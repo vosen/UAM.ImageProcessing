@@ -26,7 +26,7 @@ namespace UAM.PTO
             PNM pnm = PNM.LoadFile("test.txt");
 
             var bitmap = new WriteableBitmap(pnm.Width, pnm.Height, 96, 96, PixelFormats.Rgb48, null);
-            bitmap.WritePixels(FullRect(pnm),pnm.Bitmap, pnm.Stride,0);
+            bitmap.WritePixels(FullRect(pnm),pnm.Raster, pnm.Stride,0);
             var image = new Image() { Source = bitmap, Width = bitmap.Width, Height = bitmap.Height, UseLayoutRounding = true };
             panel.Children.Add(image);
         }

@@ -11,7 +11,7 @@ namespace UAM.PTO
     {
         public int Width { get; protected set; }
         public int Height { get; protected set; }
-        public byte[] Bitmap { get; protected set; }
+        public byte[] Raster { get; private set; }
         public int Stride { get { return Width * 6; } }
 
         public static PNM LoadFile(string path)
@@ -79,10 +79,24 @@ namespace UAM.PTO
             return builder.ToString();
         }
 
+        protected void InitializeRaster()
+        {
+            Raster = new byte[Width * Height * 6];
+        }
+
         protected int ParseNumber(string token)
         {
             int result;
             if (!Int32.TryParse(token, System.Globalization.NumberStyles.None, NumberFormatInfo.InvariantInfo, out result))
+                throw new MalformedFileException();
+            return result;
+        }
+
+        protected int ParseNumber(string token, int min, int maxval)
+        {
+            int result;
+            if (!Int32.TryParse(token, System.Globalization.NumberStyles.None, NumberFormatInfo.InvariantInfo, out result)
+                || result > maxval || result < min)
                 throw new MalformedFileException();
             return result;
         }
@@ -93,12 +107,12 @@ namespace UAM.PTO
             if (index >= (Width * Height))
                 throw new ArgumentException();
             int realIndex = index * 6;
-            Buffer.SetByte(Bitmap, realIndex, (byte)(r >> 8));
-            Buffer.SetByte(Bitmap, ++realIndex, (byte)r);
-            Buffer.SetByte(Bitmap, ++realIndex, (byte)(g >> 8));
-            Buffer.SetByte(Bitmap, ++realIndex, (byte)g);
-            Buffer.SetByte(Bitmap, ++realIndex, (byte)(b>> 8));
-            Buffer.SetByte(Bitmap, ++realIndex, (byte)b);
+            Buffer.SetByte(Raster, realIndex, (byte)(r >> 8));
+            Buffer.SetByte(Raster, ++realIndex, (byte)r);
+            Buffer.SetByte(Raster, ++realIndex, (byte)(g >> 8));
+            Buffer.SetByte(Raster, ++realIndex, (byte)g);
+            Buffer.SetByte(Raster, ++realIndex, (byte)(b>> 8));
+            Buffer.SetByte(Raster, ++realIndex, (byte)b);
         }
     }
 }

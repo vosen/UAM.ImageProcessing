@@ -10,22 +10,22 @@ namespace UAM.PTO
     // Everything is in rgb24
     public class PlainPBM : PNM
     {
-        internal PlainPBM(TextReader file)
+        internal PlainPBM(TextReader reader)
         {
             // Read width and height
-            Width = ParseNumber(ReadToken(file));
-            Height = ParseNumber(ReadToken(file));
+            Width = ParseNumber(ReadToken(reader));
+            Height = ParseNumber(ReadToken(reader));
             
             // Skip single whitespace character
-            file.Read();
+            reader.Read();
 
             // Read raster
-            Bitmap = new byte[Width * Height * 6];
+            InitializeRaster();
 
             int length = Width * Height;
             for (int i = 0; i < length; i++)
             {
-                string token = ReadToken(file);
+                string token = ReadToken(reader);
                 if (token == "0")
                     ColorPixel(i, 65535, 65535, 65535);
                 else if (token != "1")

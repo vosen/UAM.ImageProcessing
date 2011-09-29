@@ -94,7 +94,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IMP\PNM.csproj">
+    <ProjectReference Include="..\PNM\PNM.csproj">
       <Project>{E9BDF0E8-4FD8-48F4-96B5-27147A479EC0}</Project>
       <Name>PNM</Name>
     </ProjectReference>
