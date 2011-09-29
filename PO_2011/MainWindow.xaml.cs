@@ -23,7 +23,7 @@ namespace UAM.PTO
         public MainWindow()
         {
             InitializeComponent();
-            PNM pnm = PNM.LoadFile("test.pbm");
+            PNM pnm = PNM.LoadFile("test.pgm");
 
             var bitmap = new WriteableBitmap(pnm.Width, pnm.Height, 96, 96, PixelFormats.Rgb48, null);
             bitmap.WritePixels(FullRect(pnm),pnm.Raster, pnm.Stride,0);

@@ -92,17 +92,13 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="test.pgm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PNM\PNM.csproj">
       <Project>{E9BDF0E8-4FD8-48F4-96B5-27147A479EC0}</Project>
       <Name>PNM</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="test.pbm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
