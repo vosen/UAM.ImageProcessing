@@ -12,9 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
-using IMP;
 
-namespace Proj1
+namespace UAM.PTO
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

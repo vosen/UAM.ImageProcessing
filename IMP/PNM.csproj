@@ -8,8 +8,8 @@
     <ProjectGuid>{E9BDF0E8-4FD8-48F4-96B5-27147A479EC0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IMP</RootNamespace>
-    <AssemblyName>IMP</AssemblyName>
+    <RootNamespace>UAM.PTO</RootNamespace>
+    <AssemblyName>PNM</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

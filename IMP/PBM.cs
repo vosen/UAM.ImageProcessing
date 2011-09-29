@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Globalization;
 
-namespace IMP
+namespace UAM.PTO
 {
     // Eveerything is in rgb24
     public class PBM

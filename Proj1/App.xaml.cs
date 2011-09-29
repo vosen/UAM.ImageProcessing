@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 
-namespace Proj1
+namespace UAM.PTO
 {
     /// <summary>
     /// Interaction logic for App.xaml

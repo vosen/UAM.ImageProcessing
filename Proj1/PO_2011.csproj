@@ -8,8 +8,8 @@
     <ProjectGuid>{B37A3255-D3D9-4D60-8793-FDBAD55ADE22}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Proj1</RootNamespace>
-    <AssemblyName>Proj1</AssemblyName>
+    <RootNamespace>UAM.PTO</RootNamespace>
+    <AssemblyName>PO_2011</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -94,9 +94,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IMP\IMP.csproj">
+    <ProjectReference Include="..\IMP\PNM.csproj">
       <Project>{E9BDF0E8-4FD8-48F4-96B5-27147A479EC0}</Project>
-      <Name>IMP</Name>
+      <Name>PNM</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

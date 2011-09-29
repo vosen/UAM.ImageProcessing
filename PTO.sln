@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMP", "IMP\IMP.csproj", "{E9BDF0E8-4FD8-48F4-96B5-27147A479EC0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PNM", "IMP\PNM.csproj", "{E9BDF0E8-4FD8-48F4-96B5-27147A479EC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proj1", "Proj1\Proj1.csproj", "{B37A3255-D3D9-4D60-8793-FDBAD55ADE22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PO_2011", "Proj1\PO_2011.csproj", "{B37A3255-D3D9-4D60-8793-FDBAD55ADE22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
