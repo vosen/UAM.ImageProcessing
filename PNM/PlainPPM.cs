@@ -31,9 +31,9 @@ namespace UAM.PTO
             for (int i = 0; i < length; i++)
             {
                 int pik = reader.Peek();
-                ushort r = (ushort)(ParseNumber(ReadToken(reader), 0, MaxVal) * scale);
-                ushort g = (ushort)(ParseNumber(ReadToken(reader), 0, MaxVal) * scale);
-                ushort b = (ushort)(ParseNumber(ReadToken(reader), 0, MaxVal) * scale);
+                ushort r = Convert.ToUInt16(ParseNumber(ReadToken(reader), 0, MaxVal) * scale);
+                ushort g = Convert.ToUInt16(ParseNumber(ReadToken(reader), 0, MaxVal) * scale);
+                ushort b = Convert.ToUInt16(ParseNumber(ReadToken(reader), 0, MaxVal) * scale);
                 ColorPixel(i, r, g, b);
             }
         }
