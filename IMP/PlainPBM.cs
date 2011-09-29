@@ -7,25 +7,14 @@ using System.Globalization;
 
 namespace UAM.PTO
 {
-    // Eveerything is in rgb24
-    public class PBM
+    // Everything is in rgb24
+    public class PlainPBM : PNM
     {
-        protected int width;
-        protected int height;
-
-        public int Width { get { return width; } }
-        public int Height { get { return height; } }
-        public byte[] Bitmap { get; private set; }
-        public int Stride { get { return Width * 3; } }
-
-        public PBM(StreamReader file)
+        internal PlainPBM(TextReader file)
         {
-            // Check header
-            if (file.ReadLine() != "P1")
-                throw new Exception();
             string line = null;
             // Skip comments
-            while ((line = file.ReadLine())[0] == '#') ;
+            line = ReadLineSkipComments(file);
             // Get width and height
             var dims = line.Split(' ');
             if(dims.Length != 2)
@@ -54,24 +43,6 @@ namespace UAM.PTO
                         throw new Exception();
                 }
             }
-        }
-
-        // 0,0 is upper left corner, indices are postitive
-        protected void ColorPixel(int x, int y, byte r, byte g, byte b)
-        {
-            if(x >= width)
-                throw new ArgumentException();
-            if(y >= height)
-                throw new ArgumentException();
-            int index = (y * width * 3) + (x * 3);
-            Buffer.SetByte(Bitmap, index, r);
-            Buffer.SetByte(Bitmap, ++index, r);
-            Buffer.SetByte(Bitmap, ++index, r);
-        }
-
-        public void DrawOn(object obj)
-        {
-
         }
     }
 }

@@ -23,21 +23,17 @@ namespace UAM.PTO
         public MainWindow()
         {
             InitializeComponent();
-            PBM pbm;
-            using (var reader = new StreamReader("test.txt"))
-            {
-                pbm = new PBM(reader);
-            }
+            PNM pnm = PNM.LoadFile("test.txt");
 
-            var bitmap = new WriteableBitmap(pbm.Width, pbm.Height, 96, 96, PixelFormats.Rgb24, null);
-            bitmap.WritePixels(FullRect(pbm),pbm.Bitmap, pbm.Stride,0);
+            var bitmap = new WriteableBitmap(pnm.Width, pnm.Height, 96, 96, PixelFormats.Rgb24, null);
+            bitmap.WritePixels(FullRect(pnm),pnm.Bitmap, pnm.Stride,0);
             var image = new Image() { Source = bitmap, Width = 6, Height = 10, UseLayoutRounding = true };
             panel.Children.Add(image);
         }
 
-        private Int32Rect FullRect(PBM pbm)
+        private Int32Rect FullRect(PNM pnm)
         {
-            return new Int32Rect(0, 0, pbm.Width, pbm.Height);
+            return new Int32Rect(0, 0, pnm.Width, pnm.Height);
         }
     }
 }

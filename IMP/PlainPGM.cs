@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Globalization;
 
 namespace UAM.PTO
 {
-    class Program
+    public class PlainPGM : PNM
     {
-        static void Main(string[] args)
+        internal PlainPGM(TextReader reader)
         {
         }
     }
