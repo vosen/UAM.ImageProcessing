@@ -29,11 +29,9 @@ namespace UAM.PTO
             int length = Width * Height;
             for (int i = 0; i < length; i++)
             {
-                int pik = reader.Peek();
-                ushort pixelValue = (ushort)(ParseNumber(ReadToken(reader), 0, 65535) * scale);
+                ushort pixelValue = (ushort)(ParseNumber(ReadToken(reader), 0, MaxVal) * scale);
                 ColorPixel(i, pixelValue, pixelValue, pixelValue);
             }
-
         }
     }
 }
