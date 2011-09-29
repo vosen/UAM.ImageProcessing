@@ -20,14 +20,14 @@ namespace UAM.PTO
             file.Read();
 
             // Read raster
-            Bitmap = new byte[Width * Height * 3];
+            Bitmap = new byte[Width * Height * 6];
 
             int length = Width * Height;
             for (int i = 0; i < length; i++)
             {
                 string token = ReadToken(file);
                 if (token == "0")
-                    ColorPixel(i, 255, 255, 255);
+                    ColorPixel(i, 65535, 65535, 65535);
                 else if (token != "1")
                     throw new MalformedFileException();
             }

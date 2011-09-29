@@ -11,6 +11,13 @@ namespace UAM.PTO
     {
         internal PlainPGM(TextReader reader)
         {
+            // Read width and height
+            Width = ParseNumber(ReadToken(reader));
+            Height = ParseNumber(ReadToken(reader));
+
+            // Skip single whitespace character
+            reader.Read();
+
         }
     }
 }

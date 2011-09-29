@@ -12,7 +12,7 @@ namespace UAM.PTO
         public int Width { get; protected set; }
         public int Height { get; protected set; }
         public byte[] Bitmap { get; protected set; }
-        public int Stride { get { return Width * 3; } }
+        public int Stride { get { return Width * 6; } }
 
         public static PNM LoadFile(string path)
         {
@@ -88,27 +88,17 @@ namespace UAM.PTO
         }
 
         // 0,0 is upper left corner, indices are postitive
-        protected void ColorPixel(int index, byte r, byte g, byte b)
+        protected void ColorPixel(int index, ushort r, ushort g, ushort b)
         {
             if (index >= (Width * Height))
                 throw new ArgumentException();
-            int realIndex = index * 3;
-            Buffer.SetByte(Bitmap, realIndex, r);
-            Buffer.SetByte(Bitmap, ++realIndex, r);
-            Buffer.SetByte(Bitmap, ++realIndex, r);
-        }
-
-        // 0,0 is upper left corner, indices are postitive
-        protected void ColorPixel(int x, int y, byte r, byte g, byte b)
-        {
-            if (x >= Width)
-                throw new ArgumentException();
-            if (y >= Height)
-                throw new ArgumentException();
-            int index = (y * Height * 3) + (x * 3);
-            Buffer.SetByte(Bitmap, index, r);
-            Buffer.SetByte(Bitmap, ++index, r);
-            Buffer.SetByte(Bitmap, ++index, r);
+            int realIndex = index * 6;
+            Buffer.SetByte(Bitmap, realIndex, (byte)(r >> 8));
+            Buffer.SetByte(Bitmap, ++realIndex, (byte)r);
+            Buffer.SetByte(Bitmap, ++realIndex, (byte)(g >> 8));
+            Buffer.SetByte(Bitmap, ++realIndex, (byte)g);
+            Buffer.SetByte(Bitmap, ++realIndex, (byte)(b>> 8));
+            Buffer.SetByte(Bitmap, ++realIndex, (byte)b);
         }
     }
 }
