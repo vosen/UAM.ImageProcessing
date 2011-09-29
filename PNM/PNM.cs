@@ -16,7 +16,7 @@ namespace UAM.PTO
 
         public static PNM LoadFile(string path)
         {
-            using (TextReader reader = new StreamReader(path))
+            using (StreamReader reader = new StreamReader(path, System.Text.Encoding.GetEncoding(28591)))
             {
                 string header = ReadToken(reader);
                 switch (header)
@@ -113,6 +113,12 @@ namespace UAM.PTO
             Buffer.SetByte(Raster, ++realIndex, (byte)g);
             Buffer.SetByte(Raster, ++realIndex, (byte)(b>> 8));
             Buffer.SetByte(Raster, ++realIndex, (byte)b);
+        }
+
+        // 0,0 is upper left corner, indices are postitive
+        protected void ColorPixel(int x, int y, ushort r, ushort g, ushort b)
+        {
+            ColorPixel((x * Width) + y, r, g, b);
         }
     }
 }

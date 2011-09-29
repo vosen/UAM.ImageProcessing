@@ -100,7 +100,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="test.txt">
+    <None Include="test.pbm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
