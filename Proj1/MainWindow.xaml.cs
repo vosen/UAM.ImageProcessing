@@ -27,7 +27,7 @@ namespace UAM.PTO
 
             var bitmap = new WriteableBitmap(pnm.Width, pnm.Height, 96, 96, PixelFormats.Rgb24, null);
             bitmap.WritePixels(FullRect(pnm),pnm.Bitmap, pnm.Stride,0);
-            var image = new Image() { Source = bitmap, Width = 6, Height = 10, UseLayoutRounding = true };
+            var image = new Image() { Source = bitmap, Width = bitmap.Width, Height = bitmap.Height, UseLayoutRounding = true };
             panel.Children.Add(image);
         }
 
