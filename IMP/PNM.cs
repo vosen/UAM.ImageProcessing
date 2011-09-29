@@ -9,8 +9,6 @@ namespace UAM.PTO
 {
     public abstract class PNM
     {
-        private static char[] whitespace = new char[] { ' ', '\t', '\r', '\n' };
-
         public int Width { get; protected set; }
         public int Height { get; protected set; }
         public byte[] Bitmap { get; protected set; }
@@ -87,18 +85,6 @@ namespace UAM.PTO
             if (!Int32.TryParse(token, System.Globalization.NumberStyles.None, NumberFormatInfo.InvariantInfo, out result))
                 throw new MalformedFileException();
             return result;
-        }
-
-        protected static string ReadLineSkipComments(TextReader reader)
-        {
-            string line = null;
-            while ((line = reader.ReadLine()) != null && line.Length != 0 && line[0] == '#');
-            return line;
-        }
-
-        protected static string[] Split(string str)
-        {
-            return str.Split(whitespace, StringSplitOptions.RemoveEmptyEntries);
         }
 
         // 0,0 is upper left corner, indices are postitive
