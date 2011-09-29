@@ -12,36 +12,24 @@ namespace UAM.PTO
     {
         internal PlainPBM(TextReader file)
         {
-            string line = null;
-            // Skip comments
-            line = ReadLineSkipComments(file);
-            // Get width and height
-            var dims = line.Split(' ');
-            if(dims.Length != 2)
-                throw new Exception();
+            // Read width and height
+            Width = ParseNumber(ReadToken(file));
+            Height = ParseNumber(ReadToken(file));
+            
+            // Skip single whitespace character
+            file.Read();
 
-            if (!Int32.TryParse(dims[0], System.Globalization.NumberStyles.None, NumberFormatInfo.InvariantInfo, out width)
-               || !Int32.TryParse(dims[1], System.Globalization.NumberStyles.None, NumberFormatInfo.InvariantInfo, out height))
-                throw new Exception();
+            // Read raster
+            Bitmap = new byte[Width * Height * 3];
 
-            // Every pixel is 3 bytes
-            Bitmap = new byte[height * width * 3];
-
-            string[] splitLine;
-            int linenr = -1;
-            while((line = file.ReadLine()) != null)
+            int length = Width * Height;
+            for (int i = 0; i < length; i++)
             {
-                linenr++;
-                splitLine = line.Split(' ');
-                if(splitLine.Length != width)
-                    throw new Exception();
-                for(int i = 0; i < width; i++)
-                {
-                    if (splitLine[i] == "0")
-                        ColorPixel(i, linenr, 255, 255, 255);
-                    else if (splitLine[i] != "1")
-                        throw new Exception();
-                }
+                string token = ReadToken(file);
+                if (token == "0")
+                    ColorPixel(i, 255, 255, 255);
+                else if (token != "1")
+                    throw new MalformedFileException();
             }
         }
     }

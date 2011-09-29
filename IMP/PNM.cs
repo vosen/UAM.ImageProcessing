@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Globalization;
 
 namespace UAM.PTO
 {
@@ -10,11 +11,8 @@ namespace UAM.PTO
     {
         private static char[] whitespace = new char[] { ' ', '\t', '\r', '\n' };
 
-        protected int width;
-        protected int height;
-
-        public int Width { get { return width; } }
-        public int Height { get { return height; } }
+        public int Width { get; protected set; }
+        public int Height { get; protected set; }
         public byte[] Bitmap { get; protected set; }
         public int Stride { get { return Width * 3; } }
 
@@ -22,13 +20,8 @@ namespace UAM.PTO
         {
             using (TextReader reader = new StreamReader(path))
             {
-                string line = ReadLineSkipComments(reader);
-                if(line == null)
-                    throw new MalformedFileException("Malformed header");
-                string[] tokens = Split(line.Trim());
-                if (tokens.Length != 1)
-                    throw new MalformedFileException("Malformed header");
-                switch(tokens[0])
+                string header = ReadToken(reader);
+                switch (header)
                 {
                     case "P1":
                         return new PlainPBM(reader);
@@ -53,6 +46,49 @@ namespace UAM.PTO
 
         }
 
+        // read token, ignore comments, throw MalformedFileException if there is no token to read
+        // comment hash in ascii is 35
+        protected static string ReadToken(TextReader reader)
+        {
+            StringBuilder builder = new StringBuilder();
+            // Skip starting whitespace
+            int temp;
+            while(true)
+            {
+                temp = reader.Peek();
+                if(temp == -1)
+                    throw new MalformedFileException();
+                if (temp == 35)
+                {
+                    reader.ReadLine();
+                    continue;
+                }
+                if(!char.IsWhiteSpace((char)temp))
+                    break;
+                //comment - read to the end of line
+                reader.Read();
+            }
+            // Read actual token
+            builder.Append((char)reader.Read());
+            while (true)
+            {
+                temp = reader.Peek();
+                if (temp == -1 || char.IsWhiteSpace((char)temp))
+                    break;
+                builder.Append((char)reader.Read());
+            }
+            // Return
+            return builder.ToString();
+        }
+
+        protected int ParseNumber(string token)
+        {
+            int result;
+            if (!Int32.TryParse(token, System.Globalization.NumberStyles.None, NumberFormatInfo.InvariantInfo, out result))
+                throw new MalformedFileException();
+            return result;
+        }
+
         protected static string ReadLineSkipComments(TextReader reader)
         {
             string line = null;
@@ -66,13 +102,24 @@ namespace UAM.PTO
         }
 
         // 0,0 is upper left corner, indices are postitive
+        protected void ColorPixel(int index, byte r, byte g, byte b)
+        {
+            if (index >= (Width * Height))
+                throw new ArgumentException();
+            int realIndex = index * 3;
+            Buffer.SetByte(Bitmap, realIndex, r);
+            Buffer.SetByte(Bitmap, ++realIndex, r);
+            Buffer.SetByte(Bitmap, ++realIndex, r);
+        }
+
+        // 0,0 is upper left corner, indices are postitive
         protected void ColorPixel(int x, int y, byte r, byte g, byte b)
         {
-            if (x >= width)
+            if (x >= Width)
                 throw new ArgumentException();
-            if (y >= height)
+            if (y >= Height)
                 throw new ArgumentException();
-            int index = (y * width * 3) + (x * 3);
+            int index = (y * Height * 3) + (x * 3);
             Buffer.SetByte(Bitmap, index, r);
             Buffer.SetByte(Bitmap, ++index, r);
             Buffer.SetByte(Bitmap, ++index, r);
