@@ -32,7 +32,8 @@ namespace Proj1
 
             var bitmap = new WriteableBitmap(pbm.Width, pbm.Height, 96, 96, PixelFormats.Rgb24, null);
             bitmap.WritePixels(FullRect(pbm),pbm.Bitmap, pbm.Stride,0);
-            panel.Children.Add(new Image() { Source = bitmap, Width = 6, Height = 10 });
+            var image = new Image() { Source = bitmap, Width = 6, Height = 10, UseLayoutRounding = true };
+            panel.Children.Add(image);
         }
 
         private Int32Rect FullRect(PBM pbm)
