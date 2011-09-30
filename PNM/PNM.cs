@@ -107,12 +107,12 @@ namespace UAM.PTO
             if (index >= (Width * Height))
                 throw new ArgumentException();
             int realIndex = index * 6;
-            Buffer.SetByte(Raster, realIndex, (byte)(r >> 8));
-            Buffer.SetByte(Raster, ++realIndex, (byte)r);
-            Buffer.SetByte(Raster, ++realIndex, (byte)(g >> 8));
+            Buffer.SetByte(Raster, realIndex, (byte)r );
+            Buffer.SetByte(Raster, ++realIndex, (byte)(r >> 8));
             Buffer.SetByte(Raster, ++realIndex, (byte)g);
-            Buffer.SetByte(Raster, ++realIndex, (byte)(b>> 8));
+            Buffer.SetByte(Raster, ++realIndex, (byte)(g >> 8));
             Buffer.SetByte(Raster, ++realIndex, (byte)b);
+            Buffer.SetByte(Raster, ++realIndex, (byte)(b >> 8));
         }
 
         // 0,0 is upper left corner, indices are postitive
