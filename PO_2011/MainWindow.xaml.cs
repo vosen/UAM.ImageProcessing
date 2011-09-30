@@ -32,5 +32,14 @@ namespace UAM.PTO
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, Commands.SaveExecuted , Commands.CanSaveExecute));
             this.CommandBindings.Add(new CommandBinding(Commands.Exit, Commands.ExitExecuted, Commands.CanExitExecute));
         }
+
+        private void OnDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                Commands.TryReplaceImageSource(image, ((string[])e.Data.GetData(DataFormats.FileDrop))[0]);
+            }
+            e.Handled = true;
+        }
     }
 }

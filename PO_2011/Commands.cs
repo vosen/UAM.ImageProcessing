@@ -58,14 +58,29 @@ namespace UAM.PTO
             e.Handled = true;
         }
 
-        private static void TryReplaceImageSource(Image img, Stream stream)
+        internal static void TryReplaceImageSource(Image img, string path)
+        {
+            Stream stream;
+            try
+            {
+                stream = File.Open(path, FileMode.Open);
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show("Can't open the file\n" + ex.Message, "IO Error", MessageBoxButton.OK);
+                return;
+            }
+            TryReplaceImageSource(img, stream);
+        }
+
+        internal static void TryReplaceImageSource(Image img, Stream stream)
         {
             PNM pnm;
             try
             {
                 pnm = PNM.LoadFile(stream);
             }
-            catch (MalformedFileException ex)
+            catch (MalformedFileException)
             {
                 MessageBox.Show("Provided file is not a valid image.", "Invalid file", MessageBoxButton.OK);
                 return;

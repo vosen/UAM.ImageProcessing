@@ -13,7 +13,7 @@
                 <MenuItem Header="E_xit" Command="local:Commands.Exit"></MenuItem>
             </MenuItem>
         </Menu>
-        <ScrollViewer HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Auto" AllowDrop="True" Drop="OnDrop">
             <Image UseLayoutRounding="True" x:Name="image" Width="{Binding Path=Width}" Height="{Binding Path=Height}"/>
         </ScrollViewer>
     </DockPanel>
