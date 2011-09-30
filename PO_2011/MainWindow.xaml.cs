@@ -23,17 +23,14 @@ namespace UAM.PTO
         public MainWindow()
         {
             InitializeComponent();
-            PNM pnm = PNM.LoadFile("test.pgm");
-
-            var bitmap = new WriteableBitmap(pnm.Width, pnm.Height, 96, 96, PixelFormats.Rgb48, null);
-            bitmap.WritePixels(FullRect(pnm),pnm.Raster, pnm.Stride,0);
-            var image = new Image() { Source = bitmap, Width = bitmap.Width, Height = bitmap.Height, UseLayoutRounding = true };
-            panel.Children.Add(image);
+            BindCommands();
         }
 
-        private Int32Rect FullRect(PNM pnm)
+        private void BindCommands()
         {
-            return new Int32Rect(0, 0, pnm.Width, pnm.Height);
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, (s,e) => Commands.OpenExecuted(image,e) , Commands.CanOpenExecute));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, Commands.SaveExecuted , Commands.CanSaveExecute));
+            this.CommandBindings.Add(new CommandBinding(Commands.Exit, Commands.ExitExecuted, Commands.CanExitExecute));
         }
     }
 }
