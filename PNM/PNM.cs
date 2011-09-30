@@ -16,7 +16,12 @@ namespace UAM.PTO
 
         public static PNM LoadFile(string path)
         {
-            using (StreamReader reader = new StreamReader(path, System.Text.Encoding.GetEncoding(28591)))
+            return LoadFile(File.Open(path, FileMode.Open));
+        }
+
+        public static PNM LoadFile(Stream stream)
+        {
+            using (StreamReader reader = new StreamReader(stream, System.Text.Encoding.GetEncoding(28591)))
             {
                 string header = ReadToken(reader);
                 switch (header)
