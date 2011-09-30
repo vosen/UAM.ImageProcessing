@@ -13,13 +13,12 @@ namespace UAM.PTO
 
         internal RawPGM(TextReader reader)
         {
-            
             // Read width and height
             Width = ParseNumber(ReadToken(reader));
             Height = ParseNumber(ReadToken(reader));
-            MaxVal = ParseNumber(ReadToken(reader), 8, 65535);
+            MaxVal = ParseNumber(ReadToken(reader), 1, 65535);
 
-            float scale = 65536 / MaxVal;
+            float scale = 65535 / MaxVal;
 
             // Skip single whitespace character
             reader.Read();
@@ -42,7 +41,7 @@ namespace UAM.PTO
                 pixel = reader.Read();
                 if (pixel == -1)
                     throw new MalformedFileException();
-                ColorPixel(i, (ushort)(pixel * scale), (ushort)(pixel * scale), (ushort)(pixel * scale));
+                ColorPixel(i, Convert.ToUInt16(pixel * scale), Convert.ToUInt16(pixel * scale), Convert.ToUInt16(pixel * scale));
             }
         }
 
@@ -57,8 +56,8 @@ namespace UAM.PTO
                 pixel2 = reader.Read();
                 if (pixel1 == -1 || pixel2 == -1)
                     throw new MalformedFileException();
-                ushort pixelValue = (ushort)((pixel1 << 8) | pixel2);
-                ColorPixel(i, pixelValue, pixelValue, pixelValue);
+                ushort pixelValue = Convert.ToUInt16(((pixel1 << 8) | pixel2) * scale);
+                ColorPixel(i, pixelValue , pixelValue, pixelValue);
             }
         }
     }

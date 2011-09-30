@@ -17,9 +17,9 @@ namespace UAM.PTO
             // Read width, height and range
             Width = ParseNumber(ReadToken(reader));
             Height = ParseNumber(ReadToken(reader));
-            MaxVal = ParseNumber(ReadToken(reader), 8, 65535);
+            MaxVal = ParseNumber(ReadToken(reader), 1, 65535);
 
-            float scale = 65536 / MaxVal;
+            float scale = 65535 / MaxVal;
 
             // Skip single whitespace character
             reader.Read();
