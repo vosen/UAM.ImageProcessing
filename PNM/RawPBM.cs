@@ -37,7 +37,7 @@ namespace UAM.PTO
 
         private int PackedBits(int j)
         {
-            return (j * 8) > (Width - 8) ? (Width % 8) + 1 : 8;
+            return (j * 8) > (Width - 8) ? (Width % 8) : 8;
         }
 
         private void ProcessPixels(int x, int offset, int vector, int amount)
@@ -46,7 +46,7 @@ namespace UAM.PTO
             for(int i = 0; i< amount; i++)
             {
                 if (((temp >>= 1) & 1) == 0)
-                    ColorPixel(x, offset + 7 - i, UInt16.MaxValue, UInt16.MaxValue, UInt16.MaxValue);
+                    ColorPixel(x, offset + amount - i - 1, UInt16.MaxValue, UInt16.MaxValue, UInt16.MaxValue);
             }
         }
     }
