@@ -46,8 +46,38 @@ namespace UAM.PTO
             for(int i = 0; i< amount; i++)
             {
                 if (((temp >>= 1) & 1) == 0)
-                    ColorPixel(x, offset + amount - i - 1, UInt16.MaxValue, UInt16.MaxValue, UInt16.MaxValue);
+                    SetPixel(x, offset + amount - i - 1, UInt16.MaxValue, UInt16.MaxValue, UInt16.MaxValue);
             }
+        }
+
+        internal static void SaveFile(PNM bitmap, FileStream stream)
+        {
+            bitmap.WriteShortHeader("P4", stream);
+            for (int i = 0; i < bitmap.Height; i++)
+            {
+                for (int j = 0; j < bitmap.Width; j += 8)
+                {
+                    stream.WriteByte(PackBytes(bitmap, i * bitmap.Width + j,UnpackedBits(j, bitmap.Width)));
+                }
+            }
+        }
+
+        private static int UnpackedBits(int j, int width)
+        {
+            return width - j < 8 ? width - j : 8;
+        }
+
+        internal static byte PackBytes(PNM bitmap, int start, int amount)
+        {
+            int result = 0;
+            ushort r,g,b;
+            for(int i = 0; i< amount; i++)
+            {
+                bitmap.GetPixel(start + i, out r,out g,out b);
+                if (ColorToBlack(r, g, b))
+                    result |= (128 >> i);
+            }
+            return (byte)result;
         }
     }
 }

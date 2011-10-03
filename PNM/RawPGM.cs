@@ -41,7 +41,7 @@ namespace UAM.PTO
                 pixel = reader.Read();
                 if (pixel == -1)
                     throw new MalformedFileException();
-                ColorPixel(i, Convert.ToUInt16(pixel * scale), Convert.ToUInt16(pixel * scale), Convert.ToUInt16(pixel * scale));
+                SetPixel(i, Convert.ToUInt16(pixel * scale), Convert.ToUInt16(pixel * scale), Convert.ToUInt16(pixel * scale));
             }
         }
 
@@ -57,8 +57,13 @@ namespace UAM.PTO
                 if (pixel1 == -1 || pixel2 == -1)
                     throw new MalformedFileException();
                 ushort pixelValue = Convert.ToUInt16(((pixel1 << 8) | pixel2) * scale);
-                ColorPixel(i, pixelValue , pixelValue, pixelValue);
+                SetPixel(i, pixelValue , pixelValue, pixelValue);
             }
+        }
+
+        internal static void SaveFile(PNM bitmap, FileStream stream)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -44,8 +44,25 @@ namespace UAM.PTO
             }
         }
 
-        public static void SaveFile(string path)
+        public static void SaveFile(PNM bitmap, string path, PNMFormat format)
         {
+            using (FileStream stream = File.Open(path, FileMode.Create, FileAccess.Write))
+            {
+                switch (format)
+                {
+                    case PNMFormat.PBM:
+                        RawPBM.SaveFile(bitmap, stream);
+                        break;
+                    case PNMFormat.PGM:
+                        RawPGM.SaveFile(bitmap, stream);
+                        break;
+                    case PNMFormat.PPM:
+                        RawPPM.SaveFile(bitmap, stream);
+                        break;
+                    default:
+                        throw new ArgumentException("format");
+                }
+            }
 
         }
 
@@ -107,7 +124,7 @@ namespace UAM.PTO
         }
 
         // 0,0 is upper left corner, indices are postitive
-        protected void ColorPixel(int index, ushort r, ushort g, ushort b)
+        internal void SetPixel(int index, ushort r, ushort g, ushort b)
         {
             if (index >= (Width * Height))
                 throw new ArgumentException();
@@ -121,9 +138,45 @@ namespace UAM.PTO
         }
 
         // 0,0 is upper left corner, indices are postitive
-        protected void ColorPixel(int x, int y, ushort r, ushort g, ushort b)
+        internal void SetPixel(int x, int y, ushort r, ushort g, ushort b)
         {
-            ColorPixel((x * Width) + y, r, g, b);
+            SetPixel((x * Width) + y, r, g, b);
+        }
+
+        internal void GetPixel(int index, out ushort r, out ushort g, out ushort b)
+        {
+            if (index >= (Width * Height))
+                throw new ArgumentException();
+            int realIndex = index * 6;
+            r = BitConverter.ToUInt16(Raster, realIndex);
+            g = BitConverter.ToUInt16(Raster, realIndex + 2);
+            b = BitConverter.ToUInt16(Raster, realIndex + 2);
+        }
+
+        internal void WriteShortHeader(string magic, FileStream stream)
+        {
+            var encoding = Encoding.ASCII;
+            byte[] header = encoding.GetBytes(magic + Environment.NewLine + Width + " " + Height + "\n");
+            stream.Write(header, 0, header.Length);
+        }
+
+
+        internal void WriteLongHeader(string magic, FileStream stream)
+        {
+            var encoding = Encoding.ASCII;
+            byte[] header = encoding.GetBytes(magic + Environment.NewLine + Width + " " + Height + Environment.NewLine + "65535" + "\0a");
+            stream.Write(header, 0, header.Length);
+        }
+
+        internal static ushort ColorToGrayscale(ushort r, ushort g, ushort b)
+        {
+            return Convert.ToUInt16((r * 0.3) + (g * 0.59) + (b * 0.11));
+        }
+
+        internal static bool ColorToBlack(ushort r, ushort g, ushort b)
+        {
+            ushort gray = ColorToGrayscale(r, g, b);
+            return gray < 32768;
         }
     }
 }

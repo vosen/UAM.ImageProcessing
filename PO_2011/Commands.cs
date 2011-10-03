@@ -33,13 +33,37 @@ namespace UAM.PTO
             }
         }
 
-        internal static void CanSaveExecute(object sender, CanExecuteRoutedEventArgs e)
+        internal static void CanSaveExecute(Image source, CanExecuteRoutedEventArgs e)
         {
-            //CanExecute(e);
+            PNM pnm = source.DataContext as PNM;
+            if(pnm != null)
+                CanExecute(e);
         }
 
-        internal static void SaveExecuted(object sender, ExecutedRoutedEventArgs e)
+        internal static void SaveExecuted(Image source, ExecutedRoutedEventArgs e)
         {
+            var dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Filter = "PBM|*.pbm|PGM|*pgm|PPM|*ppm";
+            bool? result = dialog.ShowDialog();
+            if (result.HasValue && result.Value)
+            {
+                TrySaveImageFromSource(source, dialog.FileName, (PNMFormat)(dialog.FilterIndex - 1));
+            }
+        }
+
+        private static void TrySaveImageFromSource(Image source, string path, PNMFormat format)
+        {
+            PNM image = (PNM)source.DataContext;
+            try
+            {
+                PNM.SaveFile(image, path, format);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Can't save the file\n" + ex.Message, "Error", MessageBoxButton.OK);
+                return;
+            }
+            MessageBox.Show("File " + path + " saved successfully." , "File saved", MessageBoxButton.OK);
         }
 
         internal static void CanExitExecute(object sender, CanExecuteRoutedEventArgs e)

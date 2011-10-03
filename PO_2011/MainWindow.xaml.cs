@@ -28,8 +28,8 @@ namespace UAM.PTO
 
         private void BindCommands()
         {
-            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, (s,e) => Commands.OpenExecuted(image,e) , Commands.CanOpenExecute));
-            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, Commands.SaveExecuted , Commands.CanSaveExecute));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, (s,e) => Commands.OpenExecuted(image,e), Commands.CanOpenExecute));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, (s,e) => Commands.SaveExecuted(image,e), (s,e) => Commands.CanSaveExecute(image,e)));
             this.CommandBindings.Add(new CommandBinding(Commands.Exit, Commands.ExitExecuted, Commands.CanExitExecute));
         }
 

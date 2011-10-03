@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="PlainPGM.cs" />
     <Compile Include="PlainPPM.cs" />
+    <Compile Include="PNMFormat.cs" />
     <Compile Include="RawPBM.cs" />
     <Compile Include="RawPGM.cs" />
     <Compile Include="RawPPM.cs" />

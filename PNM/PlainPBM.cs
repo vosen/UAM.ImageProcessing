@@ -27,7 +27,7 @@ namespace UAM.PTO
             {
                 string token = ReadToken(reader);
                 if (token == "0")
-                    ColorPixel(i, 65535, 65535, 65535);
+                    SetPixel(i, 65535, 65535, 65535);
                 else if (token != "1")
                     throw new MalformedFileException();
             }

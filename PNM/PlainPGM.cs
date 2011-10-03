@@ -30,7 +30,7 @@ namespace UAM.PTO
             for (int i = 0; i < length; i++)
             {
                 ushort pixelValue = Convert.ToUInt16(ParseNumber(ReadToken(reader), 0, MaxVal) * scale);
-                ColorPixel(i, pixelValue, pixelValue, pixelValue);
+                SetPixel(i, pixelValue, pixelValue, pixelValue);
             }
         }
     }
