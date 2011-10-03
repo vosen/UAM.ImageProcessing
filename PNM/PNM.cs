@@ -162,7 +162,7 @@ namespace UAM.PTO
             int realIndex = index * 6;
             r = BitConverter.ToUInt16(Raster, realIndex);
             g = BitConverter.ToUInt16(Raster, realIndex + 2);
-            b = BitConverter.ToUInt16(Raster, realIndex + 2);
+            b = BitConverter.ToUInt16(Raster, realIndex + 4);
         }
 
         internal void WriteShortHeader(string magic, FileStream stream)
@@ -176,7 +176,7 @@ namespace UAM.PTO
         internal void WriteLongHeader(string magic, FileStream stream)
         {
             var encoding = Encoding.ASCII;
-            byte[] header = encoding.GetBytes(magic + Environment.NewLine + Width + " " + Height + Environment.NewLine + "65535" + "\0a");
+            byte[] header = encoding.GetBytes(magic + Environment.NewLine + Width + " " + Height + Environment.NewLine + "65535" + "\n");
             stream.Write(header, 0, header.Length);
         }
 

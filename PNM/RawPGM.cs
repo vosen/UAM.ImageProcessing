@@ -63,7 +63,15 @@ namespace UAM.PTO
 
         internal static void SaveFile(PNM bitmap, FileStream stream)
         {
-            throw new NotImplementedException();
+            bitmap.WriteLongHeader("P5", stream);
+            for (int i = 0; i < bitmap.Height * bitmap.Width; i++)
+            {
+                ushort r,g,b;
+                bitmap.GetPixel(i, out r, out g, out b);
+                ushort pixel = ColorToGrayscale(r,g,b);
+                stream.WriteByte((byte)(pixel >> 8));
+                stream.WriteByte((byte)(pixel));
+            }
         }
     }
 }
