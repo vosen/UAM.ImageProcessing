@@ -9,9 +9,15 @@ namespace UAM.PTO
 {
     public abstract class PNM
     {
+        private byte[] raster;
+
         public int Width { get; protected set; }
         public int Height { get; protected set; }
-        public byte[] Raster { get; private set; }
+        public byte[] Raster 
+        { 
+            get { return raster;}
+            private set { raster = value;} 
+        }
         public int Stride { get { return Width * 6; } }
 
         public static PNM LoadFile(string path)
@@ -128,13 +134,19 @@ namespace UAM.PTO
         {
             if (index >= (Width * Height))
                 throw new ArgumentException();
-            int realIndex = index * 6;
-            Buffer.SetByte(Raster, realIndex, (byte)r );
-            Buffer.SetByte(Raster, ++realIndex, (byte)(r >> 8));
-            Buffer.SetByte(Raster, ++realIndex, (byte)g);
-            Buffer.SetByte(Raster, ++realIndex, (byte)(g >> 8));
-            Buffer.SetByte(Raster, ++realIndex, (byte)b);
-            Buffer.SetByte(Raster, ++realIndex, (byte)(b >> 8));
+            unsafe
+            {
+                int realIndex = index * 6;
+                fixed(byte* rasterp = raster)
+                {
+                    rasterp[realIndex] = (byte)r;
+                    rasterp[++realIndex] = (byte)(r >> 8);
+                    rasterp[++realIndex] = (byte)g;
+                    rasterp[++realIndex] = (byte)(g >> 8);
+                    rasterp[++realIndex] = (byte)b;
+                    rasterp[++realIndex] = (byte)(b >> 8);
+                }
+            }
         }
 
         // 0,0 is upper left corner, indices are postitive
