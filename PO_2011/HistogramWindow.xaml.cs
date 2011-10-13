@@ -36,8 +36,7 @@ namespace UAM.PTO
             if (HistogramImage == null)
                 return;
 
-            HistogramImage.Children.Clear();
-            HistogramImage.Children.Add(BuildPath(GetHistogram()));
+            HistogramPath.Data = BuildHistogramGeometry(GetHistogram());
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -52,9 +51,9 @@ namespace UAM.PTO
         }
 
         // builds path 256 px wide, 128 pix tall
-        private Path BuildPath(double[] data)
+        private Geometry BuildHistogramGeometry(double[] data)
         {
-            Geometry geometry = data.Aggregate(Tuple.Create(0,new CombinedGeometry()), (geo,val) =>
+            CombinedGeometry aggregateGeometry = data.Aggregate(Tuple.Create(0,new CombinedGeometry()), (geo,val) =>
                 {
                     return Tuple.Create(
                                     geo.Item1 + 1,
@@ -72,12 +71,9 @@ namespace UAM.PTO
             figure.Segments.Add(new LineSegment(new Point(255, 127), true));
             geometry.Figures.Add(figure);
              * */
-            Path path = new Path() { SnapsToDevicePixels = true };
-            path.Data = geometry;
-            path.Stroke = Brushes.Black;
-            path.Fill = Brushes.Black;
-            //path.LayoutTransform = new ScaleTransform() { ScaleX = -1 };
-            return path;
+            ScaleTransform transform = new ScaleTransform(1, 128/aggregateGeometry.GetRenderBounds(null).Height,0,128);
+            PathGeometry scaledGeometry = Geometry.Combine(Geometry.Empty, aggregateGeometry, GeometryCombineMode.Union, transform);
+            return scaledGeometry.GetFlattenedPathGeometry();
         }
 
         private static RectangleGeometry ChartBlock(int index, double val)
