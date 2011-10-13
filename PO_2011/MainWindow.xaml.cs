@@ -31,6 +31,7 @@ namespace UAM.PTO
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, (s,e) => Commands.OpenExecuted(image,e), Commands.CanOpenExecute));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, (s,e) => Commands.SaveExecuted(image,e), (s,e) => Commands.CanSaveExecute(image,e)));
             this.CommandBindings.Add(new CommandBinding(Commands.Exit, Commands.ExitExecuted, Commands.CanExitExecute));
+            this.CommandBindings.Add(new CommandBinding(Commands.Histogram, (s, e) => Commands.HistogramExecuted(image, e), (s, e) => Commands.CanHistogramExecute(image, e)));
         }
 
         private void OnDrop(object sender, DragEventArgs e)

@@ -180,15 +180,85 @@ namespace UAM.PTO
             stream.Write(header, 0, header.Length);
         }
 
-        internal static ushort ColorToGrayscale(ushort r, ushort g, ushort b)
+        internal static ushort RGBToLuminosity(ushort r, ushort g, ushort b)
         {
-            return Convert.ToUInt16((r * 0.3) + (g * 0.59) + (b * 0.11));
+            return Convert.ToUInt16((r * 0.299) + (g * 0.587) + (b * 0.114));
         }
 
         internal static bool ColorToBlack(ushort r, ushort g, ushort b)
         {
-            ushort gray = ColorToGrayscale(r, g, b);
+            ushort gray = RGBToLuminosity(r, g, b);
             return gray < 32768;
+        }
+
+        // returned array is 256 elements long, every element has value between 0 and 1
+        public double[] GetHistogramLuminosity()
+        {
+            int[] valueArray = new int[256];
+            ushort r, g, b;
+            int size = Width * Height;
+            for (int i = 0; i < size; i++)
+            {
+                GetPixel(i, out r, out g, out b);
+                valueArray[(RGBToLuminosity(r, g, b) / 256)]++;
+            }
+            return valueArray.Select(amount => (double)amount / (double)size).ToArray();
+        }
+
+        // returned array is 256 elements long, every element has value between 0 and 1
+        public double[] GetHistogramRed()
+        {
+
+            int[] valueArray = new int[256];
+            ushort r, g, b;
+            int size = Width * Height;
+            for (int i = 0; i < size; i++)
+            {
+                GetPixel(i, out r, out g, out b);
+                valueArray[r / 256]++;
+            }
+            return valueArray.Select(amount => (double)amount / (double)size).ToArray();
+        }
+
+        // returned array is 256 elements long, every element has value between 0 and 1
+        public double[] GetHistogramGreen()
+        {
+
+            int[] valueArray = new int[256];
+            ushort r, g, b;
+            int size = Width * Height;
+            for (int i = 0; i < size; i++)
+            {
+                GetPixel(i, out r, out g, out b);
+                valueArray[g / 256]++;
+            }
+            return valueArray.Select(amount => (double)amount / (double)size).ToArray();
+        }
+
+        // returned array is 256 elements long, every element has value between 0 and 1
+        public double[] GetHistogramBlue()
+        {
+
+            int[] valueArray = new int[256];
+            ushort r, g, b;
+            int size = Width * Height;
+            for (int i = 0; i < size; i++)
+            {
+                GetPixel(i, out r, out g, out b);
+                valueArray[b / 256]++;
+            }
+            return valueArray.Select(amount => (double)amount / (double)size).ToArray();
+        }
+
+        public void ApplyFilter(Func<ushort,ushort,ushort,Tuple<ushort,ushort,ushort>> filter)
+        {
+            ushort r,g,b;
+            for (int i = 0; i < raster.Length; i++)
+            {
+                GetPixel(i, out r, out g, out b);
+                Tuple<ushort, ushort, ushort> pixel = filter(r, g, b);
+                SetPixel(i, pixel.Item1, pixel.Item2, pixel.Item3);
+            }
         }
     }
 }

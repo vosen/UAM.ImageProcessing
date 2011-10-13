@@ -1,0 +1,20 @@
+﻿<Window x:Class="UAM.PTO.HistogramWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Histogram"
+        SizeToContent="WidthAndHeight"
+        Topmost="True"        
+        ResizeMode="NoResize"
+        ShowActivated="True"
+        ShowInTaskbar="False"
+        Closing="Window_Closing" DataContextChanged="Window_DataContextChanged">
+    <DockPanel x:Name="Panel">
+        <ComboBox x:Name="ComboBox" DockPanel.Dock="Top" SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged">
+            <ComboBoxItem>Luminosity</ComboBoxItem>
+            <ComboBoxItem>Red</ComboBoxItem>
+            <ComboBoxItem>Green</ComboBoxItem>
+            <ComboBoxItem>Blue</ComboBoxItem>
+        </ComboBox>
+        <Canvas x:Name="HistogramImage" Width="257" Height="129" UseLayoutRounding="True" />
+    </DockPanel>
+</Window>

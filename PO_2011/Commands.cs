@@ -8,14 +8,37 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
+using System.Windows.Data;
 
 namespace UAM.PTO
 {
     static class Commands
     {
+        private static Lazy<Window> histogramWindow = new Lazy<Window>(() => new HistogramWindow());
+
         private static RoutedUICommand exit = new RoutedUICommand();
+        private static RoutedUICommand histogram = new RoutedUICommand();
 
         public static RoutedUICommand Exit { get { return exit; } }
+        public static RoutedUICommand Histogram { get { return histogram; } }
+
+        internal static void CanHistogramExecute(Image source, CanExecuteRoutedEventArgs e)
+        {
+            CanExecuteIfImageOpen(source, e);
+        }
+
+        internal static void HistogramExecuted(Image image, ExecutedRoutedEventArgs e)
+        {
+            if (!histogramWindow.IsValueCreated)
+            {
+                Binding context = new Binding("DataContext") { Source = image };
+                BindingOperations.SetBinding(histogramWindow.Value, HistogramWindow.DataContextProperty, context);
+                histogramWindow.Value.Owner = Application.Current.MainWindow;
+            }
+            histogramWindow.Value.Show();
+            histogramWindow.Value.Activate();
+            e.Handled = true;
+        }
 
         internal static void CanOpenExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -31,13 +54,12 @@ namespace UAM.PTO
             {
                 TryReplaceImageSource(source, dialog.OpenFile());
             }
+            e.Handled = true;
         }
 
         internal static void CanSaveExecute(Image source, CanExecuteRoutedEventArgs e)
         {
-            PNM pnm = source.DataContext as PNM;
-            if(pnm != null)
-                CanExecute(e);
+            CanExecuteIfImageOpen(source, e);
         }
 
         internal static void SaveExecuted(Image source, ExecutedRoutedEventArgs e)
@@ -49,6 +71,7 @@ namespace UAM.PTO
             {
                 TrySaveImageFromSource(source, dialog.FileName, (PNMFormat)(dialog.FilterIndex - 1));
             }
+            e.Handled = true;
         }
 
         private static void TrySaveImageFromSource(Image source, string path, PNMFormat format)
@@ -118,6 +141,13 @@ namespace UAM.PTO
             var bitmap = new WriteableBitmap(pnm.Width, pnm.Height, 96, 96, PixelFormats.Rgb48, null);
             bitmap.WritePixels(new Int32Rect(0,0,pnm.Width, pnm.Height), pnm.Raster, pnm.Stride, 0);
             return bitmap;
+        }
+
+        private static void CanExecuteIfImageOpen(Image img, CanExecuteRoutedEventArgs e)
+        {
+            PNM pnm = img.DataContext as PNM;
+            if (pnm != null)
+                CanExecute(e);
         }
     }
 }

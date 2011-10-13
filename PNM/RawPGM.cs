@@ -68,7 +68,7 @@ namespace UAM.PTO
             {
                 ushort r,g,b;
                 bitmap.GetPixel(i, out r, out g, out b);
-                ushort pixel = ColorToGrayscale(r,g,b);
+                ushort pixel = RGBToLuminosity(r,g,b);
                 stream.WriteByte((byte)(pixel >> 8));
                 stream.WriteByte((byte)(pixel));
             }
