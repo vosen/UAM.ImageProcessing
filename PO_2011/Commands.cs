@@ -48,7 +48,7 @@ namespace UAM.PTO
         internal static void OpenExecuted(ImageViewModel source, ExecutedRoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog() { AddExtension = true };
-            dialog.Filter = "Portable anymap format |*.pbm;*pgm;*ppm";
+            dialog.Filter = "Portable anymap format |*.pbm;*.pgm;*.ppm";
             bool? result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
             {
@@ -65,7 +65,7 @@ namespace UAM.PTO
         internal static void SaveExecuted(ImageViewModel source, ExecutedRoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.SaveFileDialog() { AddExtension = true };
-            dialog.Filter = "Portable bitmap format|*.pbm|Portable graymap format|*pgm|Portable pixmap format|*ppm";
+            dialog.Filter = "Portable bitmap format|*.pbm|Portable graymap format|*.pgm|Portable pixmap format|*.ppm";
             bool? result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
             {

@@ -31,6 +31,12 @@ namespace UAM.PTO
             OnPropertyChanged("Image");
         }
 
+        public void StretchHistogram()
+        {
+            image.ApplyFilter(Filters.HistogramStretch(image));
+            OnPropertyChanged("Image");
+        }
+
         public event PropertyChangedEventHandler  PropertyChanged;
 
         private void OnPropertyChanged(string name)

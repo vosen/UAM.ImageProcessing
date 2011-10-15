@@ -38,5 +38,15 @@ namespace UAM.PTO
 
             viewModel.EqualizeHistogram();
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+            ImageViewModel viewModel = DataContext as ImageViewModel;
+            if (viewModel == null)
+                return;
+
+            viewModel.StretchHistogram();
+        }
     }
 }
