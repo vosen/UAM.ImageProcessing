@@ -1,22 +1,42 @@
 ﻿<Window x:Class="UAM.PTO.HistogramWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:UAM.PTO"
         Title="Histogram"
-        SizeToContent="WidthAndHeight"
-        Topmost="True"        
+        SizeToContent="WidthAndHeight" 
         ResizeMode="NoResize"
         ShowActivated="True"
         ShowInTaskbar="False"
-        Closing="Window_Closing" DataContextChanged="Window_DataContextChanged">
+        Closing="Window_Closing"
+        x:Name="Window"
+        >
+    
+    <Window.Resources>
+        <local:PNMToHistogramGeometryConverter x:Key="HistogramGeometryConverter" />
+    </Window.Resources>
     <DockPanel x:Name="Panel">
-        <ComboBox x:Name="ComboBox" DockPanel.Dock="Top" SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged">
+        <ComboBox x:Name="SelectionBox" DockPanel.Dock="Top" SelectedIndex="0">
             <ComboBoxItem>Luminosity</ComboBoxItem>
             <ComboBoxItem>Red</ComboBoxItem>
             <ComboBoxItem>Green</ComboBoxItem>
             <ComboBoxItem>Blue</ComboBoxItem>
         </ComboBox>
-        <Canvas Margin="1" x:Name="HistogramImage" Width="256" Height="128" >
-            <Path x:Name="HistogramPath" StrokeThickness="0" Fill="Black" />
-        </Canvas>
+        <Border BorderThickness="1" BorderBrush="DarkGray" DockPanel.Dock="Top">
+            <Canvas  Margin="1,1,1,0" x:Name="HistogramImage" Width="256" Height="128" >
+                <Path x:Name="HistogramPath" StrokeThickness="0" Fill="Black" >
+                    <Path.Data>
+                        <MultiBinding Converter="{StaticResource HistogramGeometryConverter}">
+                            <Binding ElementName="HistogramPath" Path="DataContext.Image" />
+                            <Binding ElementName="SelectionBox" Path="SelectedIndex" />
+                            <Binding ElementName="Window" Path="Visibility" />
+                        </MultiBinding>
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Border>
+        <DockPanel>
+            <Button Margin="5" DockPanel.Dock="Left" HorizontalAlignment="Left" Click="Button_Click">Equalize</Button>
+            <Button Margin="5" DockPanel.Dock="Right" HorizontalAlignment="Right">Match</Button>
+        </DockPanel>
     </DockPanel>
 </Window>

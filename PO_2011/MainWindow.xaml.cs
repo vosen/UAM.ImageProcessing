@@ -20,27 +20,31 @@ namespace UAM.PTO
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ImageViewModel imgvm = new ImageViewModel();
+
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = imgvm;
             BindCommands();
         }
 
         private void BindCommands()
         {
-            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, (s,e) => Commands.OpenExecuted(image,e), Commands.CanOpenExecute));
-            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, (s,e) => Commands.SaveExecuted(image,e), (s,e) => Commands.CanSaveExecute(image,e)));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, (s, e) => Commands.OpenExecuted(imgvm, e), Commands.CanOpenExecute));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, (s, e) => Commands.SaveExecuted(imgvm, e), (s, e) => Commands.CanSaveExecute(image, e)));
             this.CommandBindings.Add(new CommandBinding(Commands.Exit, Commands.ExitExecuted, Commands.CanExitExecute));
-            this.CommandBindings.Add(new CommandBinding(Commands.Histogram, (s, e) => Commands.HistogramExecuted(image, e), (s, e) => Commands.CanHistogramExecute(image, e)));
+            this.CommandBindings.Add(new CommandBinding(Commands.Histogram, (s, e) => Commands.HistogramExecuted(this, e), (s, e) => Commands.CanHistogramExecute(image, e)));
         }
 
         private void OnDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                Commands.TryReplaceImageSource(image, ((string[])e.Data.GetData(DataFormats.FileDrop))[0]);
+                Commands.TryReplaceImageSource(imgvm, ((string[])e.Data.GetData(DataFormats.FileDrop))[0]);
             }
             e.Handled = true;
         }
+
     }
 }

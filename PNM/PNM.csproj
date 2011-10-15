@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Filters.cs" />
     <Compile Include="PlainPGM.cs" />
     <Compile Include="PlainPPM.cs" />
     <Compile Include="PNMFormat.cs" />

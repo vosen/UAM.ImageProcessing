@@ -27,11 +27,11 @@ namespace UAM.PTO
             CanExecuteIfImageOpen(source, e);
         }
 
-        internal static void HistogramExecuted(Image image, ExecutedRoutedEventArgs e)
+        internal static void HistogramExecuted(FrameworkElement parent, ExecutedRoutedEventArgs e)
         {
             if (!histogramWindow.IsValueCreated)
             {
-                Binding context = new Binding("DataContext") { Source = image };
+                Binding context = new Binding("DataContext") { Source = parent };
                 BindingOperations.SetBinding(histogramWindow.Value, HistogramWindow.DataContextProperty, context);
                 histogramWindow.Value.Owner = Application.Current.MainWindow;
             }
@@ -45,7 +45,7 @@ namespace UAM.PTO
             CanExecute(e);
         }
 
-        internal static void OpenExecuted(Image source, ExecutedRoutedEventArgs e)
+        internal static void OpenExecuted(ImageViewModel source, ExecutedRoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog() { AddExtension = true };
             dialog.Filter = "Portable anymap format |*.pbm;*pgm;*ppm";
@@ -62,21 +62,20 @@ namespace UAM.PTO
             CanExecuteIfImageOpen(source, e);
         }
 
-        internal static void SaveExecuted(Image source, ExecutedRoutedEventArgs e)
+        internal static void SaveExecuted(ImageViewModel source, ExecutedRoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.SaveFileDialog() { AddExtension = true };
             dialog.Filter = "Portable bitmap format|*.pbm|Portable graymap format|*pgm|Portable pixmap format|*ppm";
             bool? result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
             {
-                TrySaveImageFromSource(source, dialog.FileName, (PNMFormat)(dialog.FilterIndex - 1));
+                TrySaveImageFromSource(source.Image, dialog.FileName, (PNMFormat)(dialog.FilterIndex - 1));
             }
             e.Handled = true;
         }
 
-        private static void TrySaveImageFromSource(Image source, string path, PNMFormat format)
+        private static void TrySaveImageFromSource(PNM image, string path, PNMFormat format)
         {
-            PNM image = (PNM)source.DataContext;
             try
             {
                 PNM.SaveFile(image, path, format);
@@ -105,7 +104,7 @@ namespace UAM.PTO
             e.Handled = true;
         }
 
-        internal static void TryReplaceImageSource(Image img, string path)
+        internal static void TryReplaceImageSource(ImageViewModel img, string path)
         {
             Stream stream;
             try
@@ -120,33 +119,24 @@ namespace UAM.PTO
             TryReplaceImageSource(img, stream);
         }
 
-        internal static void TryReplaceImageSource(Image img, Stream stream)
+        internal static void TryReplaceImageSource(ImageViewModel img, Stream stream)
         {
             PNM pnm;
             try
             {
                 pnm = PNM.LoadFile(stream);
+                img.Image = pnm;
             }
             catch (MalformedFileException)
             {
                 MessageBox.Show("Provided file is not a valid image.", "Invalid file", MessageBoxButton.OK);
-                return;
             }
-            img.Source = BitmapFromPNM(pnm);
-            img.DataContext = pnm;
-        }
-
-        public static WriteableBitmap BitmapFromPNM(PNM pnm)
-        {
-            var bitmap = new WriteableBitmap(pnm.Width, pnm.Height, 96, 96, PixelFormats.Rgb48, null);
-            bitmap.WritePixels(new Int32Rect(0,0,pnm.Width, pnm.Height), pnm.Raster, pnm.Stride, 0);
-            return bitmap;
         }
 
         private static void CanExecuteIfImageOpen(Image img, CanExecuteRoutedEventArgs e)
         {
-            PNM pnm = img.DataContext as PNM;
-            if (pnm != null)
+            ImageViewModel model = img.DataContext as ImageViewModel;
+            if (model != null && model.Image != null)
                 CanExecute(e);
         }
     }

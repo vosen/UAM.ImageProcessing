@@ -253,7 +253,8 @@ namespace UAM.PTO
         public void ApplyFilter(Func<ushort,ushort,ushort,Tuple<ushort,ushort,ushort>> filter)
         {
             ushort r,g,b;
-            for (int i = 0; i < raster.Length; i++)
+            int size = Width * Height;
+            for (int i = 0; i < size; i++)
             {
                 GetPixel(i, out r, out g, out b);
                 Tuple<ushort, ushort, ushort> pixel = filter(r, g, b);

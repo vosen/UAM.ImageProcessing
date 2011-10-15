@@ -4,6 +4,9 @@
         xmlns:local="clr-namespace:UAM.PTO"
         TextOptions.TextFormattingMode="Display"
         Title="PO_2011" Height="350" Width="525">
+    <Window.Resources>
+        <local:PNMToBitmapConverter x:Key="PNMConverter" />
+    </Window.Resources>
     <DockPanel Name="panel">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
@@ -17,7 +20,7 @@
             </MenuItem>
         </Menu>
         <ScrollViewer HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Auto" AllowDrop="True" Drop="OnDrop">
-            <Image UseLayoutRounding="True" x:Name="image" Width="{Binding Path=Width}" Height="{Binding Path=Height}"/>
+            <Image UseLayoutRounding="True" x:Name="image" Width="{Binding Path=Image.Width}" Height="{Binding Path=Image.Height}" Source="{Binding Image, Converter={StaticResource PNMConverter}}"/>
         </ScrollViewer>
     </DockPanel>
 </Window>
