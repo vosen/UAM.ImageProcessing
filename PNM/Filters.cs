@@ -9,15 +9,25 @@ namespace UAM.PTO
     {
         public static Func<ushort,ushort,ushort,Tuple<ushort,ushort,ushort>> HistogramEqualize(PNM pnm)
         {
-            double[] rawData = pnm.GetHistogramLuminosity();
-            ushort[] lut = new ushort[256];
-            double cumulated = 0;
+            double[] rawDataR = pnm.GetHistogramRed();
+            double[] rawDataG = pnm.GetHistogramGreen();
+            double[] rawDataB = pnm.GetHistogramBlue();
+            ushort[] rlum = new ushort[256];
+            ushort[] glum = new ushort[256];
+            ushort[] blum = new ushort[256];
+            double cumulatedR = 0;
+            double cumulatedG = 0;
+            double cumulatedB = 0;
             for (int i = 0; i < 256; i++)
             {
-                cumulated += rawData[i];
-                lut[i] = Convert.ToUInt16(cumulated * 65535);
+                cumulatedR += rawDataR[i];
+                cumulatedG += rawDataG[i];
+                cumulatedB += rawDataB[i];
+                rlum[i] = Convert.ToUInt16(cumulatedR * 65535);
+                glum[i] = Convert.ToUInt16(cumulatedG * 65535);
+                blum[i] = Convert.ToUInt16(cumulatedB * 65535);
             }
-            return LuminosityMultitpliersToFunction(lut);
+            return LuminosityMultitpliersToFunction(rlum, glum, blum);
         }
 
         public static Func<ushort, ushort, ushort, Tuple<ushort, ushort, ushort>> HistogramMatch(PNM pnm)
@@ -26,22 +36,12 @@ namespace UAM.PTO
         }
 
 
-        private static Func<ushort, ushort, ushort, Tuple<ushort, ushort, ushort>> LuminosityMultitpliersToFunction(ushort[] mult)
+        private static Func<ushort, ushort, ushort, Tuple<ushort, ushort, ushort>> LuminosityMultitpliersToFunction(ushort[] rlum, ushort[] glum, ushort[] blum)
         {
             return (r, g, b) =>
                 {
-                    ushort oldlum = PNM.RGBToLuminosity(r, g, b);
-                    int index = oldlum / 256;
-                    double newIncrLum = ((double)mult[index])+1;
-                    double oldIncrLum = ((double)oldlum) + 1;
-                    double scale = newIncrLum / oldIncrLum;
-                    return Tuple.Create(Normalize(((r + 1) * scale) - 1), Normalize(((g + 1) * scale) - 1), Normalize(((b + 1) * scale) - 1));
+                    return Tuple.Create(rlum[r / 256], glum[g / 256], blum[b / 256]);
                 };
-        }
-
-        private static ushort Normalize(double value)
-        {
-            return Convert.ToUInt16(Math.Max(0, Math.Min(65535,value)));
         }
     }
 }
