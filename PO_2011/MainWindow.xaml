@@ -21,6 +21,12 @@
             <MenuItem Header="Tools">
                 <MenuItem Header="Histogram" Command="local:Commands.Histogram"/>
             </MenuItem>
+            <MenuItem Header="Filters">
+                <MenuItem Header="Blur" Command="local:Commands.Histogram">
+                    <MenuItem Header="Uniform"/>
+                    <MenuItem Header="Gaussian" Command="local:Commands.BlurGaussian"/>
+                </MenuItem>
+            </MenuItem>
         </Menu>
         <ScrollViewer HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Auto" AllowDrop="True" Drop="OnDrop">
             <Image UseLayoutRounding="True" x:Name="image" Width="{Binding Path=Image.Width}" Height="{Binding Path=Image.Height}" Source="{Binding Image, Converter={StaticResource PNMConverter}}"/>

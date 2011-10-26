@@ -48,6 +48,14 @@ namespace UAM.PTO
             OnPropertyChanged("Image");
         }
 
+        public void ApplyGaussianBlur()
+        {
+            image.ApplyConvolutionMatrix(new double[]{ 1/9, 1/9, 1/9,
+                                                     1/9, 1/9, 1/9,
+                                                     1/9, 1/9, 1/9}, 3);
+            OnPropertyChanged("Image");
+        }
+
         public event PropertyChangedEventHandler  PropertyChanged;
 
         private void OnPropertyChanged(string name)
