@@ -36,9 +36,21 @@ namespace UAM.PTO
             image.Height = newHeight;
         }
 
-        private static void Trim(PNM image, int length)
+        private static void Trim(PNM image, int padding)
         {
-
+            int newHeight = image.Height - (2 * padding);
+            int newWidth = image.Width - (2 * padding);
+            int newSize = newHeight * newWidth * 6;
+            int oldSize = image.Width * image.Height * 6;
+            byte[] newRaster = new byte[newSize];
+            int start = padding * image.Width * 6;
+            for (int i_old = start, i_new = 0; i_new < newSize; i_old += (image.Width * 6), i_new += (newWidth * 6))
+            {
+                Buffer.BlockCopy(image.raster, i_old + (padding * 6), newRaster, i_new, newWidth * 6);
+            }
+            image.raster = newRaster;
+            image.Width = newWidth;
+            image.Height = newHeight;
         }
 
         private static PNM ApplyConvolutionMatrixCore(PNM image, double[] matrix, int matrixLength)

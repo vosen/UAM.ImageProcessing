@@ -49,6 +49,10 @@ namespace UAM.PTO
 
         public void ApplyGaussianBlur()
         {
+            undoList.Push(image);
+            Image = image.ApplyConvolution(new double[]{ 0, 0, 0,
+                                                         0, 1, 0,
+                                                         0, 0, 0}, 3);
         }
 
         public void ApplyUniformBlur()
