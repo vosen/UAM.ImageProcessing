@@ -7,6 +7,21 @@ namespace UAM.PTO
 {
     public static class Filters
     {
+        public static PNM Apply(this PNM oldImage, Func<ushort,ushort,ushort,Tuple<ushort,ushort,ushort>> filter)
+        {
+            PNM newImage = new PNM(oldImage.Width, oldImage.Height);
+            ushort r,g,b;
+            int size = oldImage.Width * oldImage.Height;
+            for (int i = 0; i < size; i++)
+            {
+                oldImage.GetPixel(i, out r, out g, out b);
+                Tuple<ushort, ushort, ushort> pixel = filter(r, g, b);
+                newImage.SetPixel(i, pixel.Item1, pixel.Item2, pixel.Item3);
+            };
+            return newImage;
+        }
+
+
         public static Func<ushort,ushort,ushort,Tuple<ushort,ushort,ushort>> HistogramEqualize(PNM pnm)
         {
             double[] rawDataR = pnm.GetHistogramRed();

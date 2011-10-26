@@ -8,6 +8,7 @@ namespace UAM.PTO
 {
     public class ImageViewModel : INotifyPropertyChanged
     {
+        private Stack<PNM> undoList = new Stack<PNM>();
         private PNM image;
         public PNM Image 
         {
@@ -25,15 +26,25 @@ namespace UAM.PTO
             }
         }
 
+        public bool CanUndo { get { return undoList.Count > 0; } }
+
         public void EqualizeHistogram()
         {
-            image.ApplyFilter(Filters.HistogramEqualize(image));
+            undoList.Push(image);
+            image = image.Apply(Filters.HistogramEqualize(image));
             OnPropertyChanged("Image");
         }
 
         public void StretchHistogram()
         {
-            image.ApplyFilter(Filters.HistogramStretch(image));
+            undoList.Push(image);
+            image = image.Apply(Filters.HistogramStretch(image));
+            OnPropertyChanged("Image");
+        }
+
+        public void Undo()
+        {
+            image = undoList.Pop();
             OnPropertyChanged("Image");
         }
 

@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace UAM.PTO
 {
-    public abstract class PNM
+    public class PNM
     {
         private byte[] raster;
 
@@ -19,6 +19,15 @@ namespace UAM.PTO
             private set { raster = value;} 
         }
         public int Stride { get { return Width * 6; } }
+
+        protected PNM() { }
+
+        internal PNM(int width, int height)
+        {
+            Width = width;
+            Height = height;
+            raster = new byte[Width * Height * 6];
+        }
 
         public static PNM LoadFile(string path)
         {
@@ -248,18 +257,6 @@ namespace UAM.PTO
                 valueArray[b / 256]++;
             }
             return valueArray.Select(amount => (double)amount / (double)size).ToArray();
-        }
-
-        public void ApplyFilter(Func<ushort,ushort,ushort,Tuple<ushort,ushort,ushort>> filter)
-        {
-            ushort r,g,b;
-            int size = Width * Height;
-            for (int i = 0; i < size; i++)
-            {
-                GetPixel(i, out r, out g, out b);
-                Tuple<ushort, ushort, ushort> pixel = filter(r, g, b);
-                SetPixel(i, pixel.Item1, pixel.Item2, pixel.Item3);
-            }
         }
     }
 }

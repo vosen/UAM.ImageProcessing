@@ -15,6 +15,9 @@
                 <Separator/>
                 <MenuItem Header="E_xit" Command="local:Commands.Exit"></MenuItem>
             </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Command="Undo"></MenuItem>
+            </MenuItem>
             <MenuItem Header="Tools">
                 <MenuItem Header="Histogram" Command="local:Commands.Histogram"/>
             </MenuItem>
