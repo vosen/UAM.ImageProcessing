@@ -19,10 +19,12 @@ namespace UAM.PTO
         private static RoutedUICommand exit = new RoutedUICommand();
         private static RoutedUICommand histogram = new RoutedUICommand();
         private static RoutedUICommand gaussian = new RoutedUICommand();
+        private static RoutedUICommand uniformBlur = new RoutedUICommand();
 
         public static RoutedUICommand Exit { get { return exit; } }
         public static RoutedUICommand Histogram { get { return histogram; } }
         public static RoutedUICommand BlurGaussian { get { return gaussian; } }
+        public static RoutedUICommand BlurUniform { get { return uniformBlur; } }
 
         internal static void CanHistogramExecute(Image source, CanExecuteRoutedEventArgs e)
         {

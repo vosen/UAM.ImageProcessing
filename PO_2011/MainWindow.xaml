@@ -23,7 +23,7 @@
             </MenuItem>
             <MenuItem Header="Filters">
                 <MenuItem Header="Blur" Command="local:Commands.Histogram">
-                    <MenuItem Header="Uniform"/>
+                    <MenuItem Header="Uniform" Command="local:Commands.BlurUniform"/>
                     <MenuItem Header="Gaussian" Command="local:Commands.BlurGaussian"/>
                 </MenuItem>
             </MenuItem>

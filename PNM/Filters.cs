@@ -7,6 +7,73 @@ namespace UAM.PTO
 {
     public static class Filters
     {
+        public static PNM ApplyConvolution(this PNM image, double[] matrix, int length)
+        {
+            PNM newImage = PNM.Copy(image);
+            int padding = length / 2;
+            Pad(newImage, padding);
+            newImage = ApplyConvolutionMatrixCore(newImage, matrix, length);
+            Trim(newImage, padding);
+            return newImage;
+        }
+
+        // just pad with black for now
+        private static void Pad(PNM image, int padding)
+        {
+            int newHeight = image.Height + (2 * padding);
+            int newWidth = image.Width + (2 * padding);
+            byte[] newRaster = new byte[newHeight * newWidth * 6];
+            // skip black rows at the top
+            int start = padding * newWidth * 6;
+            int oldSize = image.Height * image.Width * 6;
+            // copy rows
+            for (int i_new = start, i_old = 0; i_old < oldSize; i_new += (newWidth * 6), i_old += (image.Width * 6))
+            {
+                Buffer.BlockCopy(image.raster, i_old, newRaster, i_new + (padding * 6), image.Width * 6);
+            }
+            image.raster = newRaster;
+            image.Width = newWidth;
+            image.Height = newHeight;
+        }
+
+        private static void Trim(PNM image, int length)
+        {
+
+        }
+
+        private static PNM ApplyConvolutionMatrixCore(PNM image, double[] matrix, int matrixLength)
+        {
+            PNM newImage = new PNM(image.Width, image.Height);
+            int padding = matrixLength / 2;
+            int oldHeight = image.Height - (padding * 2);
+            int oldWidth = image.Width - (padding * 2);
+            for (int i = padding; i < oldHeight; i++)
+            {
+                for (int j = padding; j < oldWidth; j++)
+                {
+                    double sumR = 0;
+                    double sumG = 0;
+                    double sumB = 0;
+                    // current index position
+                    int position = i * image.Width + j;
+                    for (int m = 0; m < matrixLength; m++)
+                    {
+                        for (int n = 0; n < matrixLength; n++)
+                        {
+                            ushort r, g, b;
+                            image.GetPixel(position - ((padding - m) * image.Width) - (padding - n), out r, out g, out b);
+                            double coeff = matrix[(m * matrixLength) + n];
+                            sumR += r * coeff;
+                            sumG += g * coeff;
+                            sumB += b * coeff;
+                        }
+                    }
+                    newImage.SetPixel(position, Convert.ToUInt16(sumR), Convert.ToUInt16(sumG), Convert.ToUInt16(sumB));
+                }
+            }
+            return newImage;
+        }
+
         public static PNM Apply(this PNM oldImage, Func<ushort,ushort,ushort,Tuple<ushort,ushort,ushort>> filter)
         {
             PNM newImage = new PNM(oldImage.Width, oldImage.Height);
@@ -20,7 +87,6 @@ namespace UAM.PTO
             };
             return newImage;
         }
-
 
         public static Func<ushort,ushort,ushort,Tuple<ushort,ushort,ushort>> HistogramEqualize(PNM pnm)
         {

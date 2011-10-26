@@ -26,6 +26,7 @@ namespace UAM.PTO
             }
         }
 
+        public bool IsImageOpen { get { return Image != null; } }
         public bool CanUndo { get { return undoList.Count > 0; } }
 
         public void EqualizeHistogram()
@@ -38,22 +39,24 @@ namespace UAM.PTO
         public void StretchHistogram()
         {
             undoList.Push(image);
-            image = image.Apply(Filters.HistogramStretch(image));
-            OnPropertyChanged("Image");
+            Image = image.Apply(Filters.HistogramStretch(image));
         }
 
         public void Undo()
         {
-            image = undoList.Pop();
-            OnPropertyChanged("Image");
+            Image = undoList.Pop();
         }
 
         public void ApplyGaussianBlur()
         {
-            image.ApplyConvolutionMatrix(new double[]{ 1/9, 1/9, 1/9,
-                                                     1/9, 1/9, 1/9,
-                                                     1/9, 1/9, 1/9}, 3);
-            OnPropertyChanged("Image");
+        }
+
+        public void ApplyUniformBlur()
+        {
+            undoList.Push(image);
+            Image = image.ApplyConvolution(new double[]{ 1/9d, 1/9d, 1/9d,
+                                                         1/9d, 1/9d, 1/9d,
+                                                         1/9d, 1/9d, 1/9d}, 3);
         }
 
         public event PropertyChangedEventHandler  PropertyChanged;

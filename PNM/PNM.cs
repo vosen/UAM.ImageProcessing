@@ -9,10 +9,10 @@ namespace UAM.PTO
 {
     public class PNM
     {
-        private byte[] raster;
+        internal byte[] raster;
 
-        public int Width { get; protected set; }
-        public int Height { get; protected set; }
+        public int Width { get; internal set; }
+        public int Height { get; internal set; }
         public byte[] Raster 
         { 
             get { return raster;}
@@ -169,9 +169,9 @@ namespace UAM.PTO
             if (index >= (Width * Height))
                 throw new ArgumentException();
             int realIndex = index * 6;
-            r = BitConverter.ToUInt16(Raster, realIndex);
-            g = BitConverter.ToUInt16(Raster, realIndex + 2);
-            b = BitConverter.ToUInt16(Raster, realIndex + 4);
+            r = BitConverter.ToUInt16(raster, realIndex);
+            g = BitConverter.ToUInt16(raster, realIndex + 2);
+            b = BitConverter.ToUInt16(raster, realIndex + 4);
         }
 
         internal void WriteShortHeader(string magic, FileStream stream)
@@ -259,53 +259,11 @@ namespace UAM.PTO
             return valueArray.Select(amount => (double)amount / (double)size).ToArray();
         }
 
-
-        // just pad with black for now
-        protected void Pad(int length)
+        public static PNM Copy(PNM image)
         {
-            int newHeight = Height + (2 * length);
-            int newWidth =  Width + (2 * length);
-            byte[] newRaster = new byte[newHeight * newWidth * 6];
-            // skip black rows at the top
-            int start = length * newWidth * 6;
-            int oldSize = Height * Width * 6;
-            // copy rows
-            for (int i_new = start, i_old = 0; i_old < oldSize; i_new += (newWidth * 6), i_old += (Width * 6))
-            {
-                Buffer.BlockCopy(raster, i_old, newRaster, i_new + (length*6), Width * 6);
-            }
-            raster = newRaster;
-            Width = newWidth;
-            Height = newHeight;
-        }
-
-        protected void Trim(int length)
-        {
-
-        }
-
-        // for now assume that args are correct and sums nicely
-        public void ApplyConvolutionMatrix(double[] matrix, int length)
-        {
-            //s
-            Pad((length - 1) / 2);
-            ApplyConvolutionMatrixCore(matrix, length);
-            Trim((length - 1) / 2);
-        }
-
-        private void ApplyConvolutionMatrixCore(double[] matrix,int padding)
-        {
-            byte[] newRaster = new byte[raster.Length];
-            for (int i = padding * 6; i < (Width - padding) * 6; i += 6)
-            {
-                for (int j = padding * 6; j < (Height - padding) * 6; j += 6)
-                {
-
-                }
-            }
-            Height -= (2 * padding);
-            Width -= (2 * padding);
-            raster = newRaster;
+            PNM newImage = new PNM(image.Width, image.Height);
+            Buffer.BlockCopy(image.raster, 0, newImage.raster, 0, image.raster.Length);
+            return newImage;
         }
     }
 }

@@ -37,6 +37,7 @@ namespace UAM.PTO
             this.CommandBindings.Add(new CommandBinding(Commands.Histogram, (s, e) => Commands.HistogramExecuted(this, e), (s, e) => Commands.CanHistogramExecute(image, e)));
             this.CommandBindings.Add(new CommandBinding(Commands.BlurGaussian, (s,e) => Commands.BlurGaussianExecuted(imgvm, e), (s,e) => Commands.CanBlurGaussianExecute(imgvm,e)));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (s, e) => { imgvm.Undo(); }, (s, e) => { e.CanExecute = imgvm.CanUndo; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.BlurUniform, (s,e) => { imgvm.ApplyUniformBlur(); }, (s,e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
 
         private void OnDrop(object sender, DragEventArgs e)
