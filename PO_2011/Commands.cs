@@ -18,9 +18,11 @@ namespace UAM.PTO
 
         private static RoutedUICommand exit = new RoutedUICommand();
         private static RoutedUICommand histogram = new RoutedUICommand();
+        private static RoutedUICommand gaussian = new RoutedUICommand();
 
         public static RoutedUICommand Exit { get { return exit; } }
         public static RoutedUICommand Histogram { get { return histogram; } }
+        public static RoutedUICommand BlurGaussian { get { return gaussian; } }
 
         internal static void CanHistogramExecute(Image source, CanExecuteRoutedEventArgs e)
         {
@@ -37,6 +39,17 @@ namespace UAM.PTO
             }
             histogramWindow.Value.Show();
             histogramWindow.Value.Activate();
+            e.Handled = true;
+        }
+
+        internal static void CanBlurGaussianExecute(ImageViewModel sender, CanExecuteRoutedEventArgs e)
+        {
+            CanExecute(e);
+        }
+
+        internal static void BlurGaussianExecuted(ImageViewModel source, ExecutedRoutedEventArgs e)
+        {
+            source.ApplyGaussianBlur();
             e.Handled = true;
         }
 

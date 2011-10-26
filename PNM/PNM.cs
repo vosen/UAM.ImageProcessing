@@ -261,5 +261,54 @@ namespace UAM.PTO
                 SetPixel(i, pixel.Item1, pixel.Item2, pixel.Item3);
             }
         }
+
+
+        // just pad with black for now
+        protected void Pad(int length)
+        {
+            int newHeight = Height + (2 * length);
+            int newWidth =  Width + (2 * length);
+            byte[] newRaster = new byte[newHeight * newWidth * 6];
+            // skip black rows at the top
+            int start = length * newWidth * 6;
+            int oldSize = Height * Width * 6;
+            // copy rows
+            for (int i_new = start, i_old = 0; i_old < oldSize; i_new += (newWidth * 6), i_old += (Width * 6))
+            {
+                Buffer.BlockCopy(raster, i_old, newRaster, i_new + (length*6), Width * 6);
+            }
+            raster = newRaster;
+            Width = newWidth;
+            Height = newHeight;
+        }
+
+        protected void Trim(int length)
+        {
+
+        }
+
+        // for now assume that args are correct and sums nicely
+        public void ApplyConvolutionMatrix(double[] matrix, int length)
+        {
+            //s
+            Pad((length - 1) / 2);
+            ApplyConvolutionMatrixCore(matrix, length);
+            Trim((length - 1) / 2);
+        }
+
+        private void ApplyConvolutionMatrixCore(double[] matrix,int padding)
+        {
+            byte[] newRaster = new byte[raster.Length];
+            for (int i = padding * 6; i < (Width - padding) * 6; i += 6)
+            {
+                for (int j = padding * 6; j < (Height - padding) * 6; j += 6)
+                {
+
+                }
+            }
+            Height -= (2 * padding);
+            Width -= (2 * padding);
+            raster = newRaster;
+        }
     }
 }
