@@ -20,6 +20,68 @@ namespace UAM.PTO
             return newImage;
         }
 
+        private static Tuple<float[], float[], float[]> ApplyConvolutionUnbound(PNM image, float[] matrix, int matrixLength)
+        {
+            int padding = matrixLength / 2;
+            int oldHeight = image.Height - (padding * 2);
+            int oldWidth = image.Width - (padding * 2);
+            Tuple<float[], float[], float[]> rasters = Tuple.Create(new float[oldHeight * oldWidth],
+                                                                    new float[oldHeight * oldWidth],
+                                                                    new float[oldHeight * oldWidth]);
+            int index = 0;
+            int maxHeight = image.Height - padding;
+            int maxWidth = image.Width - padding;
+            for (int i = padding; i < maxHeight; i++)
+            {
+                for (int j = padding; j < maxWidth; j++)
+                {
+                    float sumR = 0;
+                    float sumG = 0;
+                    float sumB = 0;
+                    // current index position
+                    int position = i * image.Width + j;
+                    for (int m = 0; m < matrixLength; m++)
+                    {
+                        for (int n = 0; n < matrixLength; n++)
+                        {
+                            byte r, g, b;
+                            image.GetPixel(position - ((padding - m) * image.Width) - (padding - n), out r, out g, out b);
+                            float coeff = matrix[(m * matrixLength) + n];
+                            sumR += r * coeff;
+                            sumG += g * coeff;
+                            sumB += b * coeff;
+                        }
+                    }
+                    rasters.Item1[index] = sumR;
+                    rasters.Item2[index] = sumG;
+                    rasters.Item3[index] = sumB;
+                    index++;
+                }
+            }
+            return rasters;
+        }
+
+        public static PNM ApplyGradientEdgesDetection(this PNM image)
+        {
+            PNM workImage = PNM.Copy(image);
+            Pad(workImage, 1);
+            Tuple<float[], float[], float[]> xraster = ApplyConvolutionUnbound(workImage, new float[] {-1, 0, 1,
+                                                                                                       -1, 0, 1,
+                                                                                                       -1, 0, 1}, 3);
+            Tuple<float[], float[], float[]> yraster = ApplyConvolutionUnbound(workImage, new float[] { 1,  1,  1,
+                                                                                                        0,  0,  0,
+                                                                                                       -1, -1, -1}, 3);
+            PNM newImage = new PNM(image.Width, image.Height);
+            for (int i = 0; i < xraster.Item1.Length; i++)
+            {
+                byte r = Coerce(Math.Sqrt(Math.Pow(xraster.Item1[i], 2) + Math.Pow(yraster.Item1[i], 2)));
+                byte g = Coerce(Math.Sqrt(Math.Pow(xraster.Item2[i], 2) + Math.Pow(yraster.Item2[i], 2)));
+                byte b = Coerce(Math.Sqrt(Math.Pow(xraster.Item3[i], 2) + Math.Pow(yraster.Item3[i], 2)));
+                newImage.SetPixel(i, r, g, b);
+            }
+            return newImage;
+        }
+
         // just pad with black for now
         private static void Pad(PNM image, int padding)
         {
@@ -70,11 +132,11 @@ namespace UAM.PTO
         {
             PNM newImage = new PNM(image.Width, image.Height);
             int padding = matrixLength / 2;
-            int oldHeight = image.Height - (padding * 2);
-            int oldWidth = image.Width - (padding * 2);
-            for (int i = padding; i < oldHeight; i++)
+            int maxHeight = image.Height - padding;
+            int maxWidth = image.Width - padding;
+            for (int i = padding; i < maxHeight; i++)
             {
-                for (int j = padding; j < oldWidth; j++)
+                for (int j = padding; j < maxWidth; j++)
                 {
                     double sumR = 0;
                     double sumG = 0;

@@ -52,5 +52,13 @@ namespace UAM.PTO.Commands
             public static RoutedUICommand Uniform { get { return uniform; } }
             public static RoutedUICommand Gaussian { get { return gaussian; } }
         }
+
+        public static class Edges
+        {
+            private static RoutedUICommand laplace = new RoutedUICommand();
+            private static RoutedUICommand gradient = new RoutedUICommand();
+            public static RoutedUICommand Laplace { get { return laplace; } }
+            public static RoutedUICommand Gradient { get { return gradient; } }
+        }
     }
 }

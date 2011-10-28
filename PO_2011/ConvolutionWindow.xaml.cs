@@ -26,7 +26,7 @@ namespace UAM.PTO
 
         private void CloseWindow(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void ApplyConvolution(object sender, RoutedEventArgs e)
@@ -34,6 +34,7 @@ namespace UAM.PTO
             ImageViewModel imgvm = DataContext as ImageViewModel;
             ConvolutionViewModel convvm = matrixBox.DataContext as ConvolutionViewModel;
             imgvm.ApplyConvolutionMatrix(convvm.Matrix, convvm.Weight, convvm.Shift);
+            Close();
         }
     }
 }

@@ -21,6 +21,8 @@ namespace UAM.PTO
             {
                 if(value != image)
                 {
+                    if(image != null)
+                        undoList.Push(image);
                     image = value;
                     OnPropertyChanged("Image");
                 }
@@ -66,27 +68,27 @@ namespace UAM.PTO
 
         public void EqualizeHistogram()
         {
-            undoList.Push(image);
-            image = image.Apply(Filters.HistogramEqualize(image));
-            OnPropertyChanged("Image");
+            Image = image.Apply(Filters.HistogramEqualize(image));
         }
 
         public void StretchHistogram()
         {
-            undoList.Push(image);
             Image = image.Apply(Filters.HistogramStretch(image));
         }
 
         public void Undo()
         {
-            Image = undoList.Pop();
+            image = undoList.Pop();
+            OnPropertyChanged("Image");
         }
 
         public void ApplyGaussianBlur()
         {
-            ApplyConvolutionMatrix(new double[]{ 0, 0, 0,
-                                                 0, 1, 0,
-                                                 0, 0, 0}, 1, 0);
+            ApplyConvolutionMatrix(new double[]{    0, 0.01, 0.02, 0.01,    0,
+                                                 0.01, 0.06,  0.1, 0.06, 0.01,
+                                                 0.02,  0.1, 0.16,  0.1, 0.02,
+                                                 0.01, 0.06,  0.1, 0.06, 0.01,
+                                                    0, 0.01, 0.02, 0.01,    0}, 1.0, 0);
         }
 
         public void ApplyUniformBlur()
@@ -99,7 +101,6 @@ namespace UAM.PTO
         public void ApplyConvolutionMatrix(double[] mask, double weight, double shift)
         {
             Trim(ref mask);
-            undoList.Push(image);
             Image = image.ApplyConvolution(mask, weight, shift);
         }
 
@@ -154,10 +155,10 @@ namespace UAM.PTO
         internal void ReplaceImage(string path)
         {
             Stream stream = File.Open(path, FileMode.Open);
-            undoList.Clear();
             Tuple<PNM, PNMFormat> payload = PNM.LoadFileWithFormat(stream);
             Image = payload.Item1;
             Format = payload.Item2;
+            undoList.Clear();
             Path = path;
         }
 
@@ -172,6 +173,18 @@ namespace UAM.PTO
         {
             PNM.SaveFile(Image, Path, Format);
             Path = path;
+        }
+
+        internal void DetectEdgesGradient()
+        {
+            Image = Image.ApplyGradientEdgesDetection();
+        }
+
+        internal void DetectEdgesLaplace()
+        {
+            ApplyConvolutionMatrix(new double[]{  0, -1,  0,
+                                                 -1,  4, -1,
+                                                  0, -1,  0}, 1, 0);
         }
     }
 }

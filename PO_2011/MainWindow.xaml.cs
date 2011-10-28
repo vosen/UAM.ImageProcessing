@@ -54,10 +54,12 @@ namespace UAM.PTO
         private void BindFiltersCommands()
         {
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Convolution, (s, e) => Commands.Filters.ConvolutionExecuted(this, e), (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
-            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Histogram.Equalize, (s, e) => { imgvm.EqualizeHistogram(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
-            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Histogram.Stretch, (s, e) => { imgvm.StretchHistogram(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Blur.Gaussian, (s, e) => { imgvm.ApplyGaussianBlur(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Blur.Uniform, (s, e) => { imgvm.ApplyUniformBlur(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Histogram.Equalize, (s, e) => { imgvm.EqualizeHistogram(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Histogram.Stretch, (s, e) => { imgvm.StretchHistogram(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.Gradient, (s, e) => { imgvm.DetectEdgesGradient(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.Laplace, (s, e) => { imgvm.DetectEdgesLaplace(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
 
         private void BindToolsCommands()

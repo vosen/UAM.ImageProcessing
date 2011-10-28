@@ -25,13 +25,17 @@
             <MenuItem Header="F_ilters">
                 <MenuItem Header="_Convolution Matrix" Command="{x:Static local:Commands.Filters.Convolution}"/>
                 <Separator/>
+                <MenuItem Header="_Histogram">
+                    <MenuItem Header="_Stretch" Command="{x:Static local:Commands.Filters+Histogram.Stretch}"/>
+                    <MenuItem Header="_Equalize" Command="{x:Static local:Commands.Filters+Histogram.Equalize}"/>
+                </MenuItem>
                 <MenuItem Header="_Blur">
                     <MenuItem Header="_Uniform" Command="{x:Static local:Commands.Filters+Blur.Uniform}"/>
                     <MenuItem Header="_Gaussian" Command="{x:Static local:Commands.Filters+Blur.Gaussian}"/>
                 </MenuItem>
-                <MenuItem Header="_Histogram">
-                    <MenuItem Header="_Stretch" Command="{x:Static local:Commands.Filters+Histogram.Stretch}"/>
-                    <MenuItem Header="_Equalize" Command="{x:Static local:Commands.Filters+Histogram.Equalize}"/>
+                <MenuItem Header="_Edge detection">
+                    <MenuItem Header="_Laplace" Command="{x:Static local:Commands.Filters+Edges.Laplace}"/>
+                    <MenuItem Header="_Gradient" Command="{x:Static local:Commands.Filters+Edges.Gradient}"/>
                 </MenuItem>
             </MenuItem>
         </Menu>
