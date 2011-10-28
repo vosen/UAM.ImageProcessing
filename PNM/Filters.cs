@@ -56,6 +56,16 @@ namespace UAM.PTO
             image.Height = newHeight;
         }
 
+        internal static byte Coerce(double d)
+        {
+            if (d <= 0)
+                return 0;
+            else if (d >= 255)
+                return 255;
+            else
+                return Convert.ToByte(d);
+        }
+
         private static PNM ApplyConvolutionMatrixCore(PNM image, double[] matrix, int matrixLength, double weight, double shift)
         {
             PNM newImage = new PNM(image.Width, image.Height);
@@ -83,7 +93,7 @@ namespace UAM.PTO
                             sumB += (b * coeff * weight) + shift;
                         }
                     }
-                    newImage.SetPixel(position, Convert.ToByte(sumR), Convert.ToByte(sumG), Convert.ToByte(sumB));
+                    newImage.SetPixel(position, Coerce(sumR), Coerce(sumG), Coerce(sumB));
                 }
             }
             return newImage;

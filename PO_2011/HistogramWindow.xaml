@@ -36,11 +36,5 @@
                         </Path>
                     </Canvas>
         </local:ImprovedGroupBox>
-        <local:ImprovedGroupBox Header="Operations">
-            <DockPanel>
-                <Button DockPanel.Dock="Left" HorizontalAlignment="Left" Click="Button_Click">Equalize</Button>
-                <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Click="Button_Click_1">Stretch</Button>
-            </DockPanel>
-        </local:ImprovedGroupBox>
     </DockPanel>
 </Window>

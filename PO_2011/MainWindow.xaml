@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:UAM.PTO"
         TextOptions.TextFormattingMode="Display"
-        Title="PO_2011" Height="350" Width="525">
+        Title="{Binding Path=Path, StringFormat=PO 2011 [{0}]}" Height="350" Width="525">
     <Window.Resources>
         <local:PNMToBitmapConverter x:Key="PNMConverter" />
     </Window.Resources>
@@ -12,19 +12,26 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Open..." Command="Open" CommandParameter="{Binding image}"></MenuItem>
                 <MenuItem Header="_Save" Command="Save"></MenuItem>
+                <MenuItem Header="_Save As..." Command="SaveAs"></MenuItem>
                 <Separator/>
-                <MenuItem Header="E_xit" Command="local:Commands.Exit"></MenuItem>
+                <MenuItem Header="E_xit" Command="{x:Static local:Commands.File.Exit}"></MenuItem>
             </MenuItem>
             <MenuItem Header="_Edit">
                 <MenuItem Command="Undo"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Tools">
-                <MenuItem Header="Histogram" Command="local:Commands.Histogram"/>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="Histogram" Command="{x:Static local:Commands.Tools.Histogram}"/>
             </MenuItem>
-            <MenuItem Header="Filters">
-                <MenuItem Header="Blur" Command="local:Commands.Histogram">
-                    <MenuItem Header="Uniform" Command="local:Commands.BlurUniform"/>
-                    <MenuItem Header="Gaussian" Command="local:Commands.BlurGaussian"/>
+            <MenuItem Header="F_ilters">
+                <MenuItem Header="_Convolution Matrix" Command="{x:Static local:Commands.Filters.Convolution}"/>
+                <Separator/>
+                <MenuItem Header="_Blur">
+                    <MenuItem Header="_Uniform" Command="{x:Static local:Commands.Filters+Blur.Uniform}"/>
+                    <MenuItem Header="_Gaussian" Command="{x:Static local:Commands.Filters+Blur.Gaussian}"/>
+                </MenuItem>
+                <MenuItem Header="_Histogram">
+                    <MenuItem Header="_Stretch" Command="{x:Static local:Commands.Filters+Histogram.Stretch}"/>
+                    <MenuItem Header="_Equalize" Command="{x:Static local:Commands.Filters+Histogram.Equalize}"/>
                 </MenuItem>
             </MenuItem>
         </Menu>

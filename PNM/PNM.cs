@@ -29,12 +29,12 @@ namespace UAM.PTO
             raster = new byte[Width * Height * 3];
         }
 
-        public static PNM LoadFile(string path)
+        public static PNM LoadFile(Stream stream)
         {
-            return LoadFile(File.Open(path, FileMode.Open));
+            return LoadFileWithFormat(stream).Item1;
         }
 
-        public static PNM LoadFile(Stream stream)
+        public static Tuple<PNM, PNMFormat> LoadFileWithFormat(Stream stream)
         {
             using (StreamReader reader = new StreamReader(stream, System.Text.Encoding.GetEncoding(28591)))
             {
@@ -42,17 +42,17 @@ namespace UAM.PTO
                 switch (header)
                 {
                     case "P1":
-                        return new PlainPBM(reader);
+                        return new Tuple<PNM,PNMFormat>(new PlainPBM(reader), PNMFormat.PBM);
                     case "P2":
-                        return new PlainPGM(reader);
+                        return new Tuple<PNM,PNMFormat>(new PlainPGM(reader), PNMFormat.PGM);
                     case "P3":
-                        return new PlainPPM(reader);
+                        return new Tuple<PNM,PNMFormat>(new PlainPPM(reader), PNMFormat.PPM);
                     case "P4":
-                        return new RawPBM(reader);
+                        return new Tuple<PNM,PNMFormat>(new RawPBM(reader), PNMFormat.PBM);
                     case "P5":
-                        return new RawPGM(reader);
+                        return new Tuple<PNM,PNMFormat>(new RawPGM(reader), PNMFormat.PGM);
                     case "P6":
-                        return new RawPPM(reader);
+                        return new Tuple<PNM, PNMFormat>(new RawPPM(reader), PNMFormat.PPM);
                     default:
                         throw new MalformedFileException("Malformed header");
                 }
@@ -78,7 +78,6 @@ namespace UAM.PTO
                         throw new ArgumentException("format");
                 }
             }
-
         }
 
         // read token, ignore comments, throw MalformedFileException if there is no token to read

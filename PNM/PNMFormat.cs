@@ -7,6 +7,7 @@ namespace UAM.PTO
 {
     public enum PNMFormat
     {
+        Unknown = 0,
         PBM,
         PGM,
         PPM

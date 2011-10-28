@@ -31,20 +31,51 @@ namespace UAM.PTO
 
         private void BindCommands()
         {
-            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, (s, e) => Commands.OpenExecuted(imgvm, e), Commands.CanOpenExecute));
-            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, (s, e) => Commands.SaveExecuted(imgvm, e), (s, e) => Commands.CanSaveExecute(image, e)));
-            this.CommandBindings.Add(new CommandBinding(Commands.Exit, Commands.ExitExecuted, Commands.CanExitExecute));
-            this.CommandBindings.Add(new CommandBinding(Commands.Histogram, (s, e) => Commands.HistogramExecuted(this, e), (s, e) => Commands.CanHistogramExecute(image, e)));
-            this.CommandBindings.Add(new CommandBinding(Commands.BlurGaussian, (s,e) => Commands.BlurGaussianExecuted(imgvm, e), (s,e) => Commands.CanBlurGaussianExecute(imgvm,e)));
+            BindFileCommands();
+            BindEditCommands();
+            BindFiltersCommands();
+            BindToolsCommands();
+        }
+
+        private void BindFileCommands()
+        {
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, (s, e) => Commands.File.OpenExecuted(imgvm, e)));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, (s, e) => Commands.File.SaveExecuted(imgvm, e), (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.SaveAs, (s, e) => Commands.File.SaveAsExecuted(imgvm, e), (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.File.Exit, Commands.File.ExitExecuted));
+        }
+
+        private void BindEditCommands()
+        {
+
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, (s, e) => { imgvm.Undo(); }, (s, e) => { e.CanExecute = imgvm.CanUndo; }));
-            this.CommandBindings.Add(new CommandBinding(Commands.BlurUniform, (s,e) => { imgvm.ApplyUniformBlur(); }, (s,e) => { e.CanExecute = imgvm.IsImageOpen; }));
+        }
+
+        private void BindFiltersCommands()
+        {
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Histogram.Equalize, (s, e) => { imgvm.EqualizeHistogram(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Histogram.Stretch, (s, e) => { imgvm.StretchHistogram(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Blur.Gaussian, (s, e) => { imgvm.ApplyGaussianBlur(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Blur.Uniform, (s, e) => { imgvm.ApplyUniformBlur(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+        }
+
+        private void BindToolsCommands()
+        {
+            this.CommandBindings.Add(new CommandBinding(Commands.Tools.Histogram, (s, e) => Commands.Tools.HistogramExecuted(this, e), (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
 
         private void OnDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                Commands.TryReplaceImageSource(imgvm, ((string[])e.Data.GetData(DataFormats.FileDrop))[0]);
+                try
+                {
+                    imgvm.ReplaceImage(((string[])e.Data.GetData(DataFormats.FileDrop))[0]);
+                }
+                catch (MalformedFileException)
+                {
+                    MessageBox.Show("Provided file is not a valid image.", "Invalid file", MessageBoxButton.OK);
+                }
             }
             e.Handled = true;
         }

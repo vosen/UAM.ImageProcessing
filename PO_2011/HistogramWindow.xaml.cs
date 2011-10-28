@@ -29,24 +29,5 @@ namespace UAM.PTO
             e.Cancel = true;
             this.Hide();
         }
-        
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            ImageViewModel viewModel = DataContext as ImageViewModel;
-            if (viewModel == null)
-                return;
-
-            viewModel.EqualizeHistogram();
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-            ImageViewModel viewModel = DataContext as ImageViewModel;
-            if (viewModel == null)
-                return;
-
-            viewModel.StretchHistogram();
-        }
     }
 }
