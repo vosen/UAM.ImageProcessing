@@ -10,7 +10,7 @@
     <DockPanel Name="panel">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Open..." Command="Open" CommandParameter="{Binding image}"></MenuItem>
+                <MenuItem Header="_Open..." Command="Open"></MenuItem>
                 <MenuItem Header="_Save" Command="Save"></MenuItem>
                 <MenuItem Header="_Save As..." Command="SaveAs"></MenuItem>
                 <Separator/>

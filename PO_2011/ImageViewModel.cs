@@ -84,18 +84,61 @@ namespace UAM.PTO
 
         public void ApplyGaussianBlur()
         {
-            undoList.Push(image);
-            Image = image.ApplyConvolution(new double[]{ 0, 0, 0,
-                                                         0, 1, 0,
-                                                         0, 0, 0}, 1, 0);
+            ApplyConvolutionMatrix(new double[]{ 0, 0, 0,
+                                                 0, 1, 0,
+                                                 0, 0, 0}, 1, 0);
         }
 
         public void ApplyUniformBlur()
         {
+            ApplyConvolutionMatrix(new double[]{ 1/9d, 1/9d, 1/9d,
+                                                 1/9d, 1/9d, 1/9d,
+                                                 1/9d, 1/9d, 1/9d}, 1, 0);
+        }
+
+        public void ApplyConvolutionMatrix(double[] mask, double weight, double shift)
+        {
+            Trim(ref mask);
             undoList.Push(image);
-            Image = image.ApplyConvolution(new double[]{ 1/9d, 1/9d, 1/9d,
-                                                         1/9d, 1/9d, 1/9d,
-                                                         1/9d, 1/9d, 1/9d}, 1, 0);
+            Image = image.ApplyConvolution(mask, weight, shift);
+        }
+
+        // remove useless zeroes on the edges
+        private static void Trim(ref double[] mask)
+        {
+            if (mask.Length == 1)
+                return;
+            int length = (int)Math.Sqrt(mask.Length) - 1;
+            int i = 0;
+            // check upper cells
+            for(; i < length; i++)
+            {
+                if (mask[i] != 0)
+                    return;
+            }
+            // check side cells
+            for (int j = 0; j < length; j++, i+= length)
+            {
+                if (mask[i] != 0 || mask[++i] != 0)
+                    return;
+            }
+            i -= (length - 1);
+            // check bottom cells
+            for (int j = 0; j < length; j++, i++)
+            {
+                if (mask[i] != 0)
+                    return;
+            }
+            // do the actual trimming
+            int newSize = length - 1;
+            double[] trimmed = new double[(int)Math.Pow(newSize,2)];
+            for (int m = 1; m < length; m++)
+            {
+                Array.Copy(mask, (m * (length + 1)) + 1, trimmed, (m - 1) * newSize, newSize);
+                //Buffer.BlockCopy(mask, (m * (length +1)) + 1, trimmed, (m - 1) * newSize, newSize);
+            }
+            mask = trimmed;
+            Trim(ref mask);
         }
 
         public event PropertyChangedEventHandler  PropertyChanged;

@@ -1,0 +1,108 @@
+﻿<Window x:Class="UAM.PTO.ConvolutionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:UAM.PTO"
+        TextOptions.TextFormattingMode="Display"
+        Title="Convolution"
+        SizeToContent="WidthAndHeight" 
+        ResizeMode="NoResize"
+        ShowActivated="True"
+        ShowInTaskbar="False">
+    <Window.Resources>
+        <local:LogicalNoneConverter x:Key="EnabledConverter" />
+    </Window.Resources>
+    <DockPanel Margin="2">
+        <GroupBox x:Name="matrixBox" DockPanel.Dock="Top" Header="Matrix">
+            <DockPanel>
+                <Grid DockPanel.Dock="Left">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="35"/>
+                        <ColumnDefinition Width="35"/>
+                        <ColumnDefinition Width="35"/>
+                        <ColumnDefinition Width="35"/>
+                        <ColumnDefinition Width="35"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBox x:Name="tbox00" Grid.Row="0" Grid.Column="0" Text="{Binding Matrix[0]}"/>
+                    <TextBox x:Name="tbox01" Grid.Row="0" Grid.Column="1" Text="{Binding Matrix[1]}"/>
+                    <TextBox x:Name="tbox02" Grid.Row="0" Grid.Column="2" Text="{Binding Matrix[2]}"/>
+                    <TextBox x:Name="tbox03" Grid.Row="0" Grid.Column="3" Text="{Binding Matrix[3]}"/>
+                    <TextBox x:Name="tbox04" Grid.Row="0" Grid.Column="4" Text="{Binding Matrix[4]}"/>
+                    <TextBox x:Name="tbox10" Grid.Row="1" Grid.Column="0" Text="{Binding Matrix[5]}"/>
+                    <TextBox x:Name="tbox11" Grid.Row="1" Grid.Column="1" Text="{Binding Matrix[6]}"/>
+                    <TextBox x:Name="tbox12" Grid.Row="1" Grid.Column="2" Text="{Binding Matrix[7]}"/>
+                    <TextBox x:Name="tbox13" Grid.Row="1" Grid.Column="3" Text="{Binding Matrix[8]}"/>
+                    <TextBox x:Name="tbox14" Grid.Row="1" Grid.Column="4" Text="{Binding Matrix[9]}"/>
+                    <TextBox x:Name="tbox20" Grid.Row="2" Grid.Column="0" Text="{Binding Matrix[10]}"/>
+                    <TextBox x:Name="tbox21" Grid.Row="2" Grid.Column="1" Text="{Binding Matrix[11]}"/>
+                    <TextBox x:Name="tbox22" Grid.Row="2" Grid.Column="2" Text="{Binding Matrix[12]}"/>
+                    <TextBox x:Name="tbox23" Grid.Row="2" Grid.Column="3" Text="{Binding Matrix[13]}"/>
+                    <TextBox x:Name="tbox24" Grid.Row="2" Grid.Column="4" Text="{Binding Matrix[14]}"/>
+                    <TextBox x:Name="tbox30" Grid.Row="3" Grid.Column="0" Text="{Binding Matrix[15]}"/>
+                    <TextBox x:Name="tbox31" Grid.Row="3" Grid.Column="1" Text="{Binding Matrix[16]}"/>
+                    <TextBox x:Name="tbox32" Grid.Row="3" Grid.Column="2" Text="{Binding Matrix[17]}"/>
+                    <TextBox x:Name="tbox33" Grid.Row="3" Grid.Column="3" Text="{Binding Matrix[18]}"/>
+                    <TextBox x:Name="tbox34" Grid.Row="3" Grid.Column="4" Text="{Binding Matrix[19]}"/>
+                    <TextBox x:Name="tbox40" Grid.Row="4" Grid.Column="0" Text="{Binding Matrix[20]}"/>
+                    <TextBox x:Name="tbox41" Grid.Row="4" Grid.Column="1" Text="{Binding Matrix[21]}"/>
+                    <TextBox x:Name="tbox42" Grid.Row="4" Grid.Column="2" Text="{Binding Matrix[22]}"/>
+                    <TextBox x:Name="tbox43" Grid.Row="4" Grid.Column="3" Text="{Binding Matrix[23]}"/>
+                    <TextBox x:Name="tbox44" Grid.Row="4" Grid.Column="4" Text="{Binding Matrix[24]}"/>
+                </Grid>
+                <DockPanel DockPanel.Dock="Right" LastChildFill="False">
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <Label>Weight:</Label>
+                        <TextBox x:Name="weightBox" Width="35" Text="{Binding Weight}" />
+                    </StackPanel>
+                    <DockPanel DockPanel.Dock="Top" LastChildFill="False" >
+                        <Label DockPanel.Dock="Left">Shift:</Label>
+                        <TextBox x:Name="shiftBox" DockPanel.Dock="Right" Width="35" Text="{Binding Shift}"/>
+                    </DockPanel>
+                </DockPanel>
+            </DockPanel>
+        </GroupBox>
+        <DockPanel DockPanel.Dock="Bottom">
+            <Button Width="88" Height="26" Click="CloseWindow">Cancel</Button>
+            <Button Width="88" Height="26" HorizontalAlignment="Right" Click="ApplyConvolution" IsDefault="True">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource EnabledConverter}">
+                        <Binding ElementName="weightBox" Path="(Validation.HasError)" />
+                        <Binding ElementName="shiftBox" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox00" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox01" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox02" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox03" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox04" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox10" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox11" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox12" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox13" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox14" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox20" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox21" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox22" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox23" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox24" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox30" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox31" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox32" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox33" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox34" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox40" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox41" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox42" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox43" Path="(Validation.HasError)" />
+                        <Binding ElementName="tbox44" Path="(Validation.HasError)" />
+                    </MultiBinding>
+                </Button.IsEnabled>
+                OK
+            </Button>
+        </DockPanel>
+    </DockPanel>
+</Window>

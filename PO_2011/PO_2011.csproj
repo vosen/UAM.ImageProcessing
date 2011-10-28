@@ -77,9 +77,11 @@
     </Compile>
     <Compile Include="Commands\Filters.cs" />
     <Compile Include="Commands\Tools.cs" />
+    <Compile Include="ConvolutionViewModel.cs" />
     <Compile Include="ConvolutionWindow.xaml.cs">
       <DependentUpon>ConvolutionWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LogicalNoneConverter.cs" />
     <Compile Include="ImprovedGroupBox.cs" />
     <Compile Include="PNMToHistogramGeometryConverter.cs" />
     <Compile Include="HistogramWindow.xaml.cs">
