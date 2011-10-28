@@ -19,7 +19,7 @@ namespace UAM.PTO
             Height = ParseNumber(ReadToken(reader));
             MaxVal = ParseNumber(ReadToken(reader), 1, 65535);
 
-            float scale = 65535 / MaxVal;
+            float scale = 255f / MaxVal;
 
             // Skip single whitespace character
             reader.Read();
@@ -46,7 +46,7 @@ namespace UAM.PTO
                 pixelb = reader.Read();
                 if (pixelr == -1 || pixelg == -1 || pixelb == -1)
                     throw new MalformedFileException();
-                SetPixel(i, Convert.ToUInt16(pixelr * scale), Convert.ToUInt16(pixelg * scale), Convert.ToUInt16(pixelb * scale));
+                SetPixel(i, Convert.ToByte(pixelr * scale), Convert.ToByte(pixelg * scale), Convert.ToByte(pixelb * scale));
             }
         }
 
@@ -69,7 +69,7 @@ namespace UAM.PTO
                 pixelb2 = reader.Read();
                 if (pixelr1 == -1 || pixelr2 == -1 || pixelg1 == -1 || pixelg2 == -1 || pixelb1 == -1 || pixelb2 == -1)
                     throw new MalformedFileException();
-                SetPixel(i, Convert.ToUInt16(((pixelr1 << 8) | pixelr2) * scale), Convert.ToUInt16(((pixelg1 << 8) | pixelg2) * scale), Convert.ToUInt16(((pixelb1 << 8) | pixelb2) * scale));
+                SetPixel(i, Convert.ToByte(((pixelr1 << 8) | pixelr2) * scale), Convert.ToByte(((pixelg1 << 8) | pixelg2) * scale), Convert.ToByte(((pixelb1 << 8) | pixelb2) * scale));
             }
         }
 
@@ -79,14 +79,11 @@ namespace UAM.PTO
             bitmap.WriteLongHeader("P6", stream);
             for (int i = 0; i < bitmap.Height * bitmap.Width; i++)
             {
-                ushort r, g, b;
+                byte r, g, b;
                 bitmap.GetPixel(i, out r, out g, out b);
-                stream.WriteByte((byte)(r >> 8));
-                stream.WriteByte((byte)(r));
-                stream.WriteByte((byte)(g >> 8));
-                stream.WriteByte((byte)(g));
-                stream.WriteByte((byte)(b >> 8));
-                stream.WriteByte((byte)(b));
+                stream.WriteByte(r);
+                stream.WriteByte(g);
+                stream.WriteByte(b);
             }
         }
     }

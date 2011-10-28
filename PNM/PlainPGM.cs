@@ -18,7 +18,7 @@ namespace UAM.PTO
             Height = ParseNumber(ReadToken(reader));
             MaxVal = ParseNumber(ReadToken(reader), 1, 65535);
 
-            float scale = 65535 / MaxVal;
+            float scale = 255 / MaxVal;
 
             // Skip single whitespace character
             reader.Read();
@@ -29,7 +29,7 @@ namespace UAM.PTO
             int length = Width * Height;
             for (int i = 0; i < length; i++)
             {
-                ushort pixelValue = Convert.ToUInt16(ParseNumber(ReadToken(reader), 0, MaxVal) * scale);
+                byte pixelValue = Convert.ToByte(ParseNumber(ReadToken(reader), 0, MaxVal) * scale);
                 SetPixel(i, pixelValue, pixelValue, pixelValue);
             }
         }

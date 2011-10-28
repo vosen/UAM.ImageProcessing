@@ -22,14 +22,14 @@ namespace UAM.PTO
         {
             int newHeight = image.Height + (2 * padding);
             int newWidth = image.Width + (2 * padding);
-            byte[] newRaster = new byte[newHeight * newWidth * 6];
+            byte[] newRaster = new byte[newHeight * newWidth * 3];
             // skip black rows at the top
-            int start = padding * newWidth * 6;
-            int oldSize = image.Height * image.Width * 6;
+            int start = padding * newWidth * 3;
+            int oldSize = image.Height * image.Width * 3;
             // copy rows
-            for (int i_new = start, i_old = 0; i_old < oldSize; i_new += (newWidth * 6), i_old += (image.Width * 6))
+            for (int i_new = start, i_old = 0; i_old < oldSize; i_new += (newWidth * 3), i_old += (image.Width * 3))
             {
-                Buffer.BlockCopy(image.raster, i_old, newRaster, i_new + (padding * 6), image.Width * 6);
+                Buffer.BlockCopy(image.raster, i_old, newRaster, i_new + (padding * 3), image.Width * 3);
             }
             image.raster = newRaster;
             image.Width = newWidth;
@@ -40,13 +40,13 @@ namespace UAM.PTO
         {
             int newHeight = image.Height - (2 * padding);
             int newWidth = image.Width - (2 * padding);
-            int newSize = newHeight * newWidth * 6;
-            int oldSize = image.Width * image.Height * 6;
+            int newSize = newHeight * newWidth * 3;
+            int oldSize = image.Width * image.Height * 3;
             byte[] newRaster = new byte[newSize];
-            int start = padding * image.Width * 6;
-            for (int i_old = start, i_new = 0; i_new < newSize; i_old += (image.Width * 6), i_new += (newWidth * 6))
+            int start = padding * image.Width * 3;
+            for (int i_old = start, i_new = 0; i_new < newSize; i_old += (image.Width * 3), i_new += (newWidth * 3))
             {
-                Buffer.BlockCopy(image.raster, i_old + (padding * 6), newRaster, i_new, newWidth * 6);
+                Buffer.BlockCopy(image.raster, i_old + (padding * 3), newRaster, i_new, newWidth * 3);
             }
             image.raster = newRaster;
             image.Width = newWidth;
@@ -72,7 +72,7 @@ namespace UAM.PTO
                     {
                         for (int n = 0; n < matrixLength; n++)
                         {
-                            ushort r, g, b;
+                            byte r, g, b;
                             image.GetPixel(position - ((padding - m) * image.Width) - (padding - n), out r, out g, out b);
                             double coeff = matrix[(m * matrixLength) + n];
                             sumR += r * coeff;
@@ -80,27 +80,27 @@ namespace UAM.PTO
                             sumB += b * coeff;
                         }
                     }
-                    newImage.SetPixel(position, Convert.ToUInt16(sumR), Convert.ToUInt16(sumG), Convert.ToUInt16(sumB));
+                    newImage.SetPixel(position, Convert.ToByte(sumR), Convert.ToByte(sumG), Convert.ToByte(sumB));
                 }
             }
             return newImage;
         }
 
-        public static PNM Apply(this PNM oldImage, Func<ushort,ushort,ushort,Tuple<ushort,ushort,ushort>> filter)
+        public static PNM Apply(this PNM oldImage, Func<byte, byte, byte, Pixel> filter)
         {
             PNM newImage = new PNM(oldImage.Width, oldImage.Height);
-            ushort r,g,b;
+            byte r,g,b;
             int size = oldImage.Width * oldImage.Height;
             for (int i = 0; i < size; i++)
             {
                 oldImage.GetPixel(i, out r, out g, out b);
-                Tuple<ushort, ushort, ushort> pixel = filter(r, g, b);
-                newImage.SetPixel(i, pixel.Item1, pixel.Item2, pixel.Item3);
+                Pixel pixel = filter(r, g, b);
+                newImage.SetPixel(i, pixel.Red, pixel.Green, pixel.Blue);
             };
             return newImage;
         }
 
-        public static Func<ushort,ushort,ushort,Tuple<ushort,ushort,ushort>> HistogramEqualize(PNM pnm)
+        public static Func<byte, byte, byte, Pixel> HistogramEqualize(PNM pnm)
         {
             double[] rawDataR = pnm.GetHistogramRed();
             double[] rawDataG = pnm.GetHistogramGreen();
@@ -122,11 +122,11 @@ namespace UAM.PTO
             }
             return (r, g, b) =>
                 {
-                    return Tuple.Create(Convert.ToUInt16(rlum[r / 256] * 65535), Convert.ToUInt16(glum[g / 256] * 65535), Convert.ToUInt16(blum[b / 256] * 65535));
+                    return new Pixel(Convert.ToByte(rlum[r] * 255), Convert.ToByte(glum[g] * 255), Convert.ToByte(blum[b] * 255));
                 };
         }
 
-        public static Func<ushort, ushort, ushort, Tuple<ushort, ushort, ushort>> HistogramStretch(PNM pnm)
+        public static Func<byte, byte, byte, Pixel> HistogramStretch(PNM pnm)
         {
             double[] histogramR = pnm.GetHistogramRed();
             double[] histogramG = pnm.GetHistogramGreen();
@@ -145,7 +145,7 @@ namespace UAM.PTO
 
             return (r, g, b) =>
             {
-                return Tuple.Create(Convert.ToUInt16(LUTR[r / 256] * 256), Convert.ToUInt16(LUTG[g / 256] * 256), Convert.ToUInt16(LUTB[b / 256] * 256));
+                return new Pixel(Convert.ToByte(LUTR[r]), Convert.ToByte(LUTG[g]), Convert.ToByte(LUTB[b]));
             };
         }
 

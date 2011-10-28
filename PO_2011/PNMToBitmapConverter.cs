@@ -17,7 +17,7 @@ namespace UAM.PTO
             if (pnm == null)
                 return null;
 
-            var bitmap = new WriteableBitmap(pnm.Width, pnm.Height, 96, 96, PixelFormats.Rgb48, null);
+            var bitmap = new WriteableBitmap(pnm.Width, pnm.Height, 96, 96, PixelFormats.Rgb24, null);
             bitmap.WritePixels(new Int32Rect(0, 0, pnm.Width, pnm.Height), pnm.Raster, pnm.Stride, 0);
             return bitmap;
         }

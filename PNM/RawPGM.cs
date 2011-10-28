@@ -18,7 +18,7 @@ namespace UAM.PTO
             Height = ParseNumber(ReadToken(reader));
             MaxVal = ParseNumber(ReadToken(reader), 1, 65535);
 
-            float scale = 65535 / MaxVal;
+            float scale = 255f / MaxVal;
 
             // Skip single whitespace character
             reader.Read();
@@ -41,7 +41,7 @@ namespace UAM.PTO
                 pixel = reader.Read();
                 if (pixel == -1)
                     throw new MalformedFileException();
-                SetPixel(i, Convert.ToUInt16(pixel * scale), Convert.ToUInt16(pixel * scale), Convert.ToUInt16(pixel * scale));
+                SetPixel(i, Convert.ToByte(pixel * scale), Convert.ToByte(pixel * scale), Convert.ToByte(pixel * scale));
             }
         }
 
@@ -56,7 +56,7 @@ namespace UAM.PTO
                 pixel2 = reader.Read();
                 if (pixel1 == -1 || pixel2 == -1)
                     throw new MalformedFileException();
-                ushort pixelValue = Convert.ToUInt16(((pixel1 << 8) | pixel2) * scale);
+                byte pixelValue = Convert.ToByte(((pixel1 << 8) | pixel2) * scale);
                 SetPixel(i, pixelValue , pixelValue, pixelValue);
             }
         }
@@ -66,11 +66,10 @@ namespace UAM.PTO
             bitmap.WriteLongHeader("P5", stream);
             for (int i = 0; i < bitmap.Height * bitmap.Width; i++)
             {
-                ushort r,g,b;
+                byte r,g,b;
                 bitmap.GetPixel(i, out r, out g, out b);
-                ushort pixel = RGBToLuminosity(r,g,b);
-                stream.WriteByte((byte)(pixel >> 8));
-                stream.WriteByte((byte)(pixel));
+                byte pixel = RGBToLuminosity(r, g, b);
+                stream.WriteByte(pixel);
             }
         }
     }

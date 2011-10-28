@@ -46,7 +46,7 @@ namespace UAM.PTO
             for(int i = 0; i< amount; i++)
             {
                 if (((temp >>= 1) & 1) == 0)
-                    SetPixel(x, offset + amount - i - 1, UInt16.MaxValue, UInt16.MaxValue, UInt16.MaxValue);
+                    SetPixel(x, offset + amount - i - 1, 255, 255, 255);
             }
         }
 
@@ -70,7 +70,7 @@ namespace UAM.PTO
         internal static byte PackBytes(PNM bitmap, int start, int amount)
         {
             int result = 0;
-            ushort r,g,b;
+            byte r,g,b;
             for(int i = 0; i< amount; i++)
             {
                 bitmap.GetPixel(start + i, out r,out g,out b);

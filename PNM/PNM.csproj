@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Filters.cs" />
+    <Compile Include="Pixel.cs" />
     <Compile Include="PlainPGM.cs" />
     <Compile Include="PlainPPM.cs" />
     <Compile Include="PNMFormat.cs" />

@@ -18,7 +18,7 @@ namespace UAM.PTO
             get { return raster;}
             private set { raster = value;} 
         }
-        public int Stride { get { return Width * 6; } }
+        public int Stride { get { return Width * 3; } }
 
         protected PNM() { }
 
@@ -26,7 +26,7 @@ namespace UAM.PTO
         {
             Width = width;
             Height = height;
-            raster = new byte[Width * Height * 6];
+            raster = new byte[Width * Height * 3];
         }
 
         public static PNM LoadFile(string path)
@@ -118,7 +118,7 @@ namespace UAM.PTO
 
         protected void InitializeRaster()
         {
-            Raster = new byte[Width * Height * 6];
+            Raster = new byte[Width * Height * 3];
         }
 
         protected int ParseNumber(string token)
@@ -139,39 +139,42 @@ namespace UAM.PTO
         }
 
         // 0,0 is upper left corner, indices are postitive
-        internal void SetPixel(int index, ushort r, ushort g, ushort b)
+        internal void SetPixel(int index, byte r, byte g, byte b)
         {
             if (index >= (Width * Height))
                 throw new ArgumentException();
             unsafe
             {
-                int realIndex = index * 6;
+                int realIndex = index * 3;
                 fixed(byte* rasterp = raster)
                 {
-                    rasterp[realIndex] = (byte)r;
-                    rasterp[++realIndex] = (byte)(r >> 8);
-                    rasterp[++realIndex] = (byte)g;
-                    rasterp[++realIndex] = (byte)(g >> 8);
-                    rasterp[++realIndex] = (byte)b;
-                    rasterp[++realIndex] = (byte)(b >> 8);
+                    rasterp[realIndex] = r;
+                    rasterp[++realIndex] = g;
+                    rasterp[++realIndex] = b;
                 }
             }
         }
 
         // 0,0 is upper left corner, indices are postitive
-        internal void SetPixel(int x, int y, ushort r, ushort g, ushort b)
+        internal void SetPixel(int x, int y, byte r, byte g, byte b)
         {
             SetPixel((x * Width) + y, r, g, b);
         }
 
-        internal void GetPixel(int index, out ushort r, out ushort g, out ushort b)
+        internal void GetPixel(int index, out byte r, out byte g, out byte b)
         {
             if (index >= (Width * Height))
                 throw new ArgumentException();
-            int realIndex = index * 6;
-            r = BitConverter.ToUInt16(raster, realIndex);
-            g = BitConverter.ToUInt16(raster, realIndex + 2);
-            b = BitConverter.ToUInt16(raster, realIndex + 4);
+            int realIndex = index * 3;
+            unsafe
+            {
+                fixed (byte* rasterp = raster)
+                {
+                    r = raster[realIndex];
+                    g = raster[++realIndex];
+                    b = raster[++realIndex];
+                }
+            }
         }
 
         internal void WriteShortHeader(string magic, FileStream stream)
@@ -185,31 +188,30 @@ namespace UAM.PTO
         internal void WriteLongHeader(string magic, FileStream stream)
         {
             var encoding = Encoding.ASCII;
-            byte[] header = encoding.GetBytes(magic + Environment.NewLine + Width + " " + Height + Environment.NewLine + "65535" + "\n");
+            byte[] header = encoding.GetBytes(magic + Environment.NewLine + Width + " " + Height + Environment.NewLine + "255" + "\n");
             stream.Write(header, 0, header.Length);
         }
 
-        internal static ushort RGBToLuminosity(ushort r, ushort g, ushort b)
+        internal static byte RGBToLuminosity(byte r, byte g, byte b)
         {
-            return Convert.ToUInt16((r * 0.299) + (g * 0.587) + (b * 0.114));
+            return Convert.ToByte((r * 0.299) + (g * 0.587) + (b * 0.114));
         }
 
-        internal static bool ColorToBlack(ushort r, ushort g, ushort b)
+        internal static bool ColorToBlack(byte r, byte g, byte b)
         {
-            ushort gray = RGBToLuminosity(r, g, b);
-            return gray < 32768;
+            return RGBToLuminosity(r, g, b) < 128;
         }
 
         // returned array is 256 elements long, every element has value between 0 and 1
         public double[] GetHistogramLuminosity()
         {
             int[] valueArray = new int[256];
-            ushort r, g, b;
+            byte r, g, b;
             int size = Width * Height;
             for (int i = 0; i < size; i++)
             {
                 GetPixel(i, out r, out g, out b);
-                valueArray[(RGBToLuminosity(r, g, b) / 256)]++;
+                valueArray[(RGBToLuminosity(r, g, b))]++;
             }
             return valueArray.Select(amount => (double)amount / (double)size).ToArray();
         }
@@ -219,12 +221,12 @@ namespace UAM.PTO
         {
 
             int[] valueArray = new int[256];
-            ushort r, g, b;
+            byte r, g, b;
             int size = Width * Height;
             for (int i = 0; i < size; i++)
             {
                 GetPixel(i, out r, out g, out b);
-                valueArray[r / 256]++;
+                valueArray[r]++;
             }
             return valueArray.Select(amount => (double)amount / (double)size).ToArray();
         }
@@ -234,12 +236,12 @@ namespace UAM.PTO
         {
 
             int[] valueArray = new int[256];
-            ushort r, g, b;
+            byte r, g, b;
             int size = Width * Height;
             for (int i = 0; i < size; i++)
             {
                 GetPixel(i, out r, out g, out b);
-                valueArray[g / 256]++;
+                valueArray[g]++;
             }
             return valueArray.Select(amount => (double)amount / (double)size).ToArray();
         }
@@ -249,12 +251,12 @@ namespace UAM.PTO
         {
 
             int[] valueArray = new int[256];
-            ushort r, g, b;
+            byte r, g, b;
             int size = Width * Height;
             for (int i = 0; i < size; i++)
             {
                 GetPixel(i, out r, out g, out b);
-                valueArray[b / 256]++;
+                valueArray[b]++;
             }
             return valueArray.Select(amount => (double)amount / (double)size).ToArray();
         }
