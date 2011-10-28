@@ -72,7 +72,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <None Include="Commands.cs.bak" />
     <Compile Include="Commands\File.cs">
       <Generator>MSBuild:Compile</Generator>
     </Compile>
