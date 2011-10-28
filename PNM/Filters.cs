@@ -7,12 +7,15 @@ namespace UAM.PTO
 {
     public static class Filters
     {
-        public static PNM ApplyConvolution(this PNM image, double[] matrix, int length)
+        public static PNM ApplyConvolution(this PNM image, double[] matrix, double weight, double shift)
         {
+            int length = (int)Math.Sqrt(matrix.Length);
+            if (Math.Pow(length, 2) != matrix.Length || (length / 2) * 2 == length)
+                throw new ArgumentException("matrix");
             PNM newImage = PNM.Copy(image);
             int padding = length / 2;
             Pad(newImage, padding);
-            newImage = ApplyConvolutionMatrixCore(newImage, matrix, length);
+            newImage = ApplyConvolutionMatrixCore(newImage, matrix, length, weight, shift);
             Trim(newImage, padding);
             return newImage;
         }
@@ -53,7 +56,7 @@ namespace UAM.PTO
             image.Height = newHeight;
         }
 
-        private static PNM ApplyConvolutionMatrixCore(PNM image, double[] matrix, int matrixLength)
+        private static PNM ApplyConvolutionMatrixCore(PNM image, double[] matrix, int matrixLength, double weight, double shift)
         {
             PNM newImage = new PNM(image.Width, image.Height);
             int padding = matrixLength / 2;
@@ -75,9 +78,9 @@ namespace UAM.PTO
                             byte r, g, b;
                             image.GetPixel(position - ((padding - m) * image.Width) - (padding - n), out r, out g, out b);
                             double coeff = matrix[(m * matrixLength) + n];
-                            sumR += r * coeff;
-                            sumG += g * coeff;
-                            sumB += b * coeff;
+                            sumR += (r * coeff * weight) + shift;
+                            sumG += (g * coeff * weight) + shift;
+                            sumB += (b * coeff * weight) + shift;
                         }
                     }
                     newImage.SetPixel(position, Convert.ToByte(sumR), Convert.ToByte(sumG), Convert.ToByte(sumB));

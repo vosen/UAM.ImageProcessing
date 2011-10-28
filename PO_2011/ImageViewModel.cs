@@ -52,7 +52,7 @@ namespace UAM.PTO
             undoList.Push(image);
             Image = image.ApplyConvolution(new double[]{ 0, 0, 0,
                                                          0, 1, 0,
-                                                         0, 0, 0}, 3);
+                                                         0, 0, 0}, 1, 0);
         }
 
         public void ApplyUniformBlur()
@@ -60,7 +60,7 @@ namespace UAM.PTO
             undoList.Push(image);
             Image = image.ApplyConvolution(new double[]{ 1/9d, 1/9d, 1/9d,
                                                          1/9d, 1/9d, 1/9d,
-                                                         1/9d, 1/9d, 1/9d}, 3);
+                                                         1/9d, 1/9d, 1/9d}, 1, 0);
         }
 
         public event PropertyChangedEventHandler  PropertyChanged;
