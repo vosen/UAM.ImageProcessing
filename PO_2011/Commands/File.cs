@@ -24,20 +24,25 @@ namespace UAM.PTO.Commands
             bool? result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
             {
-                try
-                {
-                    source.ReplaceImage(dialog.FileName);
-                }
-                catch (MalformedFileException)
-                {
-                    MessageBox.Show("Provided file is not a valid image.", "Invalid file", MessageBoxButton.OK);
-                }
-                catch(IOException ex)
-                {
-                    MessageBox.Show("Can't open the file\n" + ex.Message, "IO Error", MessageBoxButton.OK);
-                }
+                OpenExecutedInternal(source, dialog.FileName);
             }
             e.Handled = true;
+        }
+
+        internal static void OpenExecutedInternal(ImageViewModel source, string path)
+        {
+            try
+            {
+                source.ReplaceImage(path);
+            }
+            catch (MalformedFileException)
+            {
+                MessageBox.Show("Provided file is not a valid image.", "Invalid file", MessageBoxButton.OK);
+            }
+            catch (SystemException ex)
+            {
+                MessageBox.Show("Can't open the file. " + ex.Message, "File Error", MessageBoxButton.OK);
+            }
         }
 
         internal static void SaveExecuted(ImageViewModel source, ExecutedRoutedEventArgs e)
@@ -48,7 +53,7 @@ namespace UAM.PTO.Commands
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Can't save the file\n" + ex.Message, "Error", MessageBoxButton.OK);
+                MessageBox.Show("Can't save the file. " + ex.Message, "Error", MessageBoxButton.OK);
                 return;
             }
             e.Handled = true;

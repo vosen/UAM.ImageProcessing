@@ -68,14 +68,7 @@ namespace UAM.PTO
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                try
-                {
-                    imgvm.ReplaceImage(((string[])e.Data.GetData(DataFormats.FileDrop))[0]);
-                }
-                catch (MalformedFileException)
-                {
-                    MessageBox.Show("Provided file is not a valid image.", "Invalid file", MessageBoxButton.OK);
-                }
+                Commands.File.OpenExecutedInternal(imgvm, ((string[])e.Data.GetData(DataFormats.FileDrop))[0]);
             }
             e.Handled = true;
         }
