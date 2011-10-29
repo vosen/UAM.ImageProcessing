@@ -84,28 +84,28 @@ namespace UAM.PTO
 
         public void ApplyGaussianBlur()
         {
-            ApplyConvolutionMatrix(new double[]{    0, 0.01, 0.02, 0.01,    0,
-                                                 0.01, 0.06,  0.1, 0.06, 0.01,
-                                                 0.02,  0.1, 0.16,  0.1, 0.02,
-                                                 0.01, 0.06,  0.1, 0.06, 0.01,
-                                                    0, 0.01, 0.02, 0.01,    0}, 1.0, 0);
+            ApplyConvolutionMatrix(new float[]{    0, 0.01F, 0.02F, 0.01F,    0,
+                                                 0.01F, 0.06F,  0.1F, 0.06F, 0.01F,
+                                                 0.02F,  0.1F, 0.16F,  0.1F, 0.02F,
+                                                 0.01F, 0.06F,  0.1F, 0.06F, 0.01F,
+                                                    0, 0.01F, 0.02F, 0.01F,    0}, 1, 0);
         }
 
         public void ApplyUniformBlur()
         {
-            ApplyConvolutionMatrix(new double[]{ 1/9d, 1/9d, 1/9d,
-                                                 1/9d, 1/9d, 1/9d,
-                                                 1/9d, 1/9d, 1/9d}, 1, 0);
+            ApplyConvolutionMatrix(new float[]{ 1/9F, 1/9F, 1/9F,
+                                                 1/9F, 1/9F, 1/9F,
+                                                 1/9F, 1/9F, 1/9F}, 1, 0);
         }
 
-        public void ApplyConvolutionMatrix(double[] mask, double weight, double shift)
+        public void ApplyConvolutionMatrix(float[] mask, float weight, float shift)
         {
             Trim(ref mask);
             Image = image.ApplyConvolution(mask, weight, shift);
         }
 
         // remove useless zeroes on the edges
-        private static void Trim(ref double[] mask)
+        private static void Trim(ref float[] mask)
         {
             if (mask.Length == 1)
                 return;
@@ -132,7 +132,7 @@ namespace UAM.PTO
             }
             // do the actual trimming
             int newSize = length - 1;
-            double[] trimmed = new double[(int)Math.Pow(newSize,2)];
+            float[] trimmed = new float[(int)Math.Pow(newSize,2)];
             for (int m = 1; m < length; m++)
             {
                 Array.Copy(mask, (m * (length + 1)) + 1, trimmed, (m - 1) * newSize, newSize);
@@ -182,7 +182,7 @@ namespace UAM.PTO
 
         internal void DetectEdgesLaplace()
         {
-            ApplyConvolutionMatrix(new double[]{  0, -1,  0,
+            ApplyConvolutionMatrix(new float[]{  0, -1,  0,
                                                  -1,  4, -1,
                                                   0, -1,  0}, 1, 0);
         }

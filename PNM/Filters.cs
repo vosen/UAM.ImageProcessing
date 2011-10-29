@@ -7,7 +7,7 @@ namespace UAM.PTO
 {
     public static class Filters
     {
-        public static PNM ApplyConvolution(this PNM image, double[] matrix, double weight, double shift)
+        public static PNM ApplyConvolution(this PNM image, float[] matrix, float weight, float shift)
         {
             int length = (int)Math.Sqrt(matrix.Length);
             if (Math.Pow(length, 2) != matrix.Length || (length / 2) * 2 == length)
@@ -128,28 +128,29 @@ namespace UAM.PTO
                 return Convert.ToByte(d);
         }
 
-        private static PNM ApplyConvolutionMatrixCore(PNM image, double[] matrix, int matrixLength, double weight, double shift)
+        private static PNM ApplyConvolutionMatrixCore(PNM image, float[] matrix, int matrixLength, float weight, float shift)
         {
             PNM newImage = new PNM(image.Width, image.Height);
             int padding = matrixLength / 2;
             int maxHeight = image.Height - padding;
             int maxWidth = image.Width - padding;
+            int width = image.Width;
             for (int i = padding; i < maxHeight; i++)
             {
                 for (int j = padding; j < maxWidth; j++)
                 {
-                    double sumR = 0;
-                    double sumG = 0;
-                    double sumB = 0;
+                    float sumR = 0;
+                    float sumG = 0;
+                    float sumB = 0;
                     // current index position
-                    int position = i * image.Width + j;
+                    int position = i * width + j;
                     for (int m = 0; m < matrixLength; m++)
                     {
                         for (int n = 0; n < matrixLength; n++)
                         {
                             byte r, g, b;
-                            image.GetPixel(position - ((padding - m) * image.Width) - (padding - n), out r, out g, out b);
-                            double coeff = matrix[(m * matrixLength) + n];
+                            image.GetPixel(position - ((padding - m) * width) - (padding - n), out r, out g, out b);
+                            float coeff = matrix[(m * matrixLength) + n];
                             sumR += (r * coeff * weight) + shift;
                             sumG += (g * coeff * weight) + shift;
                             sumB += (b * coeff * weight) + shift;
