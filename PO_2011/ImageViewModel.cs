@@ -101,7 +101,10 @@ namespace UAM.PTO
         public void ApplyConvolutionMatrix(double[] mask, double weight, double shift)
         {
             Trim(ref mask);
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             Image = image.ApplyConvolution(mask, weight, shift);
+            watch.Stop();
+            System.Windows.MessageBox.Show("Time taken: " + watch.ElapsedMilliseconds +"ms.");
         }
 
         // remove useless zeroes on the edges
