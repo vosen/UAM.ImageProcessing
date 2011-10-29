@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace UAM.PTO
 {
@@ -31,7 +32,7 @@ namespace UAM.PTO
             int index = 0;
             int maxHeight = image.Height - padding;
             int maxWidth = image.Width - padding;
-            for (int i = padding; i < maxHeight; i++)
+            Parallel.For(padding, maxHeight, i =>
             {
                 for (int j = padding; j < maxWidth; j++)
                 {
@@ -57,7 +58,7 @@ namespace UAM.PTO
                     rasters.Item3[index] = sumB;
                     index++;
                 }
-            }
+            });
             return rasters;
         }
 
@@ -135,7 +136,7 @@ namespace UAM.PTO
             int maxHeight = image.Height - padding;
             int maxWidth = image.Width - padding;
             int width = image.Width;
-            for (int i = padding; i < maxHeight; i++)
+            Parallel.For(padding, maxHeight, i =>
             {
                 for (int j = padding; j < maxWidth; j++)
                 {
@@ -158,7 +159,7 @@ namespace UAM.PTO
                     }
                     newImage.SetPixel(position, Coerce(sumR), Coerce(sumG), Coerce(sumB));
                 }
-            }
+            });
             return newImage;
         }
 
