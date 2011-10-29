@@ -104,6 +104,11 @@ namespace UAM.PTO
             Image = image.ApplyConvolution(mask, weight, shift);
         }
 
+        public void ChangeBrightnessContrast(float brightness, float contrast)
+        {
+            Image =Image.Apply(Filters.ChangeBrightnessContrast(brightness, contrast));
+        }
+
         // remove useless zeroes on the edges
         private static void Trim(ref float[] mask)
         {

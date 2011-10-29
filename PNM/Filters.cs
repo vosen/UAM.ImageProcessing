@@ -1,13 +1,78 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace UAM.PTO
 {
     public static class Filters
     {
+        public static Pixel ColorToGrayscale(byte r, byte g, byte b)
+        {
+            byte value = PNM.RGBToLuminosity(r, g, b);
+            return new Pixel(value, value, value);
+        }
+
+        // brightness should fall in [-1..1] range and contrast should fall in [-1..1] range
+        public static Func<byte, byte, byte, Pixel> ChangeBrightnessContrast(float brigthness, float contrast)
+        {
+            if (brigthness < -1 || brigthness > 1)
+                throw new ArgumentOutOfRangeException("brightness");
+            if (contrast < -1 || contrast > 1)
+                throw new ArgumentOutOfRangeException("contrast");
+            // dark magic here
+            if (contrast <= 0)
+            {
+                float realContrast = contrast + 1;
+                // could be optimized by precalculating LUT
+                return (r, g, b) =>
+                {
+                    return new Pixel(Coerce((r - 127.5) * realContrast + (brigthness * 127) + 127.5),
+                                     Coerce((g - 127.5) * realContrast + (brigthness * 127) + 127.5),
+                                     Coerce((b - 127.5) * realContrast + (brigthness * 127) + 127.5));
+                };
+            }
+            else
+            {
+
+                byte[] LUT = BuildBrightnessContrastLUT(brigthness, contrast);
+                return (r, g, b) =>
+                {
+                    return new Pixel(LUT[r], LUT[g], LUT[b]);
+                };
+            }
+        }
+
+        private static byte[] BuildBrightnessContrastLUT(float brightness, float contrast)
+        {
+            float realBright = brightness * 127;
+            float factor = 1 - contrast;
+            byte lower = (byte)((contrast/2) * 255);
+            byte upper = (byte)((1 - contrast/2) * 255);
+            byte[] lut = new byte[256];
+            float segment = lower == upper ? 0 : 255f / (upper - lower);
+            byte minEnergy = Coerce(realBright);
+            for (int i = 0; i < lower; i++)
+            {
+                lut[i] = minEnergy;
+            }
+            for (int i = lower, k = 0; i <= upper; i++, k++)
+            {
+                lut[i] = Coerce((k * segment) + realBright);
+            }
+            for (int i = upper + 1; i < 256; i++)
+            {
+                lut[i] = 255;
+            }
+            return lut;
+        }
+
+        public static Func<byte, byte, byte, Pixel> ChangeGamma(float weight)
+        {
+            return (r, g, b) =>
+            {
+                return new Pixel(Coerce(Math.Pow(r / 255d, weight) * 255), Coerce(Math.Pow(g / 255d, weight) * 255), Coerce(Math.Pow(b / 255d, weight) * 255));
+            };
+        }
+
         public static PNM ApplyConvolution(this PNM image, float[] matrix, float weight, float shift)
         {
             int length = (int)Math.Sqrt(matrix.Length);
@@ -120,14 +185,24 @@ namespace UAM.PTO
             image.Height = newHeight;
         }
 
-        internal static byte Coerce(double d)
+        internal static byte Coerce(float f)
         {
-            if (d <= 0)
+            if (f <= 0)
                 return 0;
-            else if (d >= 255)
+            else if (f >= 255)
                 return 255;
             else
-                return Convert.ToByte(d);
+                return Convert.ToByte(f);
+        }
+
+        internal static byte Coerce(double f)
+        {
+            if (f <= 0)
+                return 0;
+            else if (f >= 255)
+                return 255;
+            else
+                return Convert.ToByte(f);
         }
 
         private static PNM ApplyConvolutionMatrixCore(PNM image, float[] matrix, int matrixLength, float weight, float shift)
