@@ -13,7 +13,9 @@ namespace UAM.PTO.Commands
     {
         private static ConvolutionWindow convolutionWindow;
         private static RoutedUICommand convolution = new RoutedUICommand();
+        private static RoutedUICommand grayscale = new RoutedUICommand();
         public static RoutedUICommand Convolution { get { return convolution; } }
+        public static RoutedUICommand Grayscale { get { return grayscale; } }
 
         internal static void ConvolutionExecuted(Window parent, ExecutedRoutedEventArgs e)
         {

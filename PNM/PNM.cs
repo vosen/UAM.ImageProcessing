@@ -268,5 +268,36 @@ namespace UAM.PTO
             Buffer.BlockCopy(image.raster, 0, newImage.raster, 0, image.raster.Length);
             return newImage;
         }
+
+        public byte[] GetCMYK()
+        {
+            byte[] pixels = new byte[Width * Height * 4];
+            int size = Width * Height;
+            byte r, g, b;
+            for (int i = 0, j = 0; i < size; i++)
+            {
+                GetPixel(i, out r, out g, out b);
+                // formula taken from http://www.codeproject.com/KB/applications/xcmyk.aspx
+                byte k = (byte)Math.Min(Math.Min(255-r, 255-g), 255-b);
+                if (k == 255)
+                {
+                    pixels[j++] = 255;
+                    pixels[j++] = 255;
+                    pixels[j++] = 255;
+                    pixels[j++] = 255;
+                }
+                else
+                {
+                    byte c = (byte)((255 - r - k) / (float)(255 - k) * 255);
+                    byte m = (byte)((255 - g - k) / (float)(255 - k) * 255);
+                    byte y = (byte)((255 - b - k) / (float)(255 - k) * 255);
+                    pixels[j++] = c;
+                    pixels[j++] = m;
+                    pixels[j++] = y;
+                    pixels[j++] = k;
+                }
+            }
+            return pixels;
+        }
     }
 }

@@ -60,6 +60,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="CMYKWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ConvolutionWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -84,6 +88,9 @@
       <DependentUpon>BrightnessContrastWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ChildWindow.cs" />
+    <Compile Include="CMYKWindow.xaml.cs">
+      <DependentUpon>CMYKWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Commands\File.cs">
       <Generator>MSBuild:Compile</Generator>
     </Compile>
@@ -93,6 +100,7 @@
     <Compile Include="ConvolutionWindow.xaml.cs">
       <DependentUpon>ConvolutionWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PNMCMYKToBitmapConverter.cs" />
     <Compile Include="GammaWindow.xaml.cs">
       <DependentUpon>GammaWindow.xaml</DependentUpon>
     </Compile>

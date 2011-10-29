@@ -1,0 +1,10 @@
+﻿<local:ChildWindow x:Class="UAM.PTO.CMYKWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:UAM.PTO"
+        Title="CMYK">
+    <Window.Resources>
+        <local:PNMCMYKToBitmapConverter x:Key="CMYKConverter" />
+    </Window.Resources>
+    <Image UseLayoutRounding="True" x:Name="image" Width="{Binding Path=Image.Width}" Height="{Binding Path=Image.Height}" Source="{Binding Image, Converter={StaticResource CMYKConverter}}"/>
+</local:ChildWindow>

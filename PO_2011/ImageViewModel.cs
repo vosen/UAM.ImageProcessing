@@ -114,6 +114,11 @@ namespace UAM.PTO
             Image = Image.Apply(Filters.ChangeGamma(value));
         }
 
+        public void ToGrayscale()
+        {
+            Image = Image.Apply(Filters.ColorToGrayscale);
+        }
+
         // remove useless zeroes on the edges
         private static void Trim(ref float[] mask)
         {

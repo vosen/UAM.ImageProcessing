@@ -60,6 +60,7 @@ namespace UAM.PTO
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Histogram.Stretch, (s, e) => { imgvm.StretchHistogram(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.Gradient, (s, e) => { imgvm.DetectEdgesGradient(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.Laplace, (s, e) => { imgvm.DetectEdgesLaplace(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Grayscale, (s, e) => { imgvm.ToGrayscale(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
 
         private void BindToolsCommands()
@@ -67,6 +68,7 @@ namespace UAM.PTO
             this.CommandBindings.Add(new CommandBinding(Commands.Tools.Histogram, (s, e) => Commands.Tools.HistogramExecuted(this, e), (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Tools.BrightnessContrast, (s, e) => Commands.Tools.BrightnessContrastExecuted(this, e), (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Tools.Gamma, (s, e) => Commands.Tools.GammaExecuted(this, e), (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Tools.CMYK, (s, e) => Commands.Tools.CMYKExecuted(this, e), (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
 
         private void OnDrop(object sender, DragEventArgs e)

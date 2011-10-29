@@ -20,12 +20,13 @@
                 <MenuItem Command="Undo"></MenuItem>
             </MenuItem>
             <MenuItem Header="_Tools">
-                <MenuItem Header="Histogram" Command="{x:Static local:Commands.Tools.Histogram}"/>
-                <MenuItem Header="Brightness and contrast" Command="{x:Static local:Commands.Tools.BrightnessContrast}"/>
-                <MenuItem Header="Gamma" Command="{x:Static local:Commands.Tools.Gamma}"/>
+                <MenuItem Header="Histogram..." Command="{x:Static local:Commands.Tools.Histogram}"/>
+                <MenuItem Header="Brightness and contrast..." Command="{x:Static local:Commands.Tools.BrightnessContrast}"/>
+                <MenuItem Header="Gamma..." Command="{x:Static local:Commands.Tools.Gamma}"/>
+                <MenuItem Header="Show in CMYK..." Command="{x:Static local:Commands.Tools.CMYK}"/>
             </MenuItem>
             <MenuItem Header="F_ilters">
-                <MenuItem Header="_Convolution Matrix" Command="{x:Static local:Commands.Filters.Convolution}"/>
+                <MenuItem Header="_Convolution Matrix..." Command="{x:Static local:Commands.Filters.Convolution}"/>
                 <Separator/>
                 <MenuItem Header="_Histogram">
                     <MenuItem Header="_Stretch" Command="{x:Static local:Commands.Filters+Histogram.Stretch}"/>
@@ -39,6 +40,7 @@
                     <MenuItem Header="_Laplace" Command="{x:Static local:Commands.Filters+Edges.Laplace}"/>
                     <MenuItem Header="_Gradient" Command="{x:Static local:Commands.Filters+Edges.Gradient}"/>
                 </MenuItem>
+                <MenuItem Header="Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
             </MenuItem>
         </Menu>
         <ScrollViewer HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Auto" AllowDrop="True" Drop="OnDrop">

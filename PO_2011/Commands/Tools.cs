@@ -13,13 +13,16 @@ namespace UAM.PTO.Commands
         private static HistogramWindow histogramWindow;
         private static BrightnessContrastWindow bcWindow;
         private static GammaWindow gammaWindow;
+        private static CMYKWindow cmykWindow;
 
         private static RoutedUICommand histogram = new RoutedUICommand();
         private static RoutedUICommand bc = new RoutedUICommand();
         private static RoutedUICommand gamma = new RoutedUICommand();
+        private static RoutedUICommand cmyk = new RoutedUICommand();
         public static RoutedUICommand Histogram { get { return histogram; } }
         public static RoutedUICommand BrightnessContrast { get { return bc; } }
         public static RoutedUICommand Gamma { get { return gamma; } }
+        public static RoutedUICommand CMYK { get { return cmyk; } }
 
         internal static void HistogramExecuted(Window parent, ExecutedRoutedEventArgs e)
         {
@@ -53,6 +56,18 @@ namespace UAM.PTO.Commands
             }
             gammaWindow.Show();
             gammaWindow.Activate();
+            e.Handled = true;
+        }
+
+        internal static void CMYKExecuted(Window mainWindow, ExecutedRoutedEventArgs e)
+        {
+            if (cmykWindow == null)
+            {
+                cmykWindow = new CMYKWindow(mainWindow);
+                cmykWindow.OnClosedOnce = () => cmykWindow = null;
+            }
+            cmykWindow.Show();
+            cmykWindow.Activate();
             e.Handled = true;
         }
     }
