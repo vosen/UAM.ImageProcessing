@@ -16,9 +16,10 @@ namespace UAM.PTO
     /// <summary>
     /// Interaction logic for BrightnessContrastWindow.xaml
     /// </summary>
-    public partial class BrightnessContrastWindow : Window
+    public partial class BrightnessContrastWindow : ChildWindow
     {
-        public BrightnessContrastWindow()
+        public BrightnessContrastWindow(Window owner)
+            : base(owner)
         {
             InitializeComponent();
         }

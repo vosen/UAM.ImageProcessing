@@ -15,22 +15,12 @@ namespace UAM.PTO.Commands
         private static RoutedUICommand convolution = new RoutedUICommand();
         public static RoutedUICommand Convolution { get { return convolution; } }
 
-        internal static void ConvolutionExecuted(FrameworkElement parent, ExecutedRoutedEventArgs e)
+        internal static void ConvolutionExecuted(Window parent, ExecutedRoutedEventArgs e)
         {
             if (convolutionWindow == null)
             {
-                convolutionWindow = new ConvolutionWindow();
-                Binding context = new Binding("DataContext") { Source = parent };
-                BindingOperations.SetBinding(convolutionWindow, ConvolutionWindow.DataContextProperty, context);
-                convolutionWindow.Owner = Application.Current.MainWindow;
-                EventHandler handler = null;
-                // delicious closure
-                handler = (obj, arg) =>
-                {
-                    convolutionWindow.Closed -= handler;
-                    convolutionWindow = null;
-                };
-                convolutionWindow.Closed += handler;
+                convolutionWindow = new ConvolutionWindow(parent);
+                convolutionWindow.OnClosedOnce = () => convolutionWindow = null;
             }
             convolutionWindow.Show();
             convolutionWindow.Activate();

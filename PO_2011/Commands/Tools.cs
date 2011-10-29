@@ -10,46 +10,49 @@ namespace UAM.PTO.Commands
 {
     static class Tools
     {
-        private static Lazy<Window> histogramWindow = new Lazy<Window>(() => new HistogramWindow());
-        private static Window bcWindow;
+        private static HistogramWindow histogramWindow;
+        private static BrightnessContrastWindow bcWindow;
+        private static GammaWindow gammaWindow;
 
         private static RoutedUICommand histogram = new RoutedUICommand();
-        public static RoutedUICommand Histogram { get { return histogram; } }
         private static RoutedUICommand bc = new RoutedUICommand();
+        private static RoutedUICommand gamma = new RoutedUICommand();
+        public static RoutedUICommand Histogram { get { return histogram; } }
         public static RoutedUICommand BrightnessContrast { get { return bc; } }
+        public static RoutedUICommand Gamma { get { return gamma; } }
 
-        internal static void HistogramExecuted(FrameworkElement parent, ExecutedRoutedEventArgs e)
+        internal static void HistogramExecuted(Window parent, ExecutedRoutedEventArgs e)
         {
-            if (!histogramWindow.IsValueCreated)
+            if (histogramWindow == null)
             {
-                Binding context = new Binding("DataContext") { Source = parent };
-                BindingOperations.SetBinding(histogramWindow.Value, HistogramWindow.DataContextProperty, context);
-                histogramWindow.Value.Owner = Application.Current.MainWindow;
+                histogramWindow = new HistogramWindow(parent);
             }
-            histogramWindow.Value.Show();
-            histogramWindow.Value.Activate();
+            histogramWindow.Show();
+            histogramWindow.Activate();
             e.Handled = true;
         }
 
-        internal static void BrightnessContrastExecuted(MainWindow mainWindow, ExecutedRoutedEventArgs e)
+        internal static void BrightnessContrastExecuted(Window mainWindow, ExecutedRoutedEventArgs e)
         {
             if (bcWindow == null)
             {
-                bcWindow = new BrightnessContrastWindow();
-                Binding context = new Binding("DataContext") { Source = mainWindow };
-                BindingOperations.SetBinding(bcWindow, BrightnessContrastWindow.DataContextProperty, context);
-                bcWindow.Owner = Application.Current.MainWindow;
-                EventHandler handler = null;
-                // delicious closure
-                handler = (obj, arg) =>
-                {
-                    bcWindow.Closed -= handler;
-                    bcWindow = null;
-                };
-                bcWindow.Closed += handler;
+                bcWindow = new BrightnessContrastWindow(mainWindow);
+                bcWindow.OnClosedOnce = () => bcWindow = null;
             }
             bcWindow.Show();
             bcWindow.Activate();
+            e.Handled = true;
+        }
+
+        internal static void GammaExecuted(Window mainWindow, ExecutedRoutedEventArgs e)
+        {
+            if (gammaWindow == null)
+            {
+                gammaWindow = new GammaWindow(mainWindow);
+                gammaWindow.OnClosedOnce = () => gammaWindow = null;
+            }
+            gammaWindow.Show();
+            gammaWindow.Activate();
             e.Handled = true;
         }
     }

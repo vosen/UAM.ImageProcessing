@@ -16,17 +16,13 @@ namespace UAM.PTO
     /// <summary>
     /// Interaction logic for ConvolutionWindow.xaml
     /// </summary>
-    public partial class ConvolutionWindow : Window
+    public partial class ConvolutionWindow : ChildWindow
     {
-        public ConvolutionWindow()
+        public ConvolutionWindow(Window owner)
+            : base(owner)
         {
             InitializeComponent();
             matrixBox.DataContext = new ConvolutionViewModel();
-        }
-
-        private void CloseWindow(object sender, RoutedEventArgs e)
-        {
-            Close();
         }
 
         private void ApplyConvolution(object sender, RoutedEventArgs e)

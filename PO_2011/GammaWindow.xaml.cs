@@ -10,25 +10,25 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.ComponentModel;
 
 namespace UAM.PTO
 {
     /// <summary>
-    /// Interaction logic for HistogramWindow.xaml
+    /// Interaction logic for GammaWindow.xaml
     /// </summary>
-    public partial class HistogramWindow : ChildWindow
+    public partial class GammaWindow : ChildWindow
     {
-        public HistogramWindow(Window owner)
-            : base(owner)
+        public GammaWindow(Window parent)
+            : base(parent)
         {
             InitializeComponent();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void ApplyGamma(object sender, RoutedEventArgs e)
         {
-            e.Cancel = true;
-            this.Hide();
+            ImageViewModel imgvm = (ImageViewModel)DataContext;
+            imgvm.ChangeGamma((float)gammaSlider.Value);
+            Close();
         }
     }
 }

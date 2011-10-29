@@ -1,0 +1,17 @@
+﻿<local:ChildWindow x:Class="UAM.PTO.GammaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:UAM.PTO"
+        Title="GammaWindow">
+    <DockPanel Margin="2">
+        <DockPanel DockPanel.Dock="Top">
+            <Label>Gamma:</Label>
+            <Slider x:Name="gammaSlider" Width="256" IsSnapToTickEnabled="True" Minimum="0" TickFrequency="0.1" Maximum="5" Value="1"></Slider>
+            <TextBox Text="{Binding ElementName=gammaSlider, Path=Value}" Width="40" Margin="2"/>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <Button Width="88" Height="26" Click="CloseClicked">Cancel</Button>
+            <Button Width="88" Height="26" HorizontalAlignment="Right" Click="ApplyGamma" IsDefault="True">OK</Button>
+        </DockPanel>
+    </DockPanel>
+</local:ChildWindow>

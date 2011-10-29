@@ -1,18 +1,14 @@
-﻿<Window x:Class="UAM.PTO.BrightnessContrastWindow"
+﻿<local:ChildWindow x:Class="UAM.PTO.BrightnessContrastWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:UAM.PTO"
-        TextOptions.TextFormattingMode="Display"
-        Title="Brightness and contrast"
-        SizeToContent="WidthAndHeight" 
-        ResizeMode="NoResize"
-        ShowActivated="True"
-        ShowInTaskbar="False">
-    <DockPanel>
+        Title="Brightness and contrast">
+    <DockPanel Margin="2">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
+                <ColumnDefinition Width="40"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -20,13 +16,15 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Grid.Column="0">Contrast:</Label>
-            <Slider x:Name="contrastSlider" Grid.Row="0" Grid.Column="1" Maximum="127" Minimum="-127" Width="255" TickFrequency="1" AutoToolTipPlacement="BottomRight" AutoToolTipPrecision="1" IsSnapToTickEnabled="True"></Slider>
+            <Slider x:Name="contrastSlider" Grid.Row="0" Grid.Column="1" Maximum="127" Minimum="-127" Width="255" AutoToolTipPlacement="BottomRight" AutoToolTipPrecision="1" TickFrequency="1" IsSnapToTickEnabled="True"></Slider>
+            <TextBox Text="{Binding ElementName=contrastSlider, Path=Value}" Margin="2" Grid.Row="0" Grid.Column="2"/>
             <Label Grid.Row="1" Grid.Column="0">Brightness:</Label>
             <Slider x:Name="brightnessSlider" Grid.Row="1" Grid.Column="1" TickPlacement="None" Maximum="127" Minimum="-127" Width="255" TickFrequency="1" IsSnapToTickEnabled="True"></Slider>
-            <DockPanel Grid.Row="2" Grid.ColumnSpan="2">
-                <Button Width="88" Height="26">Cancel</Button>
-                <Button Width="88" Height="26" HorizontalAlignment="Right" Click="ApplyBrightnessContrast">OK</Button>
+            <TextBox Text="{Binding ElementName=brightnessSlider, Path=Value}"  Margin="2" Grid.Row="1" Grid.Column="2"/>
+            <DockPanel Grid.Row="2" Grid.ColumnSpan="3">
+                <Button Width="88" Height="26" Click="CloseClicked">Cancel</Button>
+                <Button Width="88" Height="26" HorizontalAlignment="Right" Click="ApplyBrightnessContrast" IsDefault="True">OK</Button>
             </DockPanel>
         </Grid>
     </DockPanel>
-</Window>
+</local:ChildWindow>

@@ -109,6 +109,11 @@ namespace UAM.PTO
             Image =Image.Apply(Filters.ChangeBrightnessContrast(brightness, contrast));
         }
 
+        public void ChangeGamma(float value)
+        {
+            Image = Image.Apply(Filters.ChangeGamma(value));
+        }
+
         // remove useless zeroes on the edges
         private static void Trim(ref float[] mask)
         {
