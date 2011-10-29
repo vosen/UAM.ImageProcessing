@@ -8,12 +8,12 @@ namespace UAM.PTO
 {
     class ConvolutionViewModel : INotifyPropertyChanged
     {
-        private double[] matrix = new double[25];
-        private double weight = 1;
-        private double shift;
+        private float[] matrix = new float[25];
+        private float weight = 1;
+        private float shift;
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public double[] Matrix 
+        public float[] Matrix 
         { 
             get 
             { 
@@ -21,13 +21,13 @@ namespace UAM.PTO
             }
         }
 
-        public double Weight
+        public float Weight
         { 
             get { return weight; }
             set { weight = value; }
         }
 
-        public double Shift
+        public float Shift
         {
             get { return shift; }
             set { shift = value; }

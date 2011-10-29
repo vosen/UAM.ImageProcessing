@@ -1,13 +1,79 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace UAM.PTO
 {
     public static class Filters
     {
-        public static PNM ApplyConvolution(this PNM image, double[] matrix, double weight, double shift)
+        public static Pixel ColorToGrayscale(byte r, byte g, byte b)
+        {
+            byte value = PNM.RGBToLuminosity(r, g, b);
+            return new Pixel(value, value, value);
+        }
+
+        // brightness should fall in [-1..1] range and contrast should fall in [-1..1] range
+        public static Func<byte, byte, byte, Pixel> ChangeBrightnessContrast(float brigthness, float contrast)
+        {
+            if (brigthness < -1 || brigthness > 1)
+                throw new ArgumentOutOfRangeException("brightness");
+            if (contrast < -1 || contrast > 1)
+                throw new ArgumentOutOfRangeException("contrast");
+            // dark magic here
+            if (contrast <= 0)
+            {
+                float realContrast = contrast + 1;
+                // could be optimized by precalculating LUT
+                return (r, g, b) =>
+                {
+                    return new Pixel(Coerce((r - 127.5) * realContrast + (brigthness * 127) + 127.5),
+                                     Coerce((g - 127.5) * realContrast + (brigthness * 127) + 127.5),
+                                     Coerce((b - 127.5) * realContrast + (brigthness * 127) + 127.5));
+                };
+            }
+            else
+            {
+
+                byte[] LUT = BuildBrightnessContrastLUT(brigthness, contrast);
+                return (r, g, b) =>
+                {
+                    return new Pixel(LUT[r], LUT[g], LUT[b]);
+                };
+            }
+        }
+
+        private static byte[] BuildBrightnessContrastLUT(float brightness, float contrast)
+        {
+            float realBright = brightness * 127;
+            float factor = 1 - contrast;
+            byte lower = (byte)((contrast/2) * 255);
+            byte upper = (byte)((1 - contrast/2) * 255);
+            byte[] lut = new byte[256];
+            float segment = lower == upper ? 0 : 255f / (upper - lower);
+            byte minEnergy = Coerce(realBright);
+            for (int i = 0; i < lower; i++)
+            {
+                lut[i] = minEnergy;
+            }
+            for (int i = lower, k = 0; i <= upper; i++, k++)
+            {
+                lut[i] = Coerce((k * segment) + realBright);
+            }
+            for (int i = upper + 1; i < 256; i++)
+            {
+                lut[i] = 255;
+            }
+            return lut;
+        }
+
+        public static Func<byte, byte, byte, Pixel> ChangeGamma(float weight)
+        {
+            return (r, g, b) =>
+            {
+                return new Pixel(Coerce(Math.Pow(r / 255d, weight) * 255), Coerce(Math.Pow(g / 255d, weight) * 255), Coerce(Math.Pow(b / 255d, weight) * 255));
+            };
+        }
+
+        public static PNM ApplyConvolution(this PNM image, float[] matrix, float weight, float shift)
         {
             int length = (int)Math.Sqrt(matrix.Length);
             if (Math.Pow(length, 2) != matrix.Length || (length / 2) * 2 == length)
@@ -28,11 +94,11 @@ namespace UAM.PTO
             Tuple<float[], float[], float[]> rasters = Tuple.Create(new float[oldHeight * oldWidth],
                                                                     new float[oldHeight * oldWidth],
                                                                     new float[oldHeight * oldWidth]);
-            int index = 0;
             int maxHeight = image.Height - padding;
             int maxWidth = image.Width - padding;
-            for (int i = padding; i < maxHeight; i++)
+            Parallel.For(padding, maxHeight, i =>
             {
+                int index = (i - padding) * oldWidth;
                 for (int j = padding; j < maxWidth; j++)
                 {
                     float sumR = 0;
@@ -57,7 +123,7 @@ namespace UAM.PTO
                     rasters.Item3[index] = sumB;
                     index++;
                 }
-            }
+            });
             return rasters;
         }
 
@@ -72,13 +138,14 @@ namespace UAM.PTO
                                                                                                         0,  0,  0,
                                                                                                        -1, -1, -1}, 3);
             PNM newImage = new PNM(image.Width, image.Height);
-            for (int i = 0; i < xraster.Item1.Length; i++)
+            int size = image.Width * image.Height;
+            Parallel.For(0, size, i =>
             {
                 byte r = Coerce(Math.Sqrt(Math.Pow(xraster.Item1[i], 2) + Math.Pow(yraster.Item1[i], 2)));
                 byte g = Coerce(Math.Sqrt(Math.Pow(xraster.Item2[i], 2) + Math.Pow(yraster.Item2[i], 2)));
                 byte b = Coerce(Math.Sqrt(Math.Pow(xraster.Item3[i], 2) + Math.Pow(yraster.Item3[i], 2)));
                 newImage.SetPixel(i, r, g, b);
-            }
+            });
             return newImage;
         }
 
@@ -118,38 +185,49 @@ namespace UAM.PTO
             image.Height = newHeight;
         }
 
-        internal static byte Coerce(double d)
+        internal static byte Coerce(float f)
         {
-            if (d <= 0)
+            if (f <= 0)
                 return 0;
-            else if (d >= 255)
+            else if (f >= 255)
                 return 255;
             else
-                return Convert.ToByte(d);
+                return Convert.ToByte(f);
         }
 
-        private static PNM ApplyConvolutionMatrixCore(PNM image, double[] matrix, int matrixLength, double weight, double shift)
+        internal static byte Coerce(double f)
+        {
+            if (f <= 0)
+                return 0;
+            else if (f >= 255)
+                return 255;
+            else
+                return Convert.ToByte(f);
+        }
+
+        private static PNM ApplyConvolutionMatrixCore(PNM image, float[] matrix, int matrixLength, float weight, float shift)
         {
             PNM newImage = new PNM(image.Width, image.Height);
             int padding = matrixLength / 2;
             int maxHeight = image.Height - padding;
             int maxWidth = image.Width - padding;
-            for (int i = padding; i < maxHeight; i++)
+            int width = image.Width;
+            Parallel.For(padding, maxHeight, i =>
             {
                 for (int j = padding; j < maxWidth; j++)
                 {
-                    double sumR = 0;
-                    double sumG = 0;
-                    double sumB = 0;
+                    float sumR = 0;
+                    float sumG = 0;
+                    float sumB = 0;
                     // current index position
-                    int position = i * image.Width + j;
+                    int position = i * width + j;
                     for (int m = 0; m < matrixLength; m++)
                     {
                         for (int n = 0; n < matrixLength; n++)
                         {
                             byte r, g, b;
-                            image.GetPixel(position - ((padding - m) * image.Width) - (padding - n), out r, out g, out b);
-                            double coeff = matrix[(m * matrixLength) + n];
+                            image.GetPixel(position - ((padding - m) * width) - (padding - n), out r, out g, out b);
+                            float coeff = matrix[(m * matrixLength) + n];
                             sumR += (r * coeff * weight) + shift;
                             sumG += (g * coeff * weight) + shift;
                             sumB += (b * coeff * weight) + shift;
@@ -157,7 +235,7 @@ namespace UAM.PTO
                     }
                     newImage.SetPixel(position, Coerce(sumR), Coerce(sumG), Coerce(sumB));
                 }
-            }
+            });
             return newImage;
         }
 

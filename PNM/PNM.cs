@@ -162,8 +162,10 @@ namespace UAM.PTO
 
         internal void GetPixel(int index, out byte r, out byte g, out byte b)
         {
+            /*
             if (index >= (Width * Height))
                 throw new ArgumentException();
+             * */
             int realIndex = index * 3;
             unsafe
             {

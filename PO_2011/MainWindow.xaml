@@ -21,6 +21,7 @@
             </MenuItem>
             <MenuItem Header="_Tools">
                 <MenuItem Header="Histogram" Command="{x:Static local:Commands.Tools.Histogram}"/>
+                <MenuItem Header="Brightness and contrast" Command="{x:Static local:Commands.Tools.BrightnessContrast}"/>
             </MenuItem>
             <MenuItem Header="F_ilters">
                 <MenuItem Header="_Convolution Matrix" Command="{x:Static local:Commands.Filters.Convolution}"/>
