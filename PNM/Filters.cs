@@ -29,11 +29,11 @@ namespace UAM.PTO
             Tuple<float[], float[], float[]> rasters = Tuple.Create(new float[oldHeight * oldWidth],
                                                                     new float[oldHeight * oldWidth],
                                                                     new float[oldHeight * oldWidth]);
-            int index = 0;
             int maxHeight = image.Height - padding;
             int maxWidth = image.Width - padding;
             Parallel.For(padding, maxHeight, i =>
             {
+                int index = (i - padding) * oldWidth;
                 for (int j = padding; j < maxWidth; j++)
                 {
                     float sumR = 0;
@@ -73,13 +73,14 @@ namespace UAM.PTO
                                                                                                         0,  0,  0,
                                                                                                        -1, -1, -1}, 3);
             PNM newImage = new PNM(image.Width, image.Height);
-            for (int i = 0; i < xraster.Item1.Length; i++)
+            int size = image.Width * image.Height;
+            Parallel.For(0, size, i =>
             {
                 byte r = Coerce(Math.Sqrt(Math.Pow(xraster.Item1[i], 2) + Math.Pow(yraster.Item1[i], 2)));
                 byte g = Coerce(Math.Sqrt(Math.Pow(xraster.Item2[i], 2) + Math.Pow(yraster.Item2[i], 2)));
                 byte b = Coerce(Math.Sqrt(Math.Pow(xraster.Item3[i], 2) + Math.Pow(yraster.Item3[i], 2)));
                 newImage.SetPixel(i, r, g, b);
-            }
+            });
             return newImage;
         }
 
