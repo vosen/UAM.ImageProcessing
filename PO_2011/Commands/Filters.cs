@@ -49,8 +49,14 @@ namespace UAM.PTO.Commands
         {
             private static RoutedUICommand laplace = new RoutedUICommand();
             private static RoutedUICommand gradient = new RoutedUICommand();
+            private static RoutedUICommand sobel = new RoutedUICommand();
+            private static RoutedUICommand prewitt = new RoutedUICommand();
+            private static RoutedUICommand roberts = new RoutedUICommand();
             public static RoutedUICommand Laplace { get { return laplace; } }
             public static RoutedUICommand Gradient { get { return gradient; } }
+            public static RoutedUICommand Sobel { get { return sobel; } }
+            public static RoutedUICommand Prewitt { get { return prewitt; } }
+            public static RoutedUICommand Roberts { get { return roberts; } }
         }
     }
 }

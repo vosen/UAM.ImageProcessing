@@ -201,5 +201,20 @@ namespace UAM.PTO
                                                  -1,  4, -1,
                                                   0, -1,  0}, 1, 0);
         }
+
+        internal void DetectEdgesSobel()
+        {
+            Image = Image.ApplyConvolutionFunction(3, Filters.Sobel);
+        }
+
+        internal void DetectEdgesRoberts()
+        {
+            Image = Image.ApplyConvolutionFunction(3, Filters.Roberts);
+        }
+
+        internal void DetectEdgesPrewitt()
+        {
+            Image = Image.ApplyConvolutionFunction(3, Filters.Prewitt);
+        }
     }
 }

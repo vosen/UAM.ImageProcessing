@@ -160,6 +160,11 @@ namespace UAM.PTO
             SetPixel((x * Width) + y, r, g, b);
         }
 
+        internal void SetPixel(int index, Pixel pixel)
+        {
+            SetPixel(index, pixel.Red, pixel.Green, pixel.Blue);
+        }
+
         internal void GetPixel(int index, out byte r, out byte g, out byte b)
         {
             /*

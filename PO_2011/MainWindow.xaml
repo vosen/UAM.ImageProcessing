@@ -39,6 +39,9 @@
                 <MenuItem Header="_Edge detection">
                     <MenuItem Header="_Laplace" Command="{x:Static local:Commands.Filters+Edges.Laplace}"/>
                     <MenuItem Header="_Gradient" Command="{x:Static local:Commands.Filters+Edges.Gradient}"/>
+                    <MenuItem Header="_Sobel" Command="{x:Static local:Commands.Filters+Edges.Sobel}"/>
+                    <MenuItem Header="_Prewitt" Command="{x:Static local:Commands.Filters+Edges.Prewitt}"/>
+                    <MenuItem Header="_Roberts" Command="{x:Static local:Commands.Filters+Edges.Roberts}"/>
                 </MenuItem>
                 <MenuItem Header="Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
             </MenuItem>

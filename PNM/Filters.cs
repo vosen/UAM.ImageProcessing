@@ -5,6 +5,25 @@ namespace UAM.PTO
 {
     public static class Filters
     {
+        private static float[] Sobel1 = { -1, 0, 1,
+                                          -2, 0, 2,
+                                          -1, 0, 1};
+        private static float[] Sobel2 = {  1,  2,  1,
+                                           0,  0,  0,
+                                          -1, -2, -1};
+        private static float[] Prewitt1 = { -1, 0, 1,
+                                            -1, 0, 1,
+                                            -1, 0, 1};
+        private static float[] Prewitt2 = {  1,  1,  1,
+                                             0,  0,  0,
+                                            -1, -1, -1};
+        private static float[] Roberts1 = { 0,  0,  1,
+                                            0, -1,  0,
+                                            0,  0,  0};
+        private static float[] Roberts2 = { 0, 1,  0,
+                                            0, 0, -1,
+                                            0, 0,  0};
+
         public static Pixel ColorToGrayscale(byte r, byte g, byte b)
         {
             byte value = PNM.RGBToLuminosity(r, g, b);
@@ -125,6 +144,106 @@ namespace UAM.PTO
                 }
             });
             return rasters;
+        }
+
+        public static PNM ApplyConvolutionFunction(this PNM image, int matrixLength, Func<PNM, int, Pixel> func)
+        {
+            PNM newImage = PNM.Copy(image);
+            int padding = matrixLength / 2;
+            Pad(newImage, padding);
+            newImage = ApplyConvolutionFunctionCore(newImage, matrixLength, func);
+            Trim(newImage, padding);
+            return newImage;
+        }
+
+        // poor man's pixel shader
+        public static PNM ApplyConvolutionFunctionCore(PNM image, int matrixLength, Func<PNM, int, Pixel> func)
+        {
+            PNM newImage = new PNM(image.Width, image.Height);
+            int padding = matrixLength / 2;
+            int maxHeight = image.Height - padding;
+            int maxWidth = image.Width - padding;
+            int width = image.Width;
+            Parallel.For(padding, maxHeight, i =>
+            {
+                for (int j = padding; j < maxWidth; j++)
+                {
+                    // current index position
+                    int position = i * width + j;
+                    newImage.SetPixel(position, func(image, position));
+                }
+            });
+            return newImage;
+        }
+
+        private static double Module(float g1, float g2)
+        {
+            return Math.Sqrt((g1 * g1) + (g2 * g2));
+        }
+
+        public static Pixel Sobel(PNM image, int index)
+        {
+            return ConvoluteWithModule(image, index, Sobel1, Sobel2,3,1);
+        }
+
+        public static Pixel Prewitt(PNM image, int index)
+        {
+            return ConvoluteWithModule(image, index, Prewitt1, Prewitt2,3,1);
+        }
+
+        public static Pixel Roberts(PNM image, int index)
+        {
+            return ConvoluteWithModule(image, index, Roberts1, Roberts2, 3, 1);
+        }
+
+        private static Pixel ConvoluteWithModule(PNM image, int index, float[] matrix1, float[] matrix2, int length, int padding)
+        {
+            float sumR1 = 0;
+            float sumR2 = 0;
+            float sumG1 = 0;
+            float sumG2 = 0;
+            float sumB1 = 0;
+            float sumB2 = 0;
+            byte r, g, b;
+            for (int m = 0; m < length; m++)
+            {
+                for (int n = 0; n < length; n++)
+                {
+                    image.GetPixel(index - ((padding - m) * image.Width) - (padding - n), out r, out g, out b);
+                    float coeff1 = matrix1[(m * length) + n];
+                    float coeff2 = matrix2[(m * length) + n];
+                    sumR1 += r * coeff1;
+                    sumR2 += r * coeff2;
+                    sumG1 += g * coeff1;
+                    sumG2 += g * coeff2;
+                    sumB1 += b * coeff1;
+                    sumB2 += b * coeff2;
+                }
+            }
+            return new Pixel(Coerce(Module(sumR1, sumR2)),
+                             Coerce(Module(sumG1, sumG2)),
+                             Coerce(Module(sumB1, sumB2)));
+        }
+
+        public static Pixel SingleConvolutionMatrix(PNM image, int index, float[] matrix, int matrixLength, float weight, float shift)
+        {
+            int padding = matrixLength / 2;
+            float sumR = 0;
+            float sumG = 0;
+            float sumB = 0;
+            byte r, g, b;
+            for (int m = 0; m < matrixLength; m++)
+            {
+                for (int n = 0; n < matrixLength; n++)
+                {
+                    image.GetPixel(index - ((padding - m) * image.Width) - (padding - n), out r, out g, out b);
+                    float coeff = matrix[(m * matrixLength) + n];
+                    sumR += (r * coeff * weight) + shift;
+                    sumG += (g * coeff * weight) + shift;
+                    sumB += (b * coeff * weight) + shift;
+                }
+            }
+            return new Pixel(Coerce(sumR), Coerce(sumG), Coerce(sumB));
         }
 
         public static PNM ApplyGradientEdgesDetection(this PNM image)
