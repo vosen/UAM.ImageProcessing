@@ -63,6 +63,9 @@ namespace UAM.PTO
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.Sobel, (s, e) => { imgvm.DetectEdgesSobel(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.Prewitt, (s, e) => { imgvm.DetectEdgesPrewitt(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.Roberts, (s, e) => { imgvm.DetectEdgesRoberts(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.LaplacianOfGaussian, (s, e) => { imgvm.DetectEdgesLoG(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.DifferenceOfGaussian, (s, e) => { imgvm.DetectEdgesDoG(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.ZeroCrossing, (s, e) => { imgvm.DetectEdgesZero(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Grayscale, (s, e) => { imgvm.ToGrayscale(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
 

@@ -42,6 +42,9 @@
                     <MenuItem Header="_Sobel" Command="{x:Static local:Commands.Filters+Edges.Sobel}"/>
                     <MenuItem Header="_Prewitt" Command="{x:Static local:Commands.Filters+Edges.Prewitt}"/>
                     <MenuItem Header="_Roberts" Command="{x:Static local:Commands.Filters+Edges.Roberts}"/>
+                    <MenuItem Header="_Laplacian of Gaussian" Command="{x:Static local:Commands.Filters+Edges.LaplacianOfGaussian}"/>
+                    <MenuItem Header="_Difference of Gaussian" Command="{x:Static local:Commands.Filters+Edges.DifferenceOfGaussian}"/>
+                    <MenuItem Header="_Zero Crossing" Command="{x:Static local:Commands.Filters+Edges.ZeroCrossing}"/>
                 </MenuItem>
                 <MenuItem Header="Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
             </MenuItem>

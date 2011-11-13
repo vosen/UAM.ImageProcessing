@@ -23,6 +23,15 @@ namespace UAM.PTO
         private static float[] Roberts2 = { 0, 1,  0,
                                             0, 0, -1,
                                             0, 0,  0};
+        private static float[] LoG = new float[]{ 0, 1, 1,   2,   2,   2, 1, 1, 0,
+                                                  1, 2, 4,   5,   5,   5, 4, 2, 1,
+                                                  1, 4, 5,   3,   0,   3, 5, 4, 1,
+                                                  2, 5, 3, -12, -24, -12, 3, 5, 2,
+                                                  2, 5, 0, -24, -40, -24, 0, 5, 2,
+                                                  2, 5, 3, -12, -24, -12, 3, 5, 2,
+                                                  1, 4, 5,   3,   0,   3, 5, 4, 1,
+                                                  1, 2, 4,   5,   5,   5, 4, 2, 1,
+                                                  0, 1, 1,   2,   2,   2, 1, 1, 0};
 
         public static Pixel ColorToGrayscale(byte r, byte g, byte b)
         {
@@ -103,6 +112,43 @@ namespace UAM.PTO
             newImage = ApplyConvolutionMatrixCore(newImage, matrix, length, weight, shift);
             Trim(newImage, padding);
             return newImage;
+        }
+
+        public static PNM ApplyZeroCrossingDetector(this PNM image)
+        {
+            // preprare
+            PNM workImage = PNM.Copy(image);
+            Pad(workImage, 4);
+            // apply loG
+            Tuple<float[], float[], float[]> LoGRaster = ApplyConvolutionUnbound(workImage, LoG, 9);
+            PNM returnImage = new PNM(image.Width, image.Height);
+            // Apply zero crossing except last row and last column
+            Parallel.For(0, image.Height-1, i =>
+            {
+                for (int j = 0; j < image.Width-1; j++)
+                {
+                    byte r = 0;
+                    byte g = 0;
+                    byte b = 0;
+                    // current index position
+                    int position = i * image.Width + j;
+                    float currentR = LoGRaster.Item1[position];
+                    float neighbourR = LoGRaster.Item1[position+image.Width+1];
+                    float currentG = LoGRaster.Item2[position];
+                    float neighbourG = LoGRaster.Item2[position+image.Width+1];
+                    float currentB = LoGRaster.Item3[position];
+                    float neighbourB = LoGRaster.Item3[position+image.Width+1];
+                    if((currentR * neighbourR) < 0 && (Math.Abs(currentR) < Math.Abs(neighbourR)))
+                        r = 255;
+                    if((currentG * neighbourG) < 0 && (Math.Abs(currentG) < Math.Abs(neighbourG)))
+                        g = 255;
+                    if((currentB * neighbourB) < 0 && (Math.Abs(currentB) < Math.Abs(neighbourB)))
+                        b = 255;
+
+                    returnImage.SetPixel(position, r,g,b);
+                }
+            });
+            return returnImage;
         }
 
         private static Tuple<float[], float[], float[]> ApplyConvolutionUnbound(PNM image, float[] matrix, int matrixLength)

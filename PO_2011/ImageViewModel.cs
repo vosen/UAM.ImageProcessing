@@ -94,8 +94,8 @@ namespace UAM.PTO
         public void ApplyUniformBlur()
         {
             ApplyConvolutionMatrix(new float[]{ 1/9F, 1/9F, 1/9F,
-                                                 1/9F, 1/9F, 1/9F,
-                                                 1/9F, 1/9F, 1/9F}, 1, 0);
+                                                1/9F, 1/9F, 1/9F,
+                                                1/9F, 1/9F, 1/9F}, 1, 0);
         }
 
         public void ApplyConvolutionMatrix(float[] mask, float weight, float shift)
@@ -215,6 +215,35 @@ namespace UAM.PTO
         internal void DetectEdgesPrewitt()
         {
             Image = Image.ApplyConvolutionFunction(3, Filters.Prewitt);
+        }
+
+        internal void DetectEdgesLoG()
+        {
+            ApplyConvolutionMatrix(new float[]{ 0, 1, 1,   2,   2,   2, 1, 1, 0,
+                                                1, 2, 4,   5,   5,   5, 4, 2, 1,
+                                                1, 4, 5,   3,   0,   3, 5, 4, 1,
+                                                2, 5, 3, -12, -24, -12, 3, 5, 2,
+                                                2, 5, 0, -24, -40, -24, 0, 5, 2,
+                                                2, 5, 3, -12, -24, -12, 3, 5, 2,
+                                                1, 4, 5,   3,   0,   3, 5, 4, 1,
+                                                1, 2, 4,   5,   5,   5, 4, 2, 1,
+                                                0, 1, 1,   2,   2,   2, 1, 1, 0}, 1, 0);
+        }
+
+        internal void DetectEdgesDoG()
+        {
+            ApplyConvolutionMatrix(new float[]{  0,  0, -1, -1, -1,  0,  0,
+                                                 0, -2, -3, -3, -3, -2,  0,
+                                                -1, -3,  5,  5,  5, -3, -1,
+                                                -1, -3,  5, 16,  5, -3, -1,
+                                                -1, -3,  5,  5,  5, -3, -1,
+                                                 0, -2, -3, -3, -3, -2,  0,
+                                                 0,  0, -1, -1, -1,  0,  0}, 1, 0);
+        }
+
+        internal void DetectEdgesZero()
+        {
+            Image = image.ApplyZeroCrossingDetector();
         }
     }
 }

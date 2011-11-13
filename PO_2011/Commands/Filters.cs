@@ -52,11 +52,17 @@ namespace UAM.PTO.Commands
             private static RoutedUICommand sobel = new RoutedUICommand();
             private static RoutedUICommand prewitt = new RoutedUICommand();
             private static RoutedUICommand roberts = new RoutedUICommand();
+            private static RoutedUICommand log = new RoutedUICommand();
+            private static RoutedUICommand dog = new RoutedUICommand();
+            private static RoutedUICommand zero = new RoutedUICommand();
             public static RoutedUICommand Laplace { get { return laplace; } }
             public static RoutedUICommand Gradient { get { return gradient; } }
             public static RoutedUICommand Sobel { get { return sobel; } }
             public static RoutedUICommand Prewitt { get { return prewitt; } }
             public static RoutedUICommand Roberts { get { return roberts; } }
+            public static RoutedUICommand LaplacianOfGaussian { get { return log; } }
+            public static RoutedUICommand DifferenceOfGaussian { get { return dog; } }
+            public static RoutedUICommand ZeroCrossing { get { return zero; } }
         }
     }
 }
