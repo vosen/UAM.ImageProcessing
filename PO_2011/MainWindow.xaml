@@ -44,12 +44,18 @@
                     <MenuItem Header="_Roberts" Command="{x:Static local:Commands.Filters+Edges.Roberts}"/>
                     <MenuItem Header="_Laplacian of Gaussian" Command="{x:Static local:Commands.Filters+Edges.LaplacianOfGaussian}"/>
                     <MenuItem Header="_Difference of Gaussian" Command="{x:Static local:Commands.Filters+Edges.DifferenceOfGaussian}"/>
-                    <MenuItem Header="_Zero Crossing" Command="{x:Static local:Commands.Filters+Edges.ZeroCrossing}"/>
+                    <MenuItem Header="_Crossing of zero" Command="{x:Static local:Commands.Filters+Edges.ZeroCrossing}"/>
                 </MenuItem>
                 <MenuItem Header="_Denoise">
                     <MenuItem Header="_Median" Command="{x:Static local:Commands.Filters+Denoise.Median}"/>
                 </MenuItem>
-                <MenuItem Header="Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
+                <MenuItem Header="_Morphology">
+                    <MenuItem Header="_Dilation" Command="{x:Static local:Commands.Filters+Morphology.Dilation}" />
+                    <MenuItem Header="_Erosion" Command="{x:Static local:Commands.Filters+Morphology.Erosion}" />
+                    <MenuItem Header="_Opening" Command="{x:Static local:Commands.Filters+Morphology.Opening}" />
+                    <MenuItem Header="_Closing" Command="{x:Static local:Commands.Filters+Morphology.Closing}" />
+                </MenuItem>
+                <MenuItem Header="_Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
             </MenuItem>
         </Menu>
         <ScrollViewer HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Auto" AllowDrop="True" Drop="OnDrop">

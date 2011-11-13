@@ -67,6 +67,10 @@ namespace UAM.PTO
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.DifferenceOfGaussian, (s, e) => { imgvm.DetectEdgesDoG(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Edges.ZeroCrossing, (s, e) => { imgvm.DetectEdgesZero(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Denoise.Median, (s, e) => { imgvm.DenoiseMedian(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Morphology.Dilation, (s, e) => { imgvm.MorphDilation(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Morphology.Erosion, (s, e) => { imgvm.MorphErosion(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Morphology.Opening, (s, e) => { imgvm.MorphOpening(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Morphology.Closing, (s, e) => { imgvm.MorphClosing(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Grayscale, (s, e) => { imgvm.ToGrayscale(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
 

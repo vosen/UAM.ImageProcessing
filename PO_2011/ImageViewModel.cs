@@ -250,5 +250,27 @@ namespace UAM.PTO
         {
             Image = image.ApplyConvolutionFunction(3, Filters.Median);
         }
+
+        internal void MorphDilation()
+        {
+            Image = image.ApplyConvolutionFunction(3, Filters.Dilation);
+        }
+
+        internal void MorphErosion()
+        {
+            Image = image.ApplyConvolutionFunction(3, Filters.Erosion);
+        }
+
+        internal void MorphOpening()
+        {
+            Image = image.ApplyConvolutionFunction(3, Filters.Erosion)
+                         .ApplyConvolutionFunction(3, Filters.Dilation);
+        }
+
+        internal void MorphClosing()
+        {
+            Image = image.ApplyConvolutionFunction(3, Filters.Dilation)
+                         .ApplyConvolutionFunction(3, Filters.Erosion);
+        }
     }
 }

@@ -70,5 +70,17 @@ namespace UAM.PTO.Commands
             private static RoutedUICommand median = new RoutedUICommand();
             public static RoutedUICommand Median { get { return median; } }
         }
+
+        public static class Morphology
+        {
+            private static RoutedUICommand erosion = new RoutedUICommand();
+            private static RoutedUICommand dilation = new RoutedUICommand();
+            private static RoutedUICommand opening = new RoutedUICommand();
+            private static RoutedUICommand closing = new RoutedUICommand();
+            public static RoutedUICommand Erosion { get { return erosion; } }
+            public static RoutedUICommand Dilation { get { return dilation; } }
+            public static RoutedUICommand Opening { get { return opening; } }
+            public static RoutedUICommand Closing { get { return closing; } }
+        }
     }
 }
