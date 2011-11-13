@@ -64,5 +64,11 @@ namespace UAM.PTO.Commands
             public static RoutedUICommand DifferenceOfGaussian { get { return dog; } }
             public static RoutedUICommand ZeroCrossing { get { return zero; } }
         }
+
+        public static class Denoise
+        {
+            private static RoutedUICommand median = new RoutedUICommand();
+            public static RoutedUICommand Median { get { return median; } }
+        }
     }
 }

@@ -245,5 +245,10 @@ namespace UAM.PTO
         {
             Image = image.ApplyZeroCrossingDetector();
         }
+
+        internal void DenoiseMedian()
+        {
+            Image = image.ApplyConvolutionFunction(3, Filters.Median);
+        }
     }
 }
