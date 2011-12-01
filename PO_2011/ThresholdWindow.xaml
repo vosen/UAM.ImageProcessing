@@ -1,0 +1,17 @@
+﻿<local:ChildWindow x:Class="UAM.PTO.ThresholdWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:UAM.PTO"
+        Title="Thresholding range">
+    <DockPanel Margin="2">
+        <DockPanel DockPanel.Dock="Top">
+            <Label>Threshold:</Label>
+            <Slider x:Name="slider" Width="256" IsSnapToTickEnabled="True" Minimum="0" TickFrequency="1" Maximum="255" Value="127"></Slider>
+            <TextBox Text="{Binding ElementName=slider, Path=Value}" Width="40" Margin="2"/>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <Button Width="88" Height="26" Click="CloseClicked">Cancel</Button>
+            <Button Width="88" Height="26" HorizontalAlignment="Right" Click="ApplyThresholding" IsDefault="True">OK</Button>
+        </DockPanel>
+    </DockPanel>
+</local:ChildWindow>

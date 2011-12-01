@@ -71,6 +71,14 @@ namespace UAM.PTO
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Morphology.Erosion, (s, e) => { imgvm.MorphErosion(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Morphology.Opening, (s, e) => { imgvm.MorphOpening(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Morphology.Closing, (s, e) => { imgvm.MorphClosing(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+
+
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Thresholding.Plain, (s, e) => { Commands.Filters.Thresholding.PlainExecuted(this,e); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Thresholding.Otsu, (s, e) => { imgvm.ThresholdOtsu(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Thresholding.Triangle, (s, e) => { imgvm.ThresholdTriangle(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Thresholding.Entropy, (s, e) => { imgvm.ThresholdEntropy(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Thresholding.Niblack, (s, e) => { imgvm.ThresholdNiblack(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Grayscale, (s, e) => { imgvm.ToGrayscale(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
 

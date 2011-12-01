@@ -82,5 +82,33 @@ namespace UAM.PTO.Commands
             public static RoutedUICommand Opening { get { return opening; } }
             public static RoutedUICommand Closing { get { return closing; } }
         }
+
+        public static class Thresholding
+        {
+            private static ThresholdWindow thresholdWindow;
+
+            private static RoutedUICommand plain = new RoutedUICommand();
+            private static RoutedUICommand otsu = new RoutedUICommand();
+            private static RoutedUICommand triangl = new RoutedUICommand();
+            private static RoutedUICommand entropy = new RoutedUICommand();
+            private static RoutedUICommand niblack = new RoutedUICommand();
+            public static RoutedUICommand Plain { get { return plain; } }
+            public static RoutedUICommand Otsu { get { return otsu; } }
+            public static RoutedUICommand Triangle { get { return triangl; } }
+            public static RoutedUICommand Entropy { get { return entropy; } }
+            public static RoutedUICommand Niblack { get { return niblack; } }
+
+            public static void PlainExecuted(Window parent, ExecutedRoutedEventArgs e)
+            {
+                if (thresholdWindow == null)
+                {
+                    thresholdWindow = new ThresholdWindow(parent);
+                    thresholdWindow.OnClosedOnce = () => thresholdWindow = null;
+                }
+                thresholdWindow.Show();
+                thresholdWindow.Activate();
+                e.Handled = true;
+            }
+        }
     }
 }

@@ -68,6 +68,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ThresholdWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="GammaWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -99,6 +103,9 @@
     <Compile Include="ConvolutionViewModel.cs" />
     <Compile Include="ConvolutionWindow.xaml.cs">
       <DependentUpon>ConvolutionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ThresholdWindow.xaml.cs">
+      <DependentUpon>ThresholdWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="PNMCMYKToBitmapConverter.cs" />
     <Compile Include="GammaWindow.xaml.cs">

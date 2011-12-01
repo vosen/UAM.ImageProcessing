@@ -55,6 +55,13 @@
                     <MenuItem Header="_Opening" Command="{x:Static local:Commands.Filters+Morphology.Opening}" />
                     <MenuItem Header="_Closing" Command="{x:Static local:Commands.Filters+Morphology.Closing}" />
                 </MenuItem>
+                <MenuItem Header="_Thresholding">
+                    <MenuItem Header="_Plain..." Command="{x:Static local:Commands.Filters+Thresholding.Plain}" />
+                    <MenuItem Header="_Otsu" Command="{x:Static local:Commands.Filters+Thresholding.Otsu}" />
+                    <MenuItem Header="_Triangle" Command="{x:Static local:Commands.Filters+Thresholding.Triangle}" />
+                    <MenuItem Header="_Entropy" Command="{x:Static local:Commands.Filters+Thresholding.Entropy}" />
+                    <MenuItem Header="_Niblack" Command="{x:Static local:Commands.Filters+Thresholding.Niblack}" />
+                </MenuItem>
                 <MenuItem Header="_Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
             </MenuItem>
         </Menu>

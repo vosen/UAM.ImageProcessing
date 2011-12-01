@@ -7,6 +7,9 @@ namespace UAM.PTO
 {
     public struct Pixel
     {
+        public static Pixel Black = new Pixel(0, 0, 0);
+        public static Pixel White = new Pixel(255, 255, 255);
+
         private readonly byte red;
         private readonly byte green;
         private readonly byte blue;
@@ -21,5 +24,6 @@ namespace UAM.PTO
             this.green = green;
             this.blue = blue;
         }
+
     }
 }

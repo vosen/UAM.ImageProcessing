@@ -205,17 +205,17 @@ namespace UAM.PTO
 
         internal void DetectEdgesSobel()
         {
-            Image = Image.ApplyConvolutionFunction(3, EdgeDetection.Sobel);
+            Image = Image.ApplyPixelFunction(3, EdgeDetection.Sobel);
         }
 
         internal void DetectEdgesRoberts()
         {
-            Image = Image.ApplyConvolutionFunction(3, EdgeDetection.Roberts);
+            Image = Image.ApplyPixelFunction(3, EdgeDetection.Roberts);
         }
 
         internal void DetectEdgesPrewitt()
         {
-            Image = Image.ApplyConvolutionFunction(3, EdgeDetection.Prewitt);
+            Image = Image.ApplyPixelFunction(3, EdgeDetection.Prewitt);
         }
 
         internal void DetectEdgesLoG()
@@ -249,29 +249,53 @@ namespace UAM.PTO
 
         internal void DenoiseMedian()
         {
-            Image = image.ApplyConvolutionFunction(3, Blur.Median);
+            Image = image.ApplyPixelFunction(3, Blur.Median);
         }
 
         internal void MorphDilation()
         {
-            Image = image.ApplyConvolutionFunction(3, Morphology.Dilation);
+            Image = image.ApplyPixelFunction(3, Morphology.Dilation);
         }
 
         internal void MorphErosion()
         {
-            Image = image.ApplyConvolutionFunction(3, Morphology.Erosion);
+            Image = image.ApplyPixelFunction(3, Morphology.Erosion);
         }
 
         internal void MorphOpening()
         {
-            Image = image.ApplyConvolutionFunction(3, Morphology.Erosion)
-                         .ApplyConvolutionFunction(3, Morphology.Dilation);
+            Image = image.ApplyPixelFunction(3, Morphology.Erosion)
+                         .ApplyPixelFunction(3, Morphology.Dilation);
         }
 
         internal void MorphClosing()
         {
-            Image = image.ApplyConvolutionFunction(3, Morphology.Dilation)
-                         .ApplyConvolutionFunction(3, Morphology.Erosion);
+            Image = image.ApplyPixelFunction(3, Morphology.Dilation)
+                         .ApplyPixelFunction(3, Morphology.Erosion);
+        }
+        internal void ThresholdPlain(byte threshold)
+        {
+            Image = image.ApplyPointProcessing((r,g,b) => Thresholding.Plain(r,g,b,threshold));
+        }
+
+        internal void ThresholdOtsu()
+        {
+            Image = image.ApplyPointProcessing(Thresholding.Otsu(image));
+        }
+
+        internal void ThresholdTriangle()
+        {
+            Image = image.ApplyPointProcessing(Thresholding.Triangle(image));
+        }
+
+        internal void ThresholdEntropy()
+        {
+            Image = image.ApplyPointProcessing(Thresholding.Entropy(image));
+        }
+
+        internal void ThresholdNiblack()
+        {
+            Image = image.ApplyPixelFunction(15, (img,idx) => Thresholding.Niblack(img,idx));
         }
     }
 }

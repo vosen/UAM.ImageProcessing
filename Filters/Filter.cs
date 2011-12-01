@@ -35,7 +35,7 @@ namespace UAM.PTO
             return newImage;
         }
 
-        public static PNM ApplyConvolutionFunction(this PNM image, int matrixLength, Func<PNM, int, Pixel> func)
+        public static PNM ApplyPixelFunction(this PNM image, int matrixLength, Func<PNM, int, Pixel> func)
         {
             PNM newImage = PNM.Copy(image);
             int padding = matrixLength / 2;
