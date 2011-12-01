@@ -142,6 +142,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Filters\Filters.csproj">
+      <Project>{50C8CBB5-8FBA-4CC4-A383-1AA18075742E}</Project>
+      <Name>Filters</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PNM\PNM.csproj">
       <Project>{E9BDF0E8-4FD8-48F4-96B5-27147A479EC0}</Project>
       <Name>PNM</Name>

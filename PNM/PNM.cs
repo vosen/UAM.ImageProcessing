@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using System.Globalization;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Filters")]
+
 namespace UAM.PTO
 {
     public class PNM
