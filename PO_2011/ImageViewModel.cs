@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.IO;
+using UAM.PTO.Filters;
 
 namespace UAM.PTO
 {
@@ -68,12 +69,12 @@ namespace UAM.PTO
 
         public void EqualizeHistogram()
         {
-            Image = image.Apply(Filters.HistogramEqualize(image));
+            Image = image.ApplyPointProcessing(Histogram.Equalize(image));
         }
 
         public void StretchHistogram()
         {
-            Image = image.Apply(Filters.HistogramStretch(image));
+            Image = image.ApplyPointProcessing(Histogram.Stretch(image));
         }
 
         public void Undo()
@@ -101,22 +102,22 @@ namespace UAM.PTO
         public void ApplyConvolutionMatrix(float[] mask, float weight, float shift)
         {
             Trim(ref mask);
-            Image = image.ApplyConvolution(mask, weight, shift);
+            Image = image.ApplyConvolutionMatrix(mask, weight, shift);
         }
 
         public void ChangeBrightnessContrast(float brightness, float contrast)
         {
-            Image =Image.Apply(Filters.ChangeBrightnessContrast(brightness, contrast));
+            Image =Image.ApplyPointProcessing(Color.BrightnessContrast(brightness, contrast));
         }
 
         public void ChangeGamma(float value)
         {
-            Image = Image.Apply(Filters.ChangeGamma(value));
+            Image = Image.ApplyPointProcessing(Color.Gamma(value));
         }
 
         public void ToGrayscale()
         {
-            Image = Image.Apply(Filters.ColorToGrayscale);
+            Image = Image.ApplyPointProcessing(Color.ToGrayscale);
         }
 
         // remove useless zeroes on the edges
@@ -204,17 +205,17 @@ namespace UAM.PTO
 
         internal void DetectEdgesSobel()
         {
-            Image = Image.ApplyConvolutionFunction(3, Filters.Sobel);
+            Image = Image.ApplyConvolutionFunction(3, EdgeDetection.Sobel);
         }
 
         internal void DetectEdgesRoberts()
         {
-            Image = Image.ApplyConvolutionFunction(3, Filters.Roberts);
+            Image = Image.ApplyConvolutionFunction(3, EdgeDetection.Roberts);
         }
 
         internal void DetectEdgesPrewitt()
         {
-            Image = Image.ApplyConvolutionFunction(3, Filters.Prewitt);
+            Image = Image.ApplyConvolutionFunction(3, EdgeDetection.Prewitt);
         }
 
         internal void DetectEdgesLoG()
@@ -248,29 +249,29 @@ namespace UAM.PTO
 
         internal void DenoiseMedian()
         {
-            Image = image.ApplyConvolutionFunction(3, Filters.Median);
+            Image = image.ApplyConvolutionFunction(3, Blur.Median);
         }
 
         internal void MorphDilation()
         {
-            Image = image.ApplyConvolutionFunction(3, Filters.Dilation);
+            Image = image.ApplyConvolutionFunction(3, Morphology.Dilation);
         }
 
         internal void MorphErosion()
         {
-            Image = image.ApplyConvolutionFunction(3, Filters.Erosion);
+            Image = image.ApplyConvolutionFunction(3, Morphology.Erosion);
         }
 
         internal void MorphOpening()
         {
-            Image = image.ApplyConvolutionFunction(3, Filters.Erosion)
-                         .ApplyConvolutionFunction(3, Filters.Dilation);
+            Image = image.ApplyConvolutionFunction(3, Morphology.Erosion)
+                         .ApplyConvolutionFunction(3, Morphology.Dilation);
         }
 
         internal void MorphClosing()
         {
-            Image = image.ApplyConvolutionFunction(3, Filters.Dilation)
-                         .ApplyConvolutionFunction(3, Filters.Erosion);
+            Image = image.ApplyConvolutionFunction(3, Morphology.Dilation)
+                         .ApplyConvolutionFunction(3, Morphology.Erosion);
         }
     }
 }
