@@ -79,6 +79,10 @@ namespace UAM.PTO
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Thresholding.Entropy, (s, e) => { imgvm.ThresholdEntropy(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Thresholding.Niblack, (s, e) => { imgvm.ThresholdNiblack(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
 
+
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Artistic.Oil, (s, e) => { imgvm.Oil(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Artistic.FishEye, (s, e) => { imgvm.FishEye(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Grayscale, (s, e) => { imgvm.ToGrayscale(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
 

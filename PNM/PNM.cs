@@ -185,6 +185,26 @@ namespace UAM.PTO
             }
         }
 
+        internal void GetPixel(double radius, double angle, out byte r, out byte g, out byte b)
+        {
+            GetPixel(FromPolar(radius, angle), out r, out g, out b);
+        }
+
+        internal void ToPolar(int index, out double r, out double a)
+        {
+            int x = index % Width;
+            int y = index / Width;
+            a = Math.Atan2(y, x);
+            r = Math.Sqrt(Math.Pow(x,2) + Math.Pow(y,2));
+        }
+
+        internal int FromPolar(double r, double a)
+        {
+            double x = r * Math.Cos(a);
+            double y = r * Math.Sin(a);
+            return ((int)Math.Round(y) * Width) + (int)Math.Round(x);
+        }
+
         internal void WriteShortHeader(string magic, FileStream stream)
         {
             var encoding = Encoding.ASCII;

@@ -110,5 +110,13 @@ namespace UAM.PTO.Commands
                 e.Handled = true;
             }
         }
+
+        public static class Artistic
+        {
+            private static RoutedUICommand oil = new RoutedUICommand();
+            private static RoutedUICommand fisheye = new RoutedUICommand();
+            public static RoutedUICommand Oil { get { return oil; } }
+            public static RoutedUICommand FishEye { get { return fisheye; } }
+        }
     }
 }

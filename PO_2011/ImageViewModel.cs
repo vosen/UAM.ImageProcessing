@@ -297,5 +297,15 @@ namespace UAM.PTO
         {
             Image = image.ApplyPixelFunction(15, (img,idx) => Thresholding.Niblack(img,idx));
         }
+
+        internal void Oil()
+        {
+            Image = image.ApplyPixelFunction(7, Filters.Artistic.Oil);
+        }
+
+        internal void FishEye()
+        {
+            Image = image.ApplyPixelFunction(0, Filters.Artistic.FishEye);
+        }
     }
 }

@@ -62,6 +62,10 @@
                     <MenuItem Header="_Entropy" Command="{x:Static local:Commands.Filters+Thresholding.Entropy}" />
                     <MenuItem Header="_Niblack" Command="{x:Static local:Commands.Filters+Thresholding.Niblack}" />
                 </MenuItem>
+                <MenuItem Header="_Artistic">
+                    <MenuItem Header="_Oil" Command="{x:Static local:Commands.Filters+Artistic.Oil}" />
+                    <MenuItem Header="_Fish eye" Command="{x:Static local:Commands.Filters+Artistic.FishEye}" />
+                </MenuItem>
                 <MenuItem Header="_Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
             </MenuItem>
         </Menu>
