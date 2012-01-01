@@ -83,6 +83,9 @@ namespace UAM.PTO
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Artistic.Oil, (s, e) => { imgvm.Oil(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Artistic.FishEye, (s, e) => { imgvm.FishEye(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
 
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Mapping.Normal, (s, e) => { imgvm.NormalMapping(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Mapping.Horizon, (s, e) => { imgvm.HorizonMapping(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Grayscale, (s, e) => { imgvm.ToGrayscale(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
 

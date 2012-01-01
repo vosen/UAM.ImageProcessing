@@ -45,6 +45,24 @@ namespace UAM.PTO
             return newImage;
         }
 
+        public static PNM ApplyHeightMapFunction(this PNM image, int matrixLength, Func<int, int, float[], int, Pixel> func)
+        {
+            PNM newImage = PNM.Copy(image);
+            int padding = matrixLength / 2;
+            Pad(newImage, padding);
+            int newImageSize = newImage.Width * newImage.Height;
+            float[] heightmap = new float[newImageSize];
+            byte r,g,b;
+            for (int i = 0; i < newImageSize; i++)
+            {
+                newImage.GetPixel(i, out r, out g, out b);
+                heightmap[i] = PNM.RGBToLuminosity(r, g, b) / 255f;
+            }
+            newImage = ApplyHeightMapFunctionCore(newImage.Width, newImage.Height, heightmap, matrixLength, func);
+            Trim(newImage, padding);
+            return newImage;
+        }
+
         //this should be rewritten to ApplyConvolutionFunction
         public static PNM ApplyGradientEdgesDetection(this PNM image)
         {
@@ -109,6 +127,25 @@ namespace UAM.PTO
                 }
             });
             return rasters;
+        }
+
+        private static PNM ApplyHeightMapFunctionCore(int imgWidth, int imgHeight, float[] heightmap, int matrixLength, Func<int, int, float[], int, Pixel> func)
+        {
+            PNM newImage = new PNM(imgWidth, imgHeight);
+            int padding = matrixLength / 2;
+            int maxHeight = imgHeight - padding;
+            int maxWidth = imgWidth - padding;
+            int width = imgWidth;
+            Parallel.For(padding, maxHeight, i =>
+            {
+                for (int j = padding; j < maxWidth; j++)
+                {
+                    // current index position
+                    int position = i * width + j;
+                    newImage.SetPixel(position, func(imgWidth, imgHeight, heightmap, position));
+                }
+            });
+            return newImage;
         }
 
         // poor man's pixel shader
@@ -219,6 +256,12 @@ namespace UAM.PTO
                 }
             });
             return newImage;
+        }
+
+        // calculate relative position
+        internal static int RelativeIndex(int width, int position, int x, int y)
+        {
+            return position + (y * width) + x;
         }
     }
 }

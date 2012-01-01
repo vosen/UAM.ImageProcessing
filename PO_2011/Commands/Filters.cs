@@ -118,5 +118,13 @@ namespace UAM.PTO.Commands
             public static RoutedUICommand Oil { get { return oil; } }
             public static RoutedUICommand FishEye { get { return fisheye; } }
         }
+
+        public static class Mapping
+        {
+            private static RoutedUICommand normal = new RoutedUICommand();
+            private static RoutedUICommand horizon = new RoutedUICommand();
+            public static RoutedUICommand Normal { get { return normal; } }
+            public static RoutedUICommand Horizon { get { return horizon; } }
+        }
     }
 }

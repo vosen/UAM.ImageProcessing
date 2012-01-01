@@ -32,13 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Blur.cs" />
@@ -46,6 +42,7 @@
     <Compile Include="EdgeDetection.cs" />
     <Compile Include="Filter.cs" />
     <Compile Include="Histogram.cs" />
+    <Compile Include="Mapping.cs" />
     <Compile Include="Morphology.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Artistic.cs" />

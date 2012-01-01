@@ -307,5 +307,15 @@ namespace UAM.PTO
         {
             Image = image.ApplyPixelFunction(0, Filters.Artistic.FishEye);
         }
+
+        internal void NormalMapping()
+        {
+            Image = image.ApplyHeightMapFunction(3, Filters.Mapping.Normal);
+        }
+
+        internal void HorizonMapping()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
