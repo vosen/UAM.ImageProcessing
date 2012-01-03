@@ -315,7 +315,7 @@ namespace UAM.PTO
 
         internal void HorizonMapping()
         {
-            throw new NotImplementedException();
+            Image = image.ApplyHorizonMapping();
         }
     }
 }
