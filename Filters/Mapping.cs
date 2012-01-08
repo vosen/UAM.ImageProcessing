@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media.Media3D;
+using System.Threading.Tasks;
 
 namespace UAM.PTO.Filters
 {
     public static class Mapping
     {
+        // 16 is a magic number to make visualization nicer
+        private static int MagicHorizonNumber = 16;
+
         private static byte Pack(double v)
         {
             return Filter.Coerce((v + 1) * 127.5d);
@@ -28,7 +32,8 @@ namespace UAM.PTO.Filters
             return new Pixel(Pack(normal.X), Pack(normal.Y), Pack(normal.Z));
         }
 
-        public static PNM ApplyHorizonMapping(this PNM image)
+        // returns SENW directions as BGRA32 raw byte array
+        public static byte[] GenerateHorizonMapping(this PNM image)
         {
             int size = image.Width * image.Height;
             float[] heightMap = new float[size];
@@ -39,32 +44,65 @@ namespace UAM.PTO.Filters
                 heightMap[i] = PNM.RGBToLuminosity(r, g, b) / 255f;
             }
             byte[] northMap = GenerateHorizonNorth(heightMap, image.Width, image.Height);
-            PNM newImage = new PNM(image.Width, image.Height);
+            byte[] southMap = GenerateHorizonSouth(heightMap, image.Width, image.Height);
+            byte[] eastMap = GenerateHorizonEast(heightMap, image.Width, image.Height);
+            byte[] westMap = GenerateHorizonWest(heightMap, image.Width, image.Height);
+            byte[] rawBitmap = new byte[size * 4];
             for (int i = 0; i < size; i++)
             {
-                newImage.SetPixel(i, northMap[i], northMap[i], northMap[i]);
+                rawBitmap[i * 4] = southMap[i];
+                rawBitmap[1 + (i * 4)] = eastMap[i];
+                rawBitmap[2 + (i * 4)] = northMap[i];
+                rawBitmap[3 + (i * 4)] = westMap[i];
             }
-            return newImage;
+            return rawBitmap;
         }
 
         private static byte[] GenerateHorizonNorth(float[] heightMap, int width, int height)
         {
+            return GenerateHorizon(heightMap, width, height, StripeIndexerNorth);
+        }
+
+        private static byte[] GenerateHorizonSouth(float[] heightMap, int width, int height)
+        {
+            return GenerateHorizon(heightMap, width, height, StripeIndexerSouth);
+        }
+
+        private static byte[] GenerateHorizonEast(float[] heightMap, int width, int height)
+        {
+            return GenerateHorizon(heightMap, height, width, StripeIndexerEast);
+        }
+
+        private static byte[] GenerateHorizonWest(float[] heightMap, int width, int height)
+        {
+            return GenerateHorizon(heightMap, height, width, StripeIndexerWest);
+        }
+
+        // So ugly, yet so beautiful
+        private static byte[] GenerateHorizon(float[] heightMap,
+                                              int width,
+                                              int height,
+                                              Func<int,int,int,int,int> stripeIndexer)
+        {
             byte[] horizonMap = new byte[width * height];
             for (int i = 0; i < width; i++)
             {
-                GenerateHorizonNorthStripe(heightMap, width, height, horizonMap, i);
+                GenerateStripe(heightMap, width, height, horizonMap, i, stripeIndexer);
             }
             return horizonMap;
         }
 
-
-        // UGLINESS WARNING: 16 is a magic number to make visualization nicer
-        private static void GenerateHorizonNorthStripe(float[] heightMap, int imageWidth, int imageHeight, byte[] horizonMap, int index)
+        private static void GenerateStripe(float[] heightMap,
+                                                  int imageWidth,
+                                                  int imageHeight,
+                                                  byte[] horizonMap,
+                                                  int index,
+                                                  Func<int, int, int, int, int> stripeIndexer)
         {
             List<int> horizon = new List<int>(imageHeight);
             horizon.Add(0);
             // func calculating element index in bitmap from element index in stripe
-            Func<int, int> stripeIndex = (i) => { return StripeIndexNorth(imageWidth, index, i); };
+            Func<int, int> stripeIndex = (i) => { return stripeIndexer(imageWidth, imageHeight, index, i); };
             for (int i = 0; i < imageHeight; i++)
             {
                 int arrayIndex = stripeIndex(i);
@@ -84,7 +122,7 @@ namespace UAM.PTO.Filters
                     foreach (int pos in horizon)
                     {
                         double horizonHeight = heightMap[stripeIndex(pos)] - height;
-                        double horizonDistance = 16 * (i - pos) / (double)imageHeight;
+                        double horizonDistance = MagicHorizonNumber * (i - pos) / (double)imageHeight;
                         double pseudoAngle = Math.Atan(horizonHeight / horizonDistance) / (Math.PI/2);
                         if (pseudoAngle > highestAngle)
                         {
@@ -92,7 +130,7 @@ namespace UAM.PTO.Filters
                             highestIndex = i;
                         }
                     }
-                    double pseudoAngleAbove = Math.Atan((heightMap[stripeIndex(i-1)] - height) * imageHeight / 16) / (Math.PI/2);
+                    double pseudoAngleAbove = Math.Atan((heightMap[stripeIndex(i - 1)] - height) * imageHeight / MagicHorizonNumber) / (Math.PI / 2);
                     // check special case for pixel above in stripe
                     if (pseudoAngleAbove > highestAngle)
                     {
@@ -106,9 +144,24 @@ namespace UAM.PTO.Filters
             }
         }
 
-        private static int StripeIndexNorth(int width, int stripe, int index)
+        private static int StripeIndexerNorth(int width, int height, int stripe, int index)
         {
             return (width * index) + stripe;
+        }
+
+        private static int StripeIndexerSouth(int width, int height, int stripe, int index)
+        {
+            return StripeIndexerNorth(width, height, stripe, (height - index - 1));
+        }
+
+        private static int StripeIndexerWest(int height, int width, int stripe, int index)
+        {
+            return StripeIndexerNorth(width, height, index, stripe);
+        }
+
+        private static int StripeIndexerEast(int height, int width, int stripe, int index)
+        {
+            return StripeIndexerSouth(width, height, (width - index - 1), stripe);
         }
     }
 }

@@ -68,7 +68,7 @@
                 </MenuItem>
                 <MenuItem Header="Ma_pping">
                     <MenuItem Header="_Normal" Command="{x:Static local:Commands.Filters+Mapping.Normal}" />
-                    <MenuItem Header="_Horizon" Command="{x:Static local:Commands.Filters+Mapping.Horizon}" />
+                    <MenuItem Header="_Horizon..." Command="{x:Static local:Commands.Filters+Mapping.Horizon}" />
                 </MenuItem>
                 <MenuItem Header="_Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
             </MenuItem>

@@ -68,6 +68,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="HorizonWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ThresholdWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -103,6 +107,10 @@
     <Compile Include="ConvolutionViewModel.cs" />
     <Compile Include="ConvolutionWindow.xaml.cs">
       <DependentUpon>ConvolutionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PNMToHorizonConverter.cs" />
+    <Compile Include="HorizonWindow.xaml.cs">
+      <DependentUpon>HorizonWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ThresholdWindow.xaml.cs">
       <DependentUpon>ThresholdWindow.xaml</DependentUpon>

@@ -121,10 +121,24 @@ namespace UAM.PTO.Commands
 
         public static class Mapping
         {
+            private static HorizonWindow horizonWindow;
+
             private static RoutedUICommand normal = new RoutedUICommand();
             private static RoutedUICommand horizon = new RoutedUICommand();
             public static RoutedUICommand Normal { get { return normal; } }
             public static RoutedUICommand Horizon { get { return horizon; } }
+
+            internal static void HorizonExecuted(Window mainWindow, ExecutedRoutedEventArgs e)
+            {
+                if (horizonWindow == null)
+                {
+                    horizonWindow = new HorizonWindow(mainWindow);
+                    horizonWindow.OnClosedOnce = () => horizonWindow = null;
+                }
+                horizonWindow.Show();
+                horizonWindow.Activate();
+                e.Handled = true;
+            }
         }
     }
 }

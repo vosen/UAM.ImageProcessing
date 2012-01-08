@@ -312,10 +312,5 @@ namespace UAM.PTO
         {
             Image = image.ApplyHeightMapFunction(3, Filters.Mapping.Normal);
         }
-
-        internal void HorizonMapping()
-        {
-            Image = image.ApplyHorizonMapping();
-        }
     }
 }
