@@ -194,14 +194,18 @@ namespace UAM.PTO
         {
             int x = index % Width;
             int y = index / Width;
-            a = Math.Atan2(y, x);
-            r = Math.Sqrt(Math.Pow(x,2) + Math.Pow(y,2));
+            double centeredX = x - (Width / 2d);
+            double centeredY = (Height / 2d) - y;
+            a = Math.Atan2(centeredY, centeredX);
+            r = Math.Sqrt(Math.Pow(centeredY,2) + Math.Pow(centeredX,2));
         }
 
         internal int FromPolar(double r, double a)
         {
-            double x = r * Math.Cos(a);
-            double y = r * Math.Sin(a);
+            double centeredX = r * Math.Cos(a);
+            double centeredY = r * Math.Sin(a);
+            double x = centeredX + (Width / 2d);
+            double y = (Height / 2d) - centeredY;
             return ((int)Math.Round(y) * Width) + (int)Math.Round(x);
         }
 

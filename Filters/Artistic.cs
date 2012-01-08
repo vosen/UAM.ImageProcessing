@@ -34,11 +34,10 @@ namespace UAM.PTO.Filters
 
         public static Pixel FishEye(PNM image, int index)
         {
+            double maxR = Math.Sqrt(Math.Pow(image.Width / 2d, 2) + Math.Pow(image.Height / 2d, 2));
             byte r,g,b;
             double radius, angle;
             image.ToPolar(index, out radius, out angle);
-            double maxR, trash;
-            image.ToPolar((image.Width * image.Height) - 1, out maxR, out trash);
             image.GetPixel((radius * radius) / maxR, angle, out r, out g, out b);
             return new Pixel(r, g, b);
         }
