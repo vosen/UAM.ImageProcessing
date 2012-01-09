@@ -32,14 +32,48 @@ namespace UAM.PTO.Filters
                              bvalues.GroupBy(p => p).OrderByDescending(gr => gr.Count()).First().Key);
         }
 
-        public static Pixel FishEye(PNM image, int index)
+        public static Func<PNM,int,Pixel> GenerateFishEye(PNM image)
         {
             double maxR = Math.Sqrt(Math.Pow(image.Width / 2d, 2) + Math.Pow(image.Height / 2d, 2));
+            return (img, idx) => FishEye(img, idx, maxR);
+        }
+
+        private static Pixel FishEye(PNM image, int index, double maxR)
+        {
             byte r,g,b;
             double radius, angle;
             image.ToPolar(index, out radius, out angle);
             image.GetPixel((radius * radius) / maxR, angle, out r, out g, out b);
             return new Pixel(r, g, b);
+        }
+
+        public static Pixel Mirror(PNM image, int index)
+        {
+            byte r, g, b;
+            int x = index % image.Width;
+            int y = index / image.Width;
+            if (x < image.Width / 2d)
+                image.GetPixel((y * image.Width) + (image.Width - x - 1), out r, out g, out b);
+            else
+                image.GetPixel((y * image.Width) + x, out r, out g, out b);
+            /*
+            image.ToPolar(index, out radius, out angle);
+            double newX = image.Width * angle/Math.PI*2;
+            double newY = image.Height * radius / maxR;
+            int newIndex = ((int)newX * image.Width) + (int)newY;
+            // correct for pixels outside the image
+            if(newIndex < 0 || newIndex >= image.Width * image.Height)
+                newIndex = index;
+            image.GetPixel(radius, angle + radius, out r, out g, out b);
+             * */
+            return new Pixel(r, g, b);
+        }
+
+        public static Pixel Negative(PNM image, int index)
+        {
+            byte r, g, b;
+            image.GetPixel(index, out r, out g, out b);
+            return new Pixel((byte)(255 - r), (byte)(255 - g), (byte)(255 - b));
         }
     }
 }

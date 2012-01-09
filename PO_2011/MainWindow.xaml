@@ -65,10 +65,16 @@
                 <MenuItem Header="_Artistic">
                     <MenuItem Header="_Oil" Command="{x:Static local:Commands.Filters+Artistic.Oil}" />
                     <MenuItem Header="_Fish eye" Command="{x:Static local:Commands.Filters+Artistic.FishEye}" />
+                    <MenuItem Header="_Mirror" Command="{x:Static local:Commands.Filters+Artistic.Mirror}" />
+                    <MenuItem Header="_Negative" Command="{x:Static local:Commands.Filters+Artistic.Negative}" />
+                    <MenuItem Header="_Emboss" Command="{x:Static local:Commands.Filters+Artistic.Emboss}" />
                 </MenuItem>
                 <MenuItem Header="Ma_pping">
                     <MenuItem Header="_Normal" Command="{x:Static local:Commands.Filters+Mapping.Normal}" />
                     <MenuItem Header="_Horizon..." Command="{x:Static local:Commands.Filters+Mapping.Horizon}" />
+                </MenuItem>
+                <MenuItem Header="_Line detection">
+                    <MenuItem Header="_Hough Transform" Command="{x:Static local:Commands.Filters+Lines.Hough}" />
                 </MenuItem>
                 <MenuItem Header="_Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
             </MenuItem>

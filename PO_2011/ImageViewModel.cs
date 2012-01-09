@@ -298,6 +298,7 @@ namespace UAM.PTO
             Image = image.ApplyPixelFunction(15, (img,idx) => Thresholding.Niblack(img,idx));
         }
 
+        #region artistic
         internal void Oil()
         {
             Image = image.ApplyPixelFunction(7, Filters.Artistic.Oil);
@@ -305,12 +306,36 @@ namespace UAM.PTO
 
         internal void FishEye()
         {
-            Image = image.ApplyPixelFunction(0, Filters.Artistic.FishEye);
+            Image = image.ApplyPixelFunction(0, Filters.Artistic.GenerateFishEye(image));
         }
+
+        internal void Mirror()
+        {
+            Image = image.ApplyPixelFunction(0, Filters.Artistic.Mirror);
+        }
+
+        internal void Negative()
+        {
+            Image = image.ApplyPixelFunction(0, Filters.Artistic.Negative);
+        }
+
+        internal void Emboss()
+        {
+            ApplyConvolutionMatrix(new float[]{ -1, 0, 0,
+                                                 0, 0, 0,
+                                                 0, 0, 1}, 1, 127);
+        }
+
+        #endregion
 
         internal void NormalMapping()
         {
             Image = image.ApplyHeightMapFunction(3, Filters.Mapping.Normal);
+        }
+
+        internal void HoughTransform()
+        {
+            Image = image.GenerateHoughTransform();
         }
     }
 }

@@ -115,8 +115,14 @@ namespace UAM.PTO.Commands
         {
             private static RoutedUICommand oil = new RoutedUICommand();
             private static RoutedUICommand fisheye = new RoutedUICommand();
+            private static RoutedUICommand mirror = new RoutedUICommand();
+            private static RoutedUICommand negative = new RoutedUICommand();
+            private static RoutedUICommand emboss = new RoutedUICommand();
             public static RoutedUICommand Oil { get { return oil; } }
             public static RoutedUICommand FishEye { get { return fisheye; } }
+            public static RoutedUICommand Mirror { get { return mirror; } }
+            public static RoutedUICommand Negative { get { return negative; } }
+            public static RoutedUICommand Emboss { get { return emboss; } }
         }
 
         public static class Mapping
@@ -139,6 +145,12 @@ namespace UAM.PTO.Commands
                 horizonWindow.Activate();
                 e.Handled = true;
             }
+        }
+
+        public static class Lines
+        {
+            private static RoutedUICommand hough = new RoutedUICommand();
+            public static RoutedUICommand Hough { get { return hough; } }
         }
     }
 }

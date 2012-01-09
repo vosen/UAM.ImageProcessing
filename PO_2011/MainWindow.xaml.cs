@@ -82,9 +82,14 @@ namespace UAM.PTO
 
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Artistic.Oil, (s, e) => { imgvm.Oil(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Artistic.FishEye, (s, e) => { imgvm.FishEye(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Artistic.Mirror, (s, e) => { imgvm.Mirror(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Artistic.Negative, (s, e) => { imgvm.Negative(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Artistic.Emboss, (s, e) => { imgvm.Emboss(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
 
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Mapping.Normal, (s, e) => { imgvm.NormalMapping(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Mapping.Horizon, (s, e) => Commands.Filters.Mapping.HorizonExecuted(this,e), (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
+
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Lines.Hough, (s, e) => { imgvm.HoughTransform(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
 
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Grayscale, (s, e) => { imgvm.ToGrayscale(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
