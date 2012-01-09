@@ -247,12 +247,12 @@ namespace UAM.PTO
                             byte r, g, b;
                             image.GetPixel(position - ((padding - m) * width) - (padding - n), out r, out g, out b);
                             float coeff = matrix[(m * matrixLength) + n];
-                            sumR += (r * coeff * weight) + shift;
-                            sumG += (g * coeff * weight) + shift;
-                            sumB += (b * coeff * weight) + shift;
+                            sumR += (r * coeff * weight);
+                            sumG += (g * coeff * weight);
+                            sumB += (b * coeff * weight);
                         }
                     }
-                    newImage.SetPixel(position, Coerce(sumR), Coerce(sumG), Coerce(sumB));
+                    newImage.SetPixel(position, Coerce(sumR + shift), Coerce(sumG + shift), Coerce(sumB + shift));
                 }
             });
             return newImage;
