@@ -35,6 +35,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Blur.cs" />
@@ -42,6 +43,7 @@
     <Compile Include="EdgeDetection.cs" />
     <Compile Include="Filter.cs" />
     <Compile Include="Histogram.cs" />
+    <Compile Include="Lines.cs" />
     <Compile Include="Mapping.cs" />
     <Compile Include="Morphology.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

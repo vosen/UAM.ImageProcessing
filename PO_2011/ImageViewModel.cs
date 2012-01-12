@@ -335,7 +335,7 @@ namespace UAM.PTO
 
         internal void HoughTransform()
         {
-            Image = image.GenerateHoughTransform();
+            Image = image.ApplyHoughTransform();
         }
     }
 }
