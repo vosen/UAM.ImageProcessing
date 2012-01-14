@@ -85,10 +85,10 @@ namespace UAM.PTO
 
         public void ApplyGaussianBlur()
         {
-            ApplyConvolutionMatrix(new float[]{    0, 0.01F, 0.02F, 0.01F,    0,
-                                                 0.01F, 0.06F,  0.1F, 0.06F, 0.01F,
-                                                 0.02F,  0.1F, 0.16F,  0.1F, 0.02F,
-                                                 0.01F, 0.06F,  0.1F, 0.06F, 0.01F,
+            ApplyConvolutionMatrix(new float[]{     0, 0.01F, 0.02F, 0.01F,    0,
+                                                0.01F, 0.06F,  0.1F, 0.06F, 0.01F,
+                                                0.02F,  0.1F, 0.16F,  0.1F, 0.02F,
+                                                0.01F, 0.06F,  0.1F, 0.06F, 0.01F,
                                                     0, 0.01F, 0.02F, 0.01F,    0}, 1, 0);
         }
 
@@ -336,6 +336,11 @@ namespace UAM.PTO
         internal void HoughTransform()
         {
             Image = image.ApplyHoughTransform();
+        }
+
+        internal void DetectEdgesCanny()
+        {
+            Image = image.ApplyCannyDetector();
         }
     }
 }

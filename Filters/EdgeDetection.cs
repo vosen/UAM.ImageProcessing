@@ -6,24 +6,33 @@ using System.Threading.Tasks;
 
 namespace UAM.PTO.Filters
 {
+    enum Orientation
+    {
+        WE = 1,
+        NS = 2,
+        NWSE = 3,
+        NESW = 4
+    }
+
+
     public static class EdgeDetection
     {
-        private static float[] Sobel1 = { -1, 0, 1,
+        private static float[] SobelX = { -1, 0, 1,
                                           -2, 0, 2,
                                           -1, 0, 1};
-        private static float[] Sobel2 = {  1,  2,  1,
+        private static float[] SobelY = {  1,  2,  1,
                                            0,  0,  0,
                                           -1, -2, -1};
-        private static float[] Prewitt1 = { -1, 0, 1,
+        private static float[] PrewittX = { -1, 0, 1,
                                             -1, 0, 1,
                                             -1, 0, 1};
-        private static float[] Prewitt2 = {  1,  1,  1,
+        private static float[] PrewittY = {  1,  1,  1,
                                              0,  0,  0,
                                             -1, -1, -1};
-        private static float[] Roberts1 = { 0,  0,  1,
+        private static float[] RobertsX = { 0,  0,  1,
                                             0, -1,  0,
                                             0,  0,  0};
-        private static float[] Roberts2 = { 0, 1,  0,
+        private static float[] RobertsY = { 0, 1,  0,
                                             0, 0, -1,
                                             0, 0,  0};
         private static float[] LoG = new float[]{ 0, 1, 1,   2,   2,   2, 1, 1, 0,
@@ -109,17 +118,220 @@ namespace UAM.PTO.Filters
 
         public static Pixel Sobel(PNM image, int index)
         {
-            return ConvoluteWithModule(image, index, Sobel1, Sobel2, 3, 1);
+            return ConvoluteWithModule(image, index, SobelX, SobelY, 3, 1);
         }
 
         public static Pixel Prewitt(PNM image, int index)
         {
-            return ConvoluteWithModule(image, index, Prewitt1, Prewitt2, 3, 1);
+            return ConvoluteWithModule(image, index, PrewittX, PrewittY, 3, 1);
         }
 
         public static Pixel Roberts(PNM image, int index)
         {
-            return ConvoluteWithModule(image, index, Roberts1, Roberts2, 3, 1);
+            return ConvoluteWithModule(image, index, RobertsX, RobertsY, 3, 1);
+        }
+
+        public static PNM ApplyCannyDetector(this PNM image)
+        {
+            PNM workImage = image.ApplyPointProcessing(Color.ToGrayscale)
+                                 .ApplyConvolutionMatrix(new float[]{     0, 0.01F, 0.02F, 0.01F,    0,
+                                                                      0.01F, 0.06F,  0.1F, 0.06F, 0.01F,
+                                                                      0.02F,  0.1F, 0.16F,  0.1F, 0.02F,
+                                                                      0.01F, 0.06F,  0.1F, 0.06F, 0.01F,
+                                                                          0, 0.01F, 0.02F, 0.01F,     0}, 1, 0);
+            Filter.Pad(workImage, 1);
+            float[] xraster = Filter.ApplyConvolutionUnbound(workImage, SobelX, 3).Item1;
+            float[] yraster = Filter.ApplyConvolutionUnbound(workImage, SobelY, 3).Item1;
+            var vectorField = xraster.Zip(yraster,  (x, y) => Tuple.Create(Module(x, y), GetOrientation(x,y))).ToArray();
+            byte[] suppressed = NonMaximumSuppression(vectorField, image.Width, image.Height);
+            return ApplyHysteresis(suppressed, image.Width, image.Height, 0.05, 0.2);
+        }
+
+        private static PNM ApplyHysteresis(byte[] suppressed, int width, int height, double low, double high)
+        {
+            PNM image = new PNM(width, height);
+            byte lowValue = (byte)(low*255);
+            byte highValue = (byte)(high*255);
+            for (int i = 0; i < suppressed.Length; i++)
+            {
+                if (suppressed[i] >= highValue)
+                {
+                    image.SetPixel(i, 255, 255, 255);
+                    HysteresisConnect(image, i, width, height, lowValue, highValue);
+                }
+            }
+            return image;
+        }
+
+        private static void HysteresisConnect(PNM image, int index, int width, int height, byte lowValue, byte highValue)
+        {
+            int x = index % width;
+            int y = index / height;
+            for (int x0 = x - 1; x0 < x + 1; x0++)
+            {
+                for (int y0 = y - 1; y0 < y + 1; y0++)
+                {
+                    int currentIndex = (width * y0) + x0;
+                    if (!IsPixelOnEdge(currentIndex, width, height))
+                    {
+                        byte l;
+                        image.GetPixel(currentIndex, out l, out l, out l);
+                        if (l != 255)
+                        {
+                            if (l >= lowValue)
+                            {
+                                image.SetPixel(currentIndex, 255, 255, 255);
+                                HysteresisConnect(image, currentIndex, width, height, lowValue, highValue);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static Orientation GetOrientation(double x, double y)
+        {
+            double atan = Math.Atan(x / y);
+            if (atan <= Math.PI /8 && atan > -Math.PI/8)
+                return Orientation.NS;
+            if (atan <= 3 / 8 * Math.PI && atan > Math.PI / 8)
+                return Orientation.NESW;
+            if (atan <= -Math.PI/8 && atan > -3/8 * Math.PI)
+                return Orientation.NESW;
+            return Orientation.WE;
+        }
+
+        private static byte[] NonMaximumSuppression(Tuple<double, Orientation>[] vectorField, int width, int height)
+        {
+            return vectorField.Select((tuple,idx) => SuppressedValue(vectorField, idx, width, height)).ToArray();
+        }
+
+        private static byte SuppressedValue(Tuple<double, Orientation>[] vectorField, int index, int width, int height)
+        {
+            switch(vectorField[index].Item2)
+            {
+                case Orientation.WE:
+                    return SuppressedValueWE(vectorField, index, width, height);
+                case Orientation.NS:
+                    return SuppressedValueNS(vectorField, index, width, height);
+                case Orientation.NWSE:
+                    return SuppressedValueNWSE(vectorField, index, width, height);
+                case Orientation.NESW:
+                    return SuppressedValueNESW(vectorField, index, width, height);
+            }
+            return 0;
+        }
+
+        private static byte SuppressedValueWE(Tuple<double, Orientation>[] vectorField, int index, int width, int height)
+        {
+            if (IsPixelOnWestEdge(index, width, height))
+            {
+                if (vectorField[index].Item1 > vectorField[index + 1].Item1)
+                    return Filter.Coerce(vectorField[index].Item1);
+                return 0;
+            }
+
+            if (IsPixelOnEastEdge(index, width, height))
+            {
+                if (vectorField[index].Item1 > vectorField[index - 1].Item1)
+                    return Filter.Coerce(vectorField[index].Item1);
+                return 0;
+            }
+
+            if (vectorField[index].Item1 > vectorField[index + 1].Item1 && vectorField[index].Item1 > vectorField[index - 1].Item1)
+                return Filter.Coerce(vectorField[index].Item1);
+            return 0;
+        }
+
+        private static byte SuppressedValueNS(Tuple<double, Orientation>[] vectorField, int index, int width, int height)
+        {
+            if (IsPixelOnNorthEdge(index, width, height))
+            {
+                if (vectorField[index].Item1 > vectorField[index + width].Item1)
+                    return Filter.Coerce(vectorField[index].Item1);
+                return 0;
+            }
+
+            if (IsPixelOnSouthEdge(index, width, height))
+            {
+                if (vectorField[index].Item1 > vectorField[index - width].Item1)
+                    return Filter.Coerce(vectorField[index].Item1);
+                return 0;
+            }
+
+            if (vectorField[index].Item1 > vectorField[index + width].Item1 && vectorField[index].Item1 > vectorField[index - width].Item1)
+                return Filter.Coerce(vectorField[index].Item1);
+            return 0;
+        }
+
+        private static byte SuppressedValueNWSE(Tuple<double, Orientation>[] vectorField, int index, int width, int height)
+        {
+            if (IsPixelOnNorthEdge(index, width, height) && IsPixelOnWestEdge(index, width, height))
+            {
+                if (vectorField[index].Item1 > vectorField[index + width + 1].Item1)
+                    return Filter.Coerce(vectorField[index].Item1);
+                return 0;
+            }
+
+            if (IsPixelOnSouthEdge(index, width, height) && IsPixelOnEastEdge(index, width, height))
+            {
+                if (vectorField[index].Item1 > vectorField[index - width -1].Item1)
+                    return Filter.Coerce(vectorField[index].Item1);
+                return 0;
+            }
+
+            if (vectorField[index].Item1 > vectorField[index + width +1].Item1 && vectorField[index].Item1 > vectorField[index - width -1].Item1)
+                return Filter.Coerce(vectorField[index].Item1);
+            return 0;
+        }
+
+        private static byte SuppressedValueNESW(Tuple<double, Orientation>[] vectorField, int index, int width, int height)
+        {
+            if (IsPixelOnNorthEdge(index, width, height) && IsPixelOnEastEdge(index, width, height))
+            {
+                if (vectorField[index].Item1 > vectorField[index + width - 1].Item1)
+                    return Filter.Coerce(vectorField[index].Item1);
+                return 0;
+            }
+
+            if (IsPixelOnSouthEdge(index, width, height) && IsPixelOnWestEdge(index, width, height))
+            {
+                if (vectorField[index].Item1 > vectorField[index - width + 1].Item1)
+                    return Filter.Coerce(vectorField[index].Item1);
+                return 0;
+            }
+
+            if (vectorField[index].Item1 > vectorField[index + width - 1].Item1 && vectorField[index].Item1 > vectorField[index - width + 1].Item1)
+                return Filter.Coerce(vectorField[index].Item1);
+            return 0;
+        }
+
+        private static bool IsPixelOnEdge(int index, int width, int height)
+        {
+            return IsPixelOnNorthEdge(index, width, height)
+                   || IsPixelOnSouthEdge(index, width, height)
+                   || IsPixelOnWestEdge(index, width, height)
+                   || IsPixelOnEastEdge(index, width, height);
+        }
+
+        private static bool IsPixelOnNorthEdge(int index, int width, int height)
+        {
+            return index < width;
+        }
+
+        private static bool IsPixelOnSouthEdge(int index, int width, int height)
+        {
+            return index >= width * (height-1);
+        }
+
+        private static bool IsPixelOnWestEdge(int index, int width, int height)
+        {
+            return index % width == 0;
+        }
+
+        private static bool IsPixelOnEastEdge(int index, int width, int height)
+        {
+            return IsPixelOnWestEdge(index + 1, width, height);
         }
     }
 }

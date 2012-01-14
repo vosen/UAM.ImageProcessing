@@ -45,6 +45,7 @@
                     <MenuItem Header="_Laplacian of Gaussian" Command="{x:Static local:Commands.Filters+Edges.LaplacianOfGaussian}"/>
                     <MenuItem Header="_Difference of Gaussian" Command="{x:Static local:Commands.Filters+Edges.DifferenceOfGaussian}"/>
                     <MenuItem Header="_Crossing of zero" Command="{x:Static local:Commands.Filters+Edges.ZeroCrossing}"/>
+                    <MenuItem Header="C_anny" Command="{x:Static local:Commands.Filters+Edges.Canny}"/>
                 </MenuItem>
                 <MenuItem Header="_Denoise">
                     <MenuItem Header="_Median" Command="{x:Static local:Commands.Filters+Denoise.Median}"/>
@@ -79,7 +80,7 @@
                 <MenuItem Header="_Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
             </MenuItem>
         </Menu>
-        <ScrollViewer HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Auto" AllowDrop="True" Drop="OnDrop">
+        <ScrollViewer x:Name="scrollViewer" HorizontalContentAlignment="Center" HorizontalScrollBarVisibility="Auto" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Auto" AllowDrop="True" Drop="OnDrop">
             <Image UseLayoutRounding="True" x:Name="image" Width="{Binding Path=Image.Width}" Height="{Binding Path=Image.Height}" Source="{Binding Image, Converter={StaticResource PNMConverter}}"/>
         </ScrollViewer>
     </DockPanel>

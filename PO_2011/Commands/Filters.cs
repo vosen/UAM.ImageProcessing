@@ -55,6 +55,7 @@ namespace UAM.PTO.Commands
             private static RoutedUICommand log = new RoutedUICommand();
             private static RoutedUICommand dog = new RoutedUICommand();
             private static RoutedUICommand zero = new RoutedUICommand();
+            private static RoutedUICommand canny = new RoutedUICommand();
             public static RoutedUICommand Laplace { get { return laplace; } }
             public static RoutedUICommand Gradient { get { return gradient; } }
             public static RoutedUICommand Sobel { get { return sobel; } }
@@ -63,6 +64,7 @@ namespace UAM.PTO.Commands
             public static RoutedUICommand LaplacianOfGaussian { get { return log; } }
             public static RoutedUICommand DifferenceOfGaussian { get { return dog; } }
             public static RoutedUICommand ZeroCrossing { get { return zero; } }
+            public static RoutedUICommand Canny { get { return canny; } }
         }
 
         public static class Denoise
