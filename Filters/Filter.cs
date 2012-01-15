@@ -153,9 +153,9 @@ namespace UAM.PTO
         {
             PNM newImage = new PNM(image.Width, image.Height);
             int padding = matrixLength / 2;
-            int maxHeight = image.Height - padding;
-            int maxWidth = image.Width - padding;
-            int width = image.Width;
+            int maxHeight = newImage.Height - padding;
+            int maxWidth = newImage.Width - padding;
+            int width = newImage.Width;
             Parallel.For(padding, maxHeight, i =>
             {
                 for (int j = padding; j < maxWidth; j++)
@@ -168,23 +168,28 @@ namespace UAM.PTO
             return newImage;
         }
 
+        internal static T[] PadWithZeros<T>(T[] array, int width, int height, int widthPadding, int heightPadding) where T : struct
+        {
+            int newHeight = height + (2 * heightPadding);
+            int newWidth = width + (2 * widthPadding);
+            T[] newRaster = new T[newHeight * newWidth];
+            // skip black rows at the top
+            int start = heightPadding * newWidth;
+            int oldSize = width * height;
+            // copy rows
+            for (int i_new = start, i_old = 0; i_old < oldSize; i_new += newWidth, i_old += width)
+            {
+                Array.Copy(array, i_old, newRaster, i_new + widthPadding, width);
+            }
+            return newRaster;
+        }
+
         // just pad with black for now
         internal static void Pad(PNM image, int padding)
         {
-            int newHeight = image.Height + (2 * padding);
-            int newWidth = image.Width + (2 * padding);
-            byte[] newRaster = new byte[newHeight * newWidth * 3];
-            // skip black rows at the top
-            int start = padding * newWidth * 3;
-            int oldSize = image.Height * image.Width * 3;
-            // copy rows
-            for (int i_new = start, i_old = 0; i_old < oldSize; i_new += (newWidth * 3), i_old += (image.Width * 3))
-            {
-                Buffer.BlockCopy(image.raster, i_old, newRaster, i_new + (padding * 3), image.Width * 3);
-            }
-            image.raster = newRaster;
-            image.Width = newWidth;
-            image.Height = newHeight;
+            image.raster = PadWithZeros(image.raster, image.Width * 3, image.Height, padding*3, padding);
+            image.Width += 2 * padding;
+            image.Height += 2 * padding;
         }
 
         internal static void Trim(PNM image, int padding)
@@ -228,9 +233,9 @@ namespace UAM.PTO
         {
             PNM newImage = new PNM(image.Width, image.Height);
             int padding = matrixLength / 2;
-            int maxHeight = image.Height - padding;
-            int maxWidth = image.Width - padding;
-            int width = image.Width;
+            int maxHeight = newImage.Height - padding;
+            int maxWidth = newImage.Width - padding;
+            int width = newImage.Width;
             Parallel.For(padding, maxHeight, i =>
             {
                 for (int j = padding; j < maxWidth; j++)
