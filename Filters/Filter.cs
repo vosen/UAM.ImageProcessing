@@ -192,21 +192,26 @@ namespace UAM.PTO
             image.Height += 2 * padding;
         }
 
+        internal static T[] Trim<T>(T[] array, int width, int height, int widthPadding, int heightPadding) where T : struct
+        {
+            int newHeight = height - (2 * heightPadding);
+            int newWidth = width - (2 * widthPadding);
+            int newSize = newHeight * newWidth;
+            int oldSize = height * width;
+            T[] newRaster = new T[newSize];
+            int start = heightPadding * width;
+            for (int i_old = start, i_new = 0; i_new < newSize; i_old += width, i_new += newWidth)
+            {
+                Array.Copy(array, i_old + widthPadding, newRaster, i_new, newWidth);
+            }
+            return newRaster;
+        }
+
         internal static void Trim(PNM image, int padding)
         {
-            int newHeight = image.Height - (2 * padding);
-            int newWidth = image.Width - (2 * padding);
-            int newSize = newHeight * newWidth * 3;
-            int oldSize = image.Width * image.Height * 3;
-            byte[] newRaster = new byte[newSize];
-            int start = padding * image.Width * 3;
-            for (int i_old = start, i_new = 0; i_new < newSize; i_old += (image.Width * 3), i_new += (newWidth * 3))
-            {
-                Buffer.BlockCopy(image.raster, i_old + (padding * 3), newRaster, i_new, newWidth * 3);
-            }
-            image.raster = newRaster;
-            image.Width = newWidth;
-            image.Height = newHeight;
+            image.raster = Trim(image.raster, image.Width * 3, image.Height, padding * 3, padding);
+            image.Width -= 2 * padding;
+            image.Height -= 2 * padding;
         }
 
         internal static byte Coerce(float f)

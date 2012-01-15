@@ -40,7 +40,8 @@
   <ItemGroup>
     <Compile Include="Blur.cs" />
     <Compile Include="Color.cs" />
-    <Compile Include="EdgeDetection.cs" />
+    <Compile Include="Corners.cs" />
+    <Compile Include="Edges.cs" />
     <Compile Include="Filter.cs" />
     <Compile Include="Histogram.cs" />
     <Compile Include="Lines.cs" />

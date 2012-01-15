@@ -154,5 +154,11 @@ namespace UAM.PTO.Commands
             private static RoutedUICommand hough = new RoutedUICommand();
             public static RoutedUICommand Hough { get { return hough; } }
         }
+
+        public static class Corners
+        {
+            private static RoutedUICommand harris = new RoutedUICommand();
+            public static RoutedUICommand Harris { get { return harris; } }
+        }
     }
 }

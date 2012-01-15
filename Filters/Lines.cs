@@ -12,7 +12,7 @@ namespace UAM.PTO.Filters
 {
     public static class LineDetection
     {
-        public static PNM ApplyHoughTransform(this PNM image)
+        public static PNM ApplyHoughDetector(this PNM image)
         {
             // greyscale, edge detection, thresholding
             PNM workImage = PNM.Copy(image).ApplyPointProcessing(Color.ToGrayscale)

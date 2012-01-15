@@ -205,17 +205,17 @@ namespace UAM.PTO
 
         internal void DetectEdgesSobel()
         {
-            Image = Image.ApplyPixelFunction(3, EdgeDetection.Sobel);
+            Image = Image.ApplyPixelFunction(3, Edges.Sobel);
         }
 
         internal void DetectEdgesRoberts()
         {
-            Image = Image.ApplyPixelFunction(3, EdgeDetection.Roberts);
+            Image = Image.ApplyPixelFunction(3, Edges.Roberts);
         }
 
         internal void DetectEdgesPrewitt()
         {
-            Image = Image.ApplyPixelFunction(3, EdgeDetection.Prewitt);
+            Image = Image.ApplyPixelFunction(3, Edges.Prewitt);
         }
 
         internal void DetectEdgesLoG()
@@ -335,12 +335,17 @@ namespace UAM.PTO
 
         internal void HoughTransform()
         {
-            Image = image.ApplyHoughTransform();
+            Image = image.ApplyHoughDetector();
         }
 
         internal void DetectEdgesCanny()
         {
             Image = image.ApplyCannyDetector();
+        }
+
+        internal void HarrisDetector()
+        {
+            Image = image.ApplyHarrisDetector();
         }
     }
 }
