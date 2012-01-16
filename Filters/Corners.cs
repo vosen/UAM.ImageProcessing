@@ -9,8 +9,14 @@ namespace UAM.PTO
 {
     public static class Corners
     {
-        private static double HarrisK = 0.13;
-        private static double HarrisThreshold = 200;
+        private static float[] weirdY = new float[] { 0,  0.5f, 0,
+                                                      0,     0, 0,
+                                                      0, -0.5f, 0};
+        private static float[] weirdX = new float[] {    0, 0,     0,
+                                                      0.5f, 0, -0.5f,
+                                                         0, 0,     0};
+        private static double HarrisK = 0.05;
+        private static double HarrisThreshold = 0.001;
 
         public static PNM ApplyHarrisDetector(this PNM image)
         {
@@ -24,8 +30,9 @@ namespace UAM.PTO
             PNM workImage = PNM.Copy(image).ApplyPointProcessing(Color.ToGrayscale);
             Filter.Pad(workImage, 1);
             // integrate with prewitt
-            float[] xraster = Filter.ApplyConvolutionUnbound(workImage, Edges.PrewittX, 3).Item1;
-            float[] yraster = Filter.ApplyConvolutionUnbound(workImage, Edges.PrewittY, 3).Item1;
+            double[] normalizedWorkImage = workImage.raster.Where((b, idx) => idx % 3 ==0).Select(b => b / 255d).ToArray();
+            double[] xraster = RunConvolution(normalizedWorkImage, workImage.Width, workImage.Height, Edges.SobelX, 3);
+            double[] yraster = RunConvolution(normalizedWorkImage, workImage.Width, workImage.Height, Edges.SobelY, 3);
             double[] rasterA = new double[xraster.Length];
             double[] rasterB = new double[xraster.Length];
             double[] rasterC = new double[xraster.Length];
@@ -80,21 +87,101 @@ namespace UAM.PTO
                 if (corner >= HarrisThreshold)
                     cornerness[i] = corner;
             }
-            // do suppression
-            // BUG: integrate cornerness table not temporary image
-            float[] xcorners = Filter.ApplyConvolutionUnbound(workImage, Edges.PrewittX, 3).Item1;
-            float[] ycorners = Filter.ApplyConvolutionUnbound(workImage, Edges.PrewittY, 3).Item1;
-            var vectorField = xraster.Zip(yraster, (x, y) => Tuple.Create(Edges.Module(x, y), Edges.GetOrientation(x, y))).ToArray();
-            byte[] suppressed = Edges.NonMaximumSuppression(vectorField, image.Width, image.Height);
+            //return ToPNM(cornerness, image.Width, image.Height);
+            CenteredNonMaximumSuppression(cornerness, image.Width, image.Height, 3);
             // draw corners
             PNM newImage = PNM.Copy(image);
-            for (int i = 0; i < suppressed.Length; i++)
+            for (int i = 0; i < cornerness.Length; i++)
             {
-                if (suppressed[i] == 0)
+                if (cornerness[i] == 0)
                     continue;
-                newImage.SetPixel(i, 0, 0, 255);
+                MarkPixel(newImage, i);
             }
             return newImage;
+        }
+
+        private static void MarkPixel(PNM image, int index)
+        {
+            int x = index % image.Width;
+            int y = index / image.Width;
+            for (int x0 = -1; x0 <= 1; x0++)
+            {
+                for (int y0 = -1; y0 <= 1; y0++)
+                {
+                    if(x0 == 0 && y0 == 0)
+                        continue;
+                    int currentY = y + y0;
+                    int currentX = x + x0;
+                    if(currentX < 0 || currentX >= image.Width || currentY < 0 || currentY >= image.Height)
+                        continue;
+                    image.SetPixel(x + x0, y + y0, 0, 255, 0);
+                }
+            }
+        }
+
+        private static double[] RunConvolution(double[] array, int width, int height, float[] matrix, int matrixLength)
+        {
+            int padding = matrixLength / 2;
+            int oldHeight = height - (padding * 2);
+            int oldWidth = width - (padding * 2);
+            double[] raster = new double[oldHeight * oldWidth];
+            int maxHeight = height - padding;
+            int maxWidth = width - padding;
+            Parallel.For(padding, maxHeight, i =>
+            {
+                int index = (i - padding) * oldWidth;
+                for (int j = padding; j < maxWidth; j++)
+                {
+                    double sum = 0;
+                    // current index position
+                    int position = i * width + j;
+                    for (int m = 0; m < matrixLength; m++)
+                    {
+                        for (int n = 0; n < matrixLength; n++)
+                        {
+                            double value = array[(position - ((padding - m) * width) - (padding - n))];
+                            float coeff = matrix[(m * matrixLength) + n];
+                            sum += value * coeff;
+                        }
+                    }
+                    raster[index] = sum;
+                    index++;
+                }
+            });
+            return raster;
+        }
+
+        private static void CenteredNonMaximumSuppression(double[] array, int width, int height, int radius)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    double center = array[y * width + x];
+                    bool isMax = true;
+                    for (int x0 = -radius; x0 <= radius; x0++)
+                    {
+                        if (!isMax)
+                            break;
+
+                        for (int y0 = -radius; y0 <= radius; y0++)
+                        {
+                            int position = ((y + y0) * width) + x + x0 ;
+                            if(position < 0 || position >= array.Length)
+                                continue;
+
+                            if(center < array[position])
+                            {
+                                isMax = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!isMax)
+                        array[y * width + x] = 0;
+                }
+            }
         }
 
     }

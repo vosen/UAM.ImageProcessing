@@ -17,10 +17,10 @@ namespace UAM.PTO.Filters
 
     public static class Edges
     {
-        private static float[] SobelX = { -1, 0, 1,
+        internal static float[] SobelX = { -1, 0, 1,
                                           -2, 0, 2,
                                           -1, 0, 1};
-        private static float[] SobelY = {  1,  2,  1,
+        internal static float[] SobelY = {  1,  2,  1,
                                            0,  0,  0,
                                           -1, -2, -1};
         internal static float[] PrewittX = { -1, 0, 1,
@@ -82,7 +82,7 @@ namespace UAM.PTO.Filters
             return returnImage;
         }
 
-        internal static double Module(float g1, float g2)
+        internal static double Module(double g1, double g2)
         {
             return Math.Sqrt((g1 * g1) + (g2 * g2));
         }
