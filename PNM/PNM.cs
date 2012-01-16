@@ -159,7 +159,7 @@ namespace UAM.PTO
         // 0,0 is upper left corner, indices are postitive
         internal void SetPixel(int x, int y, byte r, byte g, byte b)
         {
-            SetPixel((x * Width) + y, r, g, b);
+            SetPixel((y * Width) + x, r, g, b);
         }
 
         internal void SetPixel(int index, Pixel pixel)

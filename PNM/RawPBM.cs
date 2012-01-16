@@ -46,7 +46,7 @@ namespace UAM.PTO
             for(int i = 0; i< amount; i++)
             {
                 if (((temp >>= 1) & 1) == 0)
-                    SetPixel(x, offset + amount - i - 1, 255, 255, 255);
+                    SetPixel(offset + amount - i - 1, x, 255, 255, 255);
             }
         }
 
