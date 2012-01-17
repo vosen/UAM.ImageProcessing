@@ -186,6 +186,11 @@ namespace UAM.PTO
             GetPixel(FromPolar(radius, angle), out r, out g, out b);
         }
 
+        internal void GetPixel(int x, int y, out byte r, out byte g, out byte b)
+        {
+            GetPixel((y * Width) + x, out r, out g, out b);
+        }
+
         internal void ToPolar(int index, out double r, out double a)
         {
             int x = index % Width;

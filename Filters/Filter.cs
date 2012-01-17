@@ -184,12 +184,125 @@ namespace UAM.PTO
             return newRaster;
         }
 
-        // just pad with black for now
+        //internal static byte[] PadRasterWithBorders(byte[] array, int width, int height, int padding)
+        //{
+        //    byte[] zeroPadded = PadWithZeros(array, width * 3, height, padding * 3, padding);
+        //    int newWidth = width + (2 * padding);
+        //    int newHeight = height + (2 * padding);
+        //    // pad top left
+        //    T topLeft = array[0];
+        //    for (int i = 0; i < widthPadding; i++)
+        //    {
+        //        for (int j = 0; j < heightPadding; j++)
+        //        {
+        //            zeroPadded[j * newWidth + i] = topLeft;
+        //        }
+        //    }
+        //    // pad top right
+        //    T topRight = array[width-1];
+        //    for (int i = widthPadding + width; i < newWidth; i++)
+        //    {
+        //        for (int j = 0; j < heightPadding; j++)
+        //        {
+        //            zeroPadded[j * newWidth + i] = topRight;
+        //        }
+        //    }
+        //    // pad bottom left
+        //    T bottomLeft = array[width * (height-1)];
+        //    for (int i = 0; i < widthPadding; i++)
+        //    {
+        //        for (int j = height + heightPadding; j < newHeight; j++)
+        //        {
+        //            zeroPadded[j * newWidth + i] = bottomLeft;
+        //        }
+        //    }
+        //    // pad bottom right
+        //    T bottomRight = array[width * height - 1];
+        //    for (int i = widthPadding + width; i < newWidth; i++)
+        //    {
+        //        for (int j = height + heightPadding; j < newHeight; j++)
+        //        {
+        //            zeroPadded[j * newWidth + i] = bottomRight;
+        //        }
+        //    }
+        //    return zeroPadded;
+        //}
+
         internal static void Pad(PNM image, int padding)
         {
-            image.raster = PadWithZeros(image.raster, image.Width * 3, image.Height, padding*3, padding);
+            image.raster = PadWithZeros(image.raster, image.Width* 3, image.Height, padding * 3, padding);
             image.Width += 2 * padding;
             image.Height += 2 * padding;
+            PadCorners(image, padding);
+            PadBorders(image, padding);
+        }
+
+        private static void PadBorders(PNM image, int padding)
+        {
+            // copy top and bottom
+            for(int i = 0;i < padding; i++)
+            {
+                Buffer.BlockCopy(image.raster, 3 * (padding * image.Width + padding), image.raster, 3 * (i * image.Width + padding), (image.Width - padding * 2) * 3);
+                Buffer.BlockCopy(image.raster, 3 * ((image.Height - padding - 1) * image.Width + padding), image.raster, 3 * ((i + image.Height - padding) * image.Width + padding), (image.Width - padding * 2) * 3);
+            }
+            // pad right and left
+            for (int i = 0; i < image.Height - (2 * padding); i++)
+            {
+                byte r, g, b;
+                
+                image.GetPixel(padding, padding + i, out r, out g, out b);
+                for (int j = 0; j < padding; j++)
+                {
+                    image.SetPixel(j, padding + i, r, g, b);
+                } 
+                
+                image.GetPixel(image.Width - padding - 1, padding + i, out r, out g, out b);
+                for (int j = 0; j < padding; j++)
+                {
+                    image.SetPixel(image.Width - j - 1, padding + i, r, g, b);
+                }
+            }
+        }
+
+        private static void PadCorners(PNM image, int padding)
+        {
+            byte r, g, b;
+            // pad top left
+            image.GetPixel(padding, padding, out r, out g, out b);
+            for (int i = 0; i < padding; i++)
+            {
+                for (int j = 0; j < padding; j++)
+                {
+                    image.SetPixel(i, j, r, g, b);
+                }
+            }
+            // pad top right
+            image.GetPixel(image.Width - padding - 1, padding, out r, out g, out b);
+            for (int i = image.Width - padding; i < image.Width; i++)
+            {
+                for (int j = 0; j < padding; j++)
+                {
+                    image.SetPixel(i, j, r, g, b);
+                }
+            }
+            // pad bottom left
+            image.GetPixel(padding, image.Height - padding - 1, out r, out g, out b);
+            for (int i = 0; i < padding; i++)
+            {
+                for (int j = image.Height - padding; j < image.Height; j++)
+                {
+                    image.SetPixel(i, j, r, g, b);
+                }
+            }
+            // pad bottom right
+            image.GetPixel(image.Width - padding - 1, image.Height - padding - 1, out r, out g, out b);
+            for (int i = image.Width - padding; i < image.Width; i++)
+            {
+                for (int j = image.Height - padding; j < image.Height; j++)
+                {
+                    image.SetPixel(i, j, r, g, b);
+                }
+            }
         }
 
         internal static T[] Trim<T>(T[] array, int width, int height, int widthPadding, int heightPadding) where T : struct
