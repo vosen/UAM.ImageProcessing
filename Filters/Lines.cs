@@ -16,13 +16,7 @@ namespace UAM.PTO.Filters
         {
             // greyscale, edge detection, thresholding
             PNM workImage = PNM.Copy(image).ApplyPointProcessing(Color.ToGrayscale)
-                                           .ApplyConvolutionMatrix(new float[]{  0,  0, -1, -1, -1,  0,  0,
-                                                                                 0, -2, -3, -3, -3, -2,  0,
-                                                                                -1, -3,  5,  5,  5, -3, -1,
-                                                                                -1, -3,  5, 16,  5, -3, -1,
-                                                                                -1, -3,  5,  5,  5, -3, -1,
-                                                                                 0, -2, -3, -3, -3, -2,  0,
-                                                                                 0,  0, -1, -1, -1,  0,  0}, 1, 0)
+                                           .ApplyGradientEdgesDetection()
                                            .ApplyPointProcessing(Thresholding.Entropy(image));
             IEnumerable<Tuple<Point, Point>> lines = GenerateHoughLines(workImage);
             return DrawLines(image, lines);
@@ -91,7 +85,6 @@ namespace UAM.PTO.Filters
             // initialize voting board 
             double maxR = Math.Sqrt(Math.Pow(image.Width / 2d, 2) + Math.Pow(image.Height / 2d, 2));
             int maxW = (int)Math.Ceiling(maxR);
-            // angle values in board are stored relative to (-1,0) axis, counterclockwise
             int[][] votingBoard = new int[180][];
             for (int i = 0; i < 180; i++)
                 votingBoard[i] = new int[maxW * 2];
@@ -119,8 +112,7 @@ namespace UAM.PTO.Filters
             return votingBoard
                 //.AsParallel()
                    .SelectMany((array, angle) => array.Select((count, distance) => new { Angle = angle, Distance = distance, Count = count }))
-                   .OrderByDescending((a) => a.Count)
-                   .Take(20)
+                   .Where(a => a.Count > maxW/2 )
                    .Select((a) => new { Distance = a.Distance - maxW, Angle = Math.PI * a.Angle / 180d })
                    .Select((a) => polarLinesToEdges(a.Distance, a.Angle))
                    .Where(tupl => tupl != null);
