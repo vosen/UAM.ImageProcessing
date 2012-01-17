@@ -25,12 +25,12 @@ namespace UAM.PTO.Filters
             double[] variances = new double[256];
             Parallel.For(0, 256, i =>
             {
-                double[] background = histogram.Take(i + 1).ToArray();
-                double[] foreground = histogram.Skip(i + 1).ToArray();
+                double[] background = histogram.Take(i).ToArray();
+                double[] foreground = histogram.Skip(i).ToArray();
                 double backgroundWeight = background.Sum();
                 double foregroundWeight = 1 - backgroundWeight;
-                double backgroundMean = background.Select((d, idx) => d * idx).Sum();
-                double foregroundMean = foreground.Select((d, idx) => d * idx).Sum();
+                double backgroundMean = background.Length == 0 ? 0 : background.Select((d, idx) => d * idx).Average();
+                double foregroundMean = foreground.Select((d, idx) => d * idx).Average();
                 double variance = backgroundWeight * foregroundWeight * Math.Pow(foregroundMean - backgroundMean, 2);
                 variances[i] = variance;
             });
