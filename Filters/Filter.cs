@@ -184,50 +184,6 @@ namespace UAM.PTO
             return newRaster;
         }
 
-        //internal static byte[] PadRasterWithBorders(byte[] array, int width, int height, int padding)
-        //{
-        //    byte[] zeroPadded = PadWithZeros(array, width * 3, height, padding * 3, padding);
-        //    int newWidth = width + (2 * padding);
-        //    int newHeight = height + (2 * padding);
-        //    // pad top left
-        //    T topLeft = array[0];
-        //    for (int i = 0; i < widthPadding; i++)
-        //    {
-        //        for (int j = 0; j < heightPadding; j++)
-        //        {
-        //            zeroPadded[j * newWidth + i] = topLeft;
-        //        }
-        //    }
-        //    // pad top right
-        //    T topRight = array[width-1];
-        //    for (int i = widthPadding + width; i < newWidth; i++)
-        //    {
-        //        for (int j = 0; j < heightPadding; j++)
-        //        {
-        //            zeroPadded[j * newWidth + i] = topRight;
-        //        }
-        //    }
-        //    // pad bottom left
-        //    T bottomLeft = array[width * (height-1)];
-        //    for (int i = 0; i < widthPadding; i++)
-        //    {
-        //        for (int j = height + heightPadding; j < newHeight; j++)
-        //        {
-        //            zeroPadded[j * newWidth + i] = bottomLeft;
-        //        }
-        //    }
-        //    // pad bottom right
-        //    T bottomRight = array[width * height - 1];
-        //    for (int i = widthPadding + width; i < newWidth; i++)
-        //    {
-        //        for (int j = height + heightPadding; j < newHeight; j++)
-        //        {
-        //            zeroPadded[j * newWidth + i] = bottomRight;
-        //        }
-        //    }
-        //    return zeroPadded;
-        //}
-
         internal static void Pad(PNM image, int padding)
         {
             image.raster = PadWithZeros(image.raster, image.Width* 3, image.Height, padding * 3, padding);

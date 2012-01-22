@@ -77,8 +77,11 @@
                 <MenuItem Header="_Line detection">
                     <MenuItem Header="_Hough" Command="{x:Static local:Commands.Filters+Lines.Hough}" />
                 </MenuItem>
-                <MenuItem Header="_Corners detection">
+                <MenuItem Header="_Corner detection">
                     <MenuItem Header="_Harris" Command="{x:Static local:Commands.Filters+Corners.Harris}" />
+                </MenuItem>
+                <MenuItem Header="_Rectangle detection">
+                    <MenuItem Header="_Hough" Command="{x:Static local:Commands.Filters+Rectangles.Hough}" />
                 </MenuItem>
                 <MenuItem Header="_Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
             </MenuItem>

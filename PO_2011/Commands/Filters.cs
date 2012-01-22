@@ -160,5 +160,12 @@ namespace UAM.PTO.Commands
             private static RoutedUICommand harris = new RoutedUICommand();
             public static RoutedUICommand Harris { get { return harris; } }
         }
+
+        public static class Rectangles
+        {
+            private static RoutedUICommand hough = new RoutedUICommand();
+            public static RoutedUICommand Hough { get { return hough; } }
+        }
+
     }
 }

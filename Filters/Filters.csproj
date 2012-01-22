@@ -49,6 +49,7 @@
     <Compile Include="Morphology.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Artistic.cs" />
+    <Compile Include="Rectangles.cs" />
     <Compile Include="Thresholding.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -347,5 +347,10 @@ namespace UAM.PTO
         {
             Image = image.ApplyHarrisDetector();
         }
+
+        internal void HoughRectanglesDetector()
+        {
+            Image = image.ApplyHoughRectanglesDetector();
+        }
     }
 }

@@ -119,7 +119,7 @@ namespace UAM.PTO
             }
         }
 
-        private static double[] RunConvolution(double[] array, int width, int height, float[] matrix, int matrixLength)
+        internal static double[] RunConvolution(double[] array, int width, int height, float[] matrix, int matrixLength)
         {
             int padding = matrixLength / 2;
             int oldHeight = height - (padding * 2);

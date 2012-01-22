@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace UAM.PTO.Filters
 {
-    public static class LineDetection
+    public static class Lines
     {
         public static PNM ApplyHoughDetector(this PNM image)
         {
@@ -82,10 +82,26 @@ namespace UAM.PTO.Filters
         // returns list tuples which encode interesection of lines with image edges
         private static IEnumerable<Tuple<Point, Point>> GenerateHoughLines(PNM image)
         {
-            // initialize voting board 
             double maxR = Math.Sqrt(Math.Pow(image.Width / 2d, 2) + Math.Pow(image.Height / 2d, 2));
             int maxW = (int)Math.Ceiling(maxR);
-            int[][] votingBoard = new int[180][];
+            int[][] votingBoard = HoughVote(image, maxW);
+            // prepare function
+            Func<double, double, Tuple<Point, Point>> polarLinesToEdges = (dist, ang) => PolarLineToImageEdges(dist, ang, image.Width, image.Height);
+            // pick top 10
+            // MADNESS
+            return votingBoard
+                //.AsParallel()
+                   .SelectMany((array, angle) => array.Select((count, distance) => new { Angle = angle, Distance = distance, Count = count }))
+                   .Where(a => a.Count > maxW/2 )
+                   .Select((a) => new { Distance = a.Distance - maxW, Angle = Math.PI * a.Angle / 180d })
+                   .Select((a) => polarLinesToEdges(a.Distance, a.Angle))
+                   .Where(tupl => tupl != null);
+        }
+
+        internal static int[][] HoughVote(PNM image, int maxW)
+        {
+            // initialize voting board 
+            int[][]  votingBoard = new int[180][];
             for (int i = 0; i < 180; i++)
                 votingBoard[i] = new int[maxW * 2];
             int size = image.Width * image.Height;
@@ -105,17 +121,7 @@ namespace UAM.PTO.Filters
                     votingBoard[angle][(int)w + maxW]++;
                 }
             }
-            // prepare function
-            Func<double, double, Tuple<Point, Point>> polarLinesToEdges = (dist, ang) => PolarLineToImageEdges(dist, ang, image.Width, image.Height);
-            // pick top 10
-            // MADNESS
-            return votingBoard
-                //.AsParallel()
-                   .SelectMany((array, angle) => array.Select((count, distance) => new { Angle = angle, Distance = distance, Count = count }))
-                   .Where(a => a.Count > maxW/2 )
-                   .Select((a) => new { Distance = a.Distance - maxW, Angle = Math.PI * a.Angle / 180d })
-                   .Select((a) => polarLinesToEdges(a.Distance, a.Angle))
-                   .Where(tupl => tupl != null);
+            return votingBoard;
         }
 
         private static Tuple<Point, Point> PolarLineToImageEdges(double w, double angle, double width, double height)
