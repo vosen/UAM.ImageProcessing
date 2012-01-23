@@ -83,6 +83,7 @@
                 <MenuItem Header="_Rectangle detection">
                     <MenuItem Header="_Hough" Command="{x:Static local:Commands.Filters+Rectangles.Hough}" />
                 </MenuItem>
+                <MenuItem Header="D_istance transform" Command="{x:Static local:Commands.Filters.Distance}" />
                 <MenuItem Header="_Grayscale" Command="{x:Static local:Commands.Filters.Grayscale}" />
             </MenuItem>
         </Menu>

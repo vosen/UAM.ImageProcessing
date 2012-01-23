@@ -352,5 +352,10 @@ namespace UAM.PTO
         {
             Image = image.ApplyHoughRectanglesDetector();
         }
+
+        internal void ToDistance()
+        {
+            Image = image.ApplyDistanceTransform();
+        }
     }
 }

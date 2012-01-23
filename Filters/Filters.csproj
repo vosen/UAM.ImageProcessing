@@ -41,6 +41,7 @@
     <Compile Include="Blur.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Corners.cs" />
+    <Compile Include="Distance.cs" />
     <Compile Include="Edges.cs" />
     <Compile Include="Filter.cs" />
     <Compile Include="Histogram.cs" />

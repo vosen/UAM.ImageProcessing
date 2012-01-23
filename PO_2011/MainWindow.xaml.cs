@@ -99,6 +99,7 @@ namespace UAM.PTO
             
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Rectangles.Hough, (s, e) => { imgvm.HoughRectanglesDetector(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
 
+            this.CommandBindings.Add(new CommandBinding(Commands.Filters.Distance, (s, e) => { imgvm.ToDistance(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
             this.CommandBindings.Add(new CommandBinding(Commands.Filters.Grayscale, (s, e) => { imgvm.ToGrayscale(); }, (s, e) => { e.CanExecute = imgvm.IsImageOpen; }));
         }
 
