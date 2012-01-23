@@ -206,6 +206,7 @@ namespace UAM.PTO.Filters
             return vectorField.Select((tuple,idx) => SuppressedValue(vectorField, idx, width, height)).ToArray();
         }
 
+        // when equal, bigger index wins
         private static byte SuppressedValue(Tuple<double, Orientation>[] vectorField, int index, int width, int height)
         {
             switch(vectorField[index].Item2)
@@ -233,12 +234,12 @@ namespace UAM.PTO.Filters
 
             if (IsPixelOnEastEdge(index, width, height))
             {
-                if (vectorField[index].Item1 > vectorField[index - 1].Item1)
+                if (vectorField[index].Item1 >= vectorField[index - 1].Item1)
                     return Filter.Coerce(vectorField[index].Item1);
                 return 0;
             }
 
-            if (vectorField[index].Item1 > vectorField[index + 1].Item1 && vectorField[index].Item1 > vectorField[index - 1].Item1)
+            if (vectorField[index].Item1 > vectorField[index + 1].Item1 && vectorField[index].Item1 >= vectorField[index - 1].Item1)
                 return Filter.Coerce(vectorField[index].Item1);
             return 0;
         }
@@ -254,12 +255,12 @@ namespace UAM.PTO.Filters
 
             if (IsPixelOnSouthEdge(index, width, height))
             {
-                if (vectorField[index].Item1 > vectorField[index - width].Item1)
+                if (vectorField[index].Item1 >= vectorField[index - width].Item1)
                     return Filter.Coerce(vectorField[index].Item1);
                 return 0;
             }
 
-            if (vectorField[index].Item1 > vectorField[index + width].Item1 && vectorField[index].Item1 > vectorField[index - width].Item1)
+            if (vectorField[index].Item1 > vectorField[index + width].Item1 && vectorField[index].Item1 >= vectorField[index - width].Item1)
                 return Filter.Coerce(vectorField[index].Item1);
             return 0;
         }
@@ -275,12 +276,12 @@ namespace UAM.PTO.Filters
 
             if (IsPixelOnSouthEdge(index, width, height) && IsPixelOnEastEdge(index, width, height))
             {
-                if (vectorField[index].Item1 > vectorField[index - width -1].Item1)
+                if (vectorField[index].Item1 >= vectorField[index - width -1].Item1)
                     return Filter.Coerce(vectorField[index].Item1);
                 return 0;
             }
 
-            if (vectorField[index].Item1 > vectorField[index + width +1].Item1 && vectorField[index].Item1 > vectorField[index - width -1].Item1)
+            if (vectorField[index].Item1 > vectorField[index + width +1].Item1 && vectorField[index].Item1 >= vectorField[index - width -1].Item1)
                 return Filter.Coerce(vectorField[index].Item1);
             return 0;
         }
@@ -289,7 +290,7 @@ namespace UAM.PTO.Filters
         {
             if (IsPixelOnNorthEdge(index, width, height) && IsPixelOnEastEdge(index, width, height))
             {
-                if (vectorField[index].Item1 > vectorField[index + width - 1].Item1)
+                if (vectorField[index].Item1 >= vectorField[index + width - 1].Item1)
                     return Filter.Coerce(vectorField[index].Item1);
                 return 0;
             }
@@ -301,7 +302,7 @@ namespace UAM.PTO.Filters
                 return 0;
             }
 
-            if (vectorField[index].Item1 > vectorField[index + width - 1].Item1 && vectorField[index].Item1 > vectorField[index - width + 1].Item1)
+            if (vectorField[index].Item1 >= vectorField[index + width - 1].Item1 && vectorField[index].Item1 > vectorField[index - width + 1].Item1)
                 return Filter.Coerce(vectorField[index].Item1);
             return 0;
         }
