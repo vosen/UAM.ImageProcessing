@@ -48,7 +48,7 @@ namespace UAM.PTO.Filters
             }
         }
 
-        private static byte[] Stride(byte[] array, int width, int height)
+        internal static byte[] Stride(byte[] array, int width, int height)
         {
             int stridedWidth = width * 3;
             int overflow = (stridedWidth % 4);
@@ -63,7 +63,7 @@ namespace UAM.PTO.Filters
             return stridedBuffer;
         }
 
-        private static byte[] UnStride(IntPtr array, int width, int height)
+        internal static byte[] UnStride(IntPtr array, int width, int height)
         {
             int stridedWidth = width * 3;
             int overflow = (stridedWidth % 4);

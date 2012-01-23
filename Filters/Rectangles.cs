@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Drawing.Imaging;
 
 namespace UAM.PTO.Filters
 {
     public static class Rectangles
     {
+        private static double AngularThreshold = Math.PI * 3 / 180;
+        private static double DistanceThreshold = 3;
+        private static double NormalizedThreshold = 0.4;
+
         public static PNM ApplyHoughRectanglesDetector(this PNM image, int dmax = 60, int dmin = 13)
         {
             PNM workImage = PNM.Copy(image).ApplyCannyDetector();
@@ -19,15 +26,19 @@ namespace UAM.PTO.Filters
             int maxW = (int)Math.Ceiling(maxR);
             bool[] circleMask = GenerateCircleMask(dmax, dmin);
             int imageSize = image.Width * image.Height;
+            IEnumerable<Tuple<float, float>[]>[] allRectangles = new IEnumerable<Tuple<float, float>[]>[image.Width];
             Parallel.For(0, image.Width, i =>
+            //for (int i = 0; i < image.Width; i++)
             {
-                for (int j = 0; j < image.Height; j++)
+                allRectangles[i] = Enumerable.Range(0, image.Height).Select(j =>
                 {
-                    int center = workImage.Height * (padding + j) + padding + i;
-                    MaskedHoughVote(workImage, center, circleMask, dmax, dmin);
-                }
+                    int center = workImage.Width * (padding + (int)j) + padding + i;
+                    var masked = MaskedHoughVote(workImage, center, circleMask, dmax, dmin, padding);
+                    return masked;
+                }).SelectMany(x => x).ToArray();
+            //}
             });
-            return workImage;
+            return DrawRectangles(image, allRectangles.SelectMany(x => x).ToArray());
         }
 
         private static bool[] GenerateCircleMask(int dmax, int dmin)
@@ -48,7 +59,7 @@ namespace UAM.PTO.Filters
             return circleMask;
         }
 
-        private static void MaskedHoughVote(PNM image, int center, bool[] mask, int dmax, int dmin)
+        private static IEnumerable<Tuple<float, float>[]> MaskedHoughVote(PNM image, int center, bool[] mask, int dmax, int dmin, int padding)
         {
             double angleStep = (Math.PI * 3) / (4d * dmax);
             int angles = (int)Math.Floor(Math.PI / angleStep);
@@ -76,31 +87,87 @@ namespace UAM.PTO.Filters
                     {
                         double radianAngle = angle * angleStep;
                         double w = i * Math.Cos(radianAngle) + j * Math.Sin(radianAngle);
-                        int normalizedW = (int)(w + (dmax / 2d));
-                        votingBoard[angle][normalizedW]++;
+                        double normalizedW = w + (dmax / 2d);
+                        int steppedW = (int)(normalizedW / distanceStep);
+                        votingBoard[angle][steppedW]++;
                     }
                 }
             }
             // votingboard is full - enhance it now
-            var peaks = EnhanceHoughVotingBoard(votingBoard, dmin);
+            List<double[]> peaks = EnhanceHoughVotingBoard(votingBoard, dmax, dmin, angleStep, distanceStep);
+            List<Tuple<int, int, double>> extendedPeaks = new List<Tuple<int, int, double>>(peaks.Count / 2);
+            for (int i = 0; i < peaks.Count; i++)
+            {
+                for (int j = i + 1; j < peaks.Count; j++)
+                {
+                    if (Math.Abs(peaks[i][0] - peaks[j][0]) < AngularThreshold
+                       && Math.Abs(peaks[i][1] + peaks[j][1]) < DistanceThreshold
+                       && Math.Abs(peaks[i][2] - peaks[j][2]) < NormalizedThreshold * (peaks[i][2] + peaks[j][2]) / 2)
+                    extendedPeaks.Add(Tuple.Create(i, j, 0.5 * (peaks[i][0] + peaks[j][0])));
+                }
+            }
+            // extendedPeaks now holds Tuples of (i, j, ak), where i and j are indices of paired peaks and their alpha_k
+            List<Tuple<double[][], double[][]>> finalPairs = new List<Tuple<double[][], double[][]>>();
+            for (int i = 0; i < extendedPeaks.Count; i++)
+            {
+                for (int j = i + 1; j < extendedPeaks.Count; j++)
+                {
+                    if (Math.Abs(Math.Abs(extendedPeaks[i].Item3 - extendedPeaks[j].Item3) - (Math.PI / 2)) < AngularThreshold)
+                        // we got pairs of peak pairs
+                        finalPairs.Add(Tuple.Create( new double[][] {peaks[extendedPeaks[i].Item1], peaks[extendedPeaks[i].Item2] },  new double[][] { peaks[extendedPeaks[j].Item1], peaks[extendedPeaks[j].Item2] }));
+                }
+            }
+            return finalPairs.Select(pair => new Tuple<double, double>[] { 
+                    PolarLineIntersection(pair.Item1[0][0], pair.Item1[0][1], pair.Item2[0][0], pair.Item2[0][1]),
+                    PolarLineIntersection(pair.Item1[1][0], pair.Item1[1][1], pair.Item2[0][0], pair.Item2[0][1]),
+                    PolarLineIntersection(pair.Item1[0][0], pair.Item1[0][1], pair.Item2[1][0], pair.Item2[1][1]),
+                    PolarLineIntersection(pair.Item1[1][0], pair.Item1[1][1], pair.Item2[1][0], pair.Item2[1][1])})
+                .Select(tups => new Tuple<float, float>[]{
+                    CorrectCoordinates(tups[0].Item1, tups[0].Item2, center, image.Width, image.Height, padding),
+                    CorrectCoordinates(tups[1].Item1, tups[1].Item2, center, image.Width, image.Height, padding),
+                    CorrectCoordinates(tups[2].Item1, tups[2].Item2, center, image.Width, image.Height, padding),
+                    CorrectCoordinates(tups[3].Item1, tups[3].Item2, center, image.Width, image.Height, padding)});
         }
 
-        private static List<int> EnhanceHoughVotingBoard(int[][] votingBoard, double dmin)
+        private static Tuple<float, float> CorrectCoordinates(double x, double y, int center, int width, int height, int padding)
+        {
+            int centerX = center % width;
+            int centerY = center / width;
+            return Tuple.Create(centerX + (float)x - padding, centerY - (float)y - padding);
+        }
+
+        // returns peaks as {angle, distance}
+        private static List<double[]> EnhanceHoughVotingBoard(int[][] votingBoard, double dmax, double dmin, double angleStep, double distanceStep)
         {
             int width = votingBoard.GetLength(0);
             int height = votingBoard[0].GetLength(0);
             double[][] convoluted = QuickSum(votingBoard);
-            List<int> peaks = new List<int>(16);
-            double threshold = dmin / 2;
+            List<double[]> peaks = new List<double[]>(16);
+            double threshold = dmax / 2;
             for (int i = 0; i < width; i++)
             {
                 for(int j = 0; j < height; j++)
                 {
                     if (25 * Math.Pow(votingBoard[i][j], 2) / convoluted[i][j] > threshold)
-                        peaks.Add(i);
+                        peaks.Add(new double[] { i * angleStep, (j * distanceStep) - (dmax / 2), votingBoard[i][j] });
                 }
             }
             return peaks;
+        }
+
+        private static Tuple<double, double> PolarLineIntersection(double a1, double r1, double a2, double r2)
+        {
+            // convert to cartesian
+            double A1 = Math.Cos(a1);
+            double B1 = Math.Sin(a1);
+            double C1 = -r1;
+            double A2 = Math.Cos(a2);
+            double B2 = Math.Sin(a2);
+            double C2 = -r2;
+            double W = (A1 * B2) - (A2 * B1);
+            double Wx = (-C1 * B2) - (- C2 * B1);
+            double Wy = (A1 *-C2) - (A2 * -C1);
+            return Tuple.Create(Wx / W, Wy / W);
         }
 
         // Summing over whole array in a 5x5 window
@@ -173,14 +240,41 @@ namespace UAM.PTO.Filters
                 for (int j = 3; j < leftFillHeight; j++)
                 {
                     summed[i][j] = summed[i][j - 1]
-                                   - summed[i - 2][j - 3] + summed[i - 2][j + 2]
-                                   - summed[i - 1][j - 3] + summed[i - 1][j + 2]
-                                   - summed[i][j - 3] + summed[i][j + 2]
-                                   - summed[i + 1][j - 3] + summed[i + 1][j + 2]
-                                   - summed[i + 2][j - 3] + summed[i + 2][j + 2];
+                                   - votingBoard[i - 2][j - 3] + votingBoard[i - 2][j + 2]
+                                   - votingBoard[i - 1][j - 3] + votingBoard[i - 1][j + 2]
+                                   - votingBoard[i][j - 3] + votingBoard[i][j + 2]
+                                   - votingBoard[i + 1][j - 3] + votingBoard[i + 1][j + 2]
+                                   - votingBoard[i + 2][j - 3] + votingBoard[i + 2][j + 2];
                 }
             }
             return summed;
+        }
+
+        private static PNM DrawRectangles(PNM image, Tuple<float, float>[][] corners)
+        {
+            using (Bitmap bitmap = new Bitmap(image.Width, image.Height, PixelFormat.Format24bppRgb))
+            {
+                BitmapData data = bitmap.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                byte[] stridedBuffer = Lines.Stride(image.raster, image.Width, image.Height);
+                Marshal.Copy(stridedBuffer, 0, data.Scan0, stridedBuffer.Length);
+                bitmap.UnlockBits(data);
+                using (Graphics graphics = Graphics.FromImage(bitmap))
+                {
+                    // draw the lines
+                    foreach (var corner in corners)
+                    {
+                        for (int i = 0; i < 4; i++)
+                            for (int j = i + 1; j < 4; j++ )
+                                graphics.DrawLine(Pens.Blue, corner[i].Item1, corner[i].Item2, corner[j].Item1, corner[j].Item2);
+                    }
+                }
+                // get raw data
+                PNM rectImage = new PNM(image.Width, image.Height);
+                data = bitmap.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                rectImage.raster = Lines.UnStride(data.Scan0, image.Width, image.Height);
+                bitmap.UnlockBits(data);
+                return rectImage;
+            }
         }
     }
 }
