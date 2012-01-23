@@ -77,7 +77,7 @@ namespace UAM.PTO.Filters
                     if (!mask[maskIndex++])
                         continue;
                     int x = center % image.Width + i;
-                    int y = center / image.Width + j;
+                    int y = center / image.Width - j;
                     int realIndex = (y * image.Width) + x;
                     byte l;
                     image.GetPixel(realIndex, out l, out l, out l);
