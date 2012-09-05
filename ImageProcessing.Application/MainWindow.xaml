@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:UAM.PTO"
         TextOptions.TextFormattingMode="Display"
-        Title="{Binding Path=Path, StringFormat=PO 2011 [{0}]}" Height="350" Width="525">
+        Title="{Binding Path=Path, StringFormat=ImageProcessing [{0}]}" Height="350" Width="525">
     <Window.Resources>
         <local:PNMToBitmapConverter x:Key="PNMConverter" />
     </Window.Resources>

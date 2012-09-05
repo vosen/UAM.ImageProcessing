@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Globalization;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Filters")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ImageProcessing.Filters")]
 
 namespace UAM.PTO
 {
